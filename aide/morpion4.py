@@ -1,8 +1,14 @@
 def test():
     import tkinter as tk
     import tkinter.messagebox as msg
+    from pathlib import Path
     from boombox import BoomBox
-
+    import os
+    import sys
+    
+    def ch(fichier):
+        return os.path.join(sys.path[0], str(fichier))
+    
     maitre = tk.Tk()
     maitre.title("Morpion!")
 
@@ -11,9 +17,9 @@ def test():
     prin.columnconfigure([0, 1, 2], minsize=100, weight=1)
     prin.pack()
 
-    X = tk.PhotoImage(file="X.png")
+    X = tk.PhotoImage(file=ch("X.png"))
     X = X.subsample(25,25)
-    O = tk.PhotoImage(file="O.gif")
+    O = tk.PhotoImage(file=ch("O.gif"))
     O = O.subsample(25,25)
 
     tour = 1
@@ -27,7 +33,7 @@ def test():
             t = "Egalité !"
         else:
             t = forme(tour, "texte") + " a gagné!"
-        BoomBox("1_honteux_Rene.wav", wait=False).play()
+        BoomBox(os.path.join(sys.path[0],"1_honteux_Rene.wav"), wait=False).play()
         
         msg.showinfo("Fin du jeu", t)
         maitre.destroy()
