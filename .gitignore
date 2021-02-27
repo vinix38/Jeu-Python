@@ -5,6 +5,8 @@
 
 #custom
 *.ini
+*.code-workspace
+.vscode
 
 # User-specific files
 *.rsuser

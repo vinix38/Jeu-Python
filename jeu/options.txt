@@ -1,0 +1,4 @@
+[DEFAULT]
+plein_ecran = False
+son = False
+
