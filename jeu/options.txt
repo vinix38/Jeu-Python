@@ -2,3 +2,5 @@
 plein_ecran = True
 son = True
 langue = fr_FR
+langues_dispo = fr_FR,en_US
+

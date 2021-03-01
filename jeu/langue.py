@@ -5,7 +5,9 @@ fr_FR = {
     "options" : "Paramètres",
     ">partie" : "Charger une partie",
     "+partie" : "Créer une nouvelle partie",
-    "debut" : "bienvenue!",
+    "q+sauv" : "Sauvegarder et quitter",
+    "q-sauv" : "Quitter sans sauvegarder",
+    "langue" : "Langue"
 }
 
 #====== ANGLAIS ======
@@ -15,5 +17,7 @@ en_US = {
     "options" : "Settings",
     ">partie" : "Load a game",
     "+partie" : "Create a new game",
-    "debut" : "welcome!",
+    "q+sauv" : "Save and quit",
+    "q-sauv" : "Discard changes and quit",
+    "langue" : "Langue"
 }
