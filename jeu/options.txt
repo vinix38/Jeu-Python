@@ -1,4 +1,4 @@
 [DEFAULT]
-plein_ecran = False
+plein_ecran = True
 son = True
 langue = fr_FR

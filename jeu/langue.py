@@ -1,13 +1,19 @@
 #====== FRANCAIS ======
 fr_FR = {
-    "titre1" : "je suis un titre",
-    "quitter" : "QUITTER",
+    "titre" : "je suis un titre",
+    "quitter" : "Quitter",
+    "options" : "Paramètres",
+    ">partie" : "Charger une partie",
+    "+partie" : "Créer une nouvelle partie",
     "debut" : "bienvenue!",
 }
 
 #====== ANGLAIS ======
 en_US = {
-    "titre1" : "I'm a title",
-    "quitter" : "QUIT",
+    "titre" : "I'm a title",
+    "quitter" : "Quit",
+    "options" : "Settings",
+    ">partie" : "Load a game",
+    "+partie" : "Create a new game",
     "debut" : "welcome!",
 }

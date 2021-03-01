@@ -1,16 +1,26 @@
-#=== imports ===
+# === imports ===
 import tkinter as tk
 from configparser import ConfigParser
 from langue import *
 import sys
 import os
 
-#=== fonctions ===
+
+# === fonctions ===
 def ch(fichier):
     """indique le chemin du fichier executé"""
     return os.path.join(sys.path[0], str(fichier))
 
-#=== lecture paramètres ===
+def creer():
+    pass
+
+def param():
+    pass
+
+def charger():
+    pass
+
+# === lecture paramètres ===
 options = ConfigParser()
 if os.path.isfile(ch("options.txt")) == False:
     options["DEFAULT"] = {
@@ -22,45 +32,66 @@ if os.path.isfile(ch("options.txt")) == False:
         options.write(fichier)
 else:
     options.read(ch("options.txt"))
-    
-#localisation
-loc = {}
-exec("loc = "+ options["DEFAULT"]["langue"])
 
-#=== initialisation fenêtre ===
+# === localisation ===
+loc = {}
+exec("loc = " + options["DEFAULT"]["langue"])
+
+# === initialisation fenêtre ===
 maitre = tk.Tk()
-maitre.title(loc["titre1"])
+maitre.title(loc["titre"])
 maitre.resizable(0, 0)
 
 h_ecran = maitre.winfo_screenheight()
 l_ecran = maitre.winfo_screenwidth()
 
+# === prise en compte plein écran ===
 if options["DEFAULT"].getboolean("plein_ecran"):
-    maitre.attributes('-fullscreen',True)
+    maitre.attributes('-fullscreen', True)
 
-acceuil = tk.Frame(master=maitre)
-acceuil.rowconfigure([0, 1, 2], minsize=100, weight=1)
-acceuil.columnconfigure([0, 1, 2], minsize=100, weight=1)
-acceuil.grid()
+# === initialisation écran d'acceuil ===
+acceuil = tk.Frame(master=maitre,)
+acceuil.place(relheight=1, relwidth=1)
 
-I = tk.PhotoImage(file = ch("media/fond.png"))
+acceuil.rowconfigure(list(range(15)), weight=1)
+acceuil.columnconfigure(list(range(7)), weight=1)
 
-fond = tk.Canvas(
-    master=acceuil,
-    height=h_ecran,
-    width=l_ecran,
-    bg="#ff0"
-)
-fond.grid()
-fond.create_image(0, 0, image=I,anchor = "nw")
+I = tk.PhotoImage(file=ch("media/fond.png"))
+fond = tk.Label(acceuil, image=I)
+fond.place(x=0, y=0, relwidth=1, relheight=1)
 
-quitter = tk.Button(
+B_quitter = tk.Button(
     text=loc["quitter"],
-    width=25,
-    height=5,
-    bg="blue",
-    fg="yellow",
+    bg="grey",
+    fg="black",
     master=acceuil,
+    command=lambda: maitre.destroy(),
 )
+B_options = tk.Button(
+    text=loc["options"],
+    bg="grey",
+    fg="black",
+    master=acceuil,
+    command=param,
+)
+B_charger = tk.Button(
+    text=loc[">partie"],
+    bg="grey",
+    fg="black",
+    master=acceuil,
+    command=charger,
+)
+B_creer = tk.Button(
+    text=loc["+partie"],
+    bg="grey",
+    fg="black",
+    master=acceuil,
+    command=creer,
+)
+
+B_quitter.grid(column=3, row=12, sticky="nswe")
+B_options.grid(column=3, row=10, sticky="nswe")
+B_charger.grid(column=3, row=8, sticky="nswe")
+B_creer.grid(column=3, row=6, sticky="nswe")
 
 maitre.mainloop()

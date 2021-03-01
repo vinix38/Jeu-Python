@@ -1,7 +1,6 @@
 def test():
     import tkinter as tk
     import tkinter.messagebox as msg
-    from pathlib import Path
     from boombox import BoomBox
     import os
     import sys
