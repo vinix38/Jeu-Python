@@ -8,10 +8,12 @@ fr_FR = {
     "q+sauv" : "Sauvegarder et quitter",
     "q-sauv" : "Quitter sans sauvegarder",
     "langue" : "Langue",
-    "-sauv" : "Pas de sauvegardes disponibles!",
+    "-sauv" : "Aucune sauvegarde disponible!",
     "retour" : "Retour",
     "charger" : "Charger Sauvegarde",
     "import" : "Importer",
+    "XP" : "Expérience",
+    "niv" : "Niveau",
 }
 
 #====== ANGLAIS ======
@@ -28,4 +30,6 @@ en_US = {
     "retour" : "Back",
     "charger" : "Load Save",
     "import" : "Import",
+    "XP" : "Experience",
+    "niv" : "Level",
 }
