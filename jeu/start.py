@@ -253,11 +253,17 @@ def charger():
     B_retour.grid(row=0, column=1, sticky="nswe")
     B_charger.grid(row=0, column=2, sticky="nswe")
 
-def jeu():
+def jeu(sauv):
     global maitre
     global options
     global parties
     global I
+    
+    def quitter():
+        nonlocal sauv
+        with open(ch("parties.txt")) as fichier:
+            pass
+        acceuil()
     
     F_jeu = tk.Frame(maitre)
     F_jeu.place(relheight=1,relwidth=1)
@@ -268,7 +274,14 @@ def jeu():
     F_barre = tk.Frame(F_jeu)
     F_barre.place(relheight=1,relwidth=0.2,relx=0.8)
     
+    F_barre.rowconfigure(list(range(10)), weight=1)
+    F_barre.columnconfigure([0, 1, 2], weight=1)
     
+    B_quitter = tk.Button(
+        master=F_barre,
+        bg = "grey",
+        command = quitter,
+    )
 
 acceuil()
 
