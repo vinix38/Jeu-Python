@@ -2,6 +2,8 @@
 import tkinter as tk
 import datetime as dt
 from configparser import ConfigParser
+from fractions import Fraction
+from tkinter.messagebox import showinfo
 from langue import *
 import sys
 import os
@@ -64,7 +66,7 @@ def efface():
         enfant.destroy()
 
 
-# ***====== FENETRE ======***
+# ***====== FENETRES ======***
 def acceuil():
     global maitre
     global options
@@ -117,8 +119,55 @@ def acceuil():
 
 
 def creer():
-    pass
-
+    global parties
+    global maitre
+    global I
+    
+    efface()
+    
+    F_creer = tk.Frame(maitre)
+    F_creer.place(relheight=1,relwidth=1)
+    F_creer.rowconfigure([0,1],weight=1)
+    F_creer.columnconfigure([0,1],weight=1)
+    
+    E_creer = tk.Entry(
+        master=F_creer,
+        bg = "black",
+        fg = "white",
+    )
+    def creation():
+        nonlocal E_creer
+        nom = E_creer.get()
+        if nom in parties.sections():
+            showinfo(loc["err"], loc["déjà"])
+        else:
+            parties[nom] = {
+                "niv" : "00",
+                "score" : 0,
+                "temps" : 0,
+                "inv" : "",
+                "pos" : "00;00"
+            }
+            jeu()
+    
+    B_creer = tk.Button(
+        master=F_creer,
+        bg="grey",
+        fg="black",
+        text=loc["creer"],
+        command=creation,
+    )
+    B_annuler = tk.Button(
+        master=F_creer,
+        bg="grey",
+        fg="black",
+        text=loc["annuler"],
+        command=acceuil,        
+    )
+    
+    E_creer.grid(row=0,column=0,columnspan=2,sticky="nswe")
+    B_annuler.grid(row=1,column=0,sticky="nswe")
+    B_creer.grid(row=1,column=1,sticky="nswe")
 
 def param():
     global options

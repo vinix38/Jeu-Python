@@ -14,6 +14,10 @@ fr_FR = {
     "import" : "Importer",
     "XP" : "Expérience",
     "niv" : "Niveau",
+    "creer" : "Créer",
+    "annuler" : "Annuler",
+    "err" : "Erreur!",
+    "déjà" : "Ce nom existe déjà!"
 }
 
 #====== ANGLAIS ======
@@ -32,4 +36,8 @@ en_US = {
     "import" : "Import",
     "XP" : "Experience",
     "niv" : "Level",
+    "creer" : "Create",
+    "annuler" : "Cancel",
+    "err" : "Error!",
+    "déjà" : "This name already exists!"
 }
