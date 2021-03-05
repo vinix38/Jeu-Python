@@ -1,6 +1,6 @@
 [DEFAULT]
 plein_ecran = True
-son = True
+son = 1
 langue = fr_FR
 langues_dispo = fr_FR,en_US
 

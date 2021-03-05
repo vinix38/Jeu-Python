@@ -17,7 +17,8 @@ fr_FR = {
     "creer" : "Créer",
     "annuler" : "Annuler",
     "err" : "Erreur!",
-    "déjà" : "Ce nom existe déjà!"
+    "déjà" : "Ce nom existe déjà!",
+    "son" : "Son du jeu",
 }
 
 #====== ANGLAIS ======
@@ -39,5 +40,6 @@ en_US = {
     "creer" : "Create",
     "annuler" : "Cancel",
     "err" : "Error!",
-    "déjà" : "This name already exists!"
+    "déjà" : "This name already exists!",
+    "son" : "Game sound",
 }

@@ -56,7 +56,11 @@ if options["DEFAULT"].getboolean("plein_ecran"):
 
 
 # === images ===
-I = tk.PhotoImage(file=ch("media/fond.png"))
+img = {
+    #"V--" : tk.PhotoImage(file=ch("media/V--.png")),
+    "I" : tk.PhotoImage(file=ch("media/fond.png")),
+}
+
 
 
 # === fonctions ===
@@ -70,7 +74,7 @@ def efface():
 def acceuil():
     global maitre
     global options
-    global I
+    global img
 
     efface()
 
@@ -80,7 +84,7 @@ def acceuil():
     F_acceuil.rowconfigure(list(range(15)), weight=1)
     F_acceuil.columnconfigure(list(range(7)), weight=1)
 
-    fond = tk.Label(F_acceuil, image=I)
+    fond = tk.Label(F_acceuil, image=img["I"])
     fond.place(x=0, y=0, relwidth=1, relheight=1)
 
     B_quitter = tk.Button(
@@ -121,7 +125,7 @@ def acceuil():
 def creer():
     global parties
     global maitre
-    global I
+    global img
     
     efface()
     
@@ -172,7 +176,7 @@ def creer():
 def param():
     global options
     global maitre
-    global I
+    global img
 
     efface()
 
@@ -189,14 +193,32 @@ def param():
         with open(ch('options.txt'), 'w') as fichier:
             options.write(fichier)
         acceuil()
+        
+    V_son = tk.IntVar().set(int(options["DEFAULT"]["son"]))
+        
+    def sono():
+        options["DEFAULT"]["son"] = V_son.get()
 
-    afond = tk.Label(F_param, image=I)
+
+    afond = tk.Label(F_param, image=img["I"])
     afond.place(x=0, y=0, relwidth=1, relheight=1)
 
     opt = list(options["DEFAULT"]["langues_dispo"].split(","))
     clic = tk.StringVar()
     clic.set(options["DEFAULT"]["langue"])
     B_langue = tk.OptionMenu(F_param, clic, *opt)
+    
+    B_son = tk.Checkbutton(
+        master=F_param,
+        bg="grey",
+        fg="black",
+        text=loc["son"],
+        command=sono,
+        onvalue=1, 
+        offvalue=0,
+        variable = V_son
+
+    )
 
     B_quitter_sauv = tk.Button(
         master=F_param,
@@ -220,12 +242,13 @@ def param():
     B_langue.grid(row=3, column=4, sticky="nswe")
     B_quitter_sauv.grid(row=7, column=4, sticky="nswe")
     B_quitter_sans.grid(row=5, column=4, sticky="nswe")
+    B_son.grid(row=4, column=4, sticky="nswe")
 
 
 def charger():
     global options
     global maitre
-    global I
+    global img
     global parties
 
     efface()
@@ -246,7 +269,7 @@ def charger():
 
     if sauv != []:
         roue = tk.Scrollbar(F_liste)
-        roue.pack(side="RIGHT", fill="Y")
+        roue.pack(side="right", fill="Y")
 
         B_liste = tk.Listbox(
             maitre=F_liste,
@@ -306,7 +329,7 @@ def jeu(sauv):
     global maitre
     global options
     global parties
-    global I
+    global img
     
     def quitter():
         nonlocal sauv
