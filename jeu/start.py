@@ -64,6 +64,7 @@ exec("loc = " + options["DEFAULT"]["langue"])
 maitre = tk.Tk()
 maitre.title(loc["titre"])
 maitre.resizable(0, 0)
+#maitre.iconbitmap(ch("*.ico"))
 H_E = maitre.winfo_screenheight()
 L_E = maitre.winfo_screenwidth()
 
