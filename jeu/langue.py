@@ -19,6 +19,7 @@ fr_FR = {
     "err" : "Erreur!",
     "déjà" : "Ce nom existe déjà!",
     "son" : "Son du jeu",
+    "plein" : "Plein écran",
 }
 
 #====== ANGLAIS ======
@@ -42,4 +43,5 @@ en_US = {
     "err" : "Error!",
     "déjà" : "This name already exists!",
     "son" : "Game sound",
+    "plein" : "Fullscreen",
 }

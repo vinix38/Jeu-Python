@@ -1,6 +1,8 @@
 [DEFAULT]
-plein_ecran = True
-son = 1
+plein_ecran = False
+taille = 1600x900
+taille_dispo = 1920x1080,1366x768,1440x900,1600x900,1280x800,1280x1024
+son = True
 langue = fr_FR
 langues_dispo = fr_FR,en_US
 

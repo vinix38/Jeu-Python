@@ -1,7 +1,7 @@
 # === imports ===
 import tkinter as tk
 import datetime as dt
-from configparser import ConfigParser
+from configparser import ConfigParser, DEFAULTSECT
 from fractions import Fraction
 from tkinter.messagebox import showinfo
 from langue import *
@@ -11,15 +11,33 @@ import os
 
 # === chemins ===
 def ch(fichier):
-    """indique le chemin du fichier executé"""
+    """
+    indique le chemin du fichier executé
+    """
     return os.path.join(sys.path[0], str(fichier))
 
+#resize
+def dim(L, H, img):
+    """
+    Largeur (px), Hauteur (px), image
+    redimensionne l'image aux dimensions souhaitées
+    """
+    print(L, H)
+    H = (Fraction(str(H/img.height()))).limit_denominator(100)
+    L = (Fraction(str(L/img.width()))).limit_denominator(100)
+    print(L, H)
+    img.subsample(L.denominator, H.denominator)
+    img.zoom(L.numerator, H.numerator)
+
+    return img
 
 # === lecture paramètres ===
 options = ConfigParser()
 if os.path.isfile(ch("options.txt")) == False:
     options["DEFAULT"] = {
         "plein_ecran": True,
+        "taille" : "1920x1080",
+        "taille_dispo" : "1920x1080,1366x768,1440x900,1600x900,1280x800,1280x1024,1024x768",
         "son": True,
         "langue": "fr_FR",
         "langues_dispo": "fr_FR,en_US"
@@ -46,19 +64,24 @@ exec("loc = " + options["DEFAULT"]["langue"])
 maitre = tk.Tk()
 maitre.title(loc["titre"])
 maitre.resizable(0, 0)
-h_ecran = maitre.winfo_screenheight()
-l_ecran = maitre.winfo_screenwidth()
+H_E = maitre.winfo_screenheight()
+L_E = maitre.winfo_screenwidth()
 
 
 # === prise en compte plein écran ===
 if options["DEFAULT"].getboolean("plein_ecran"):
     maitre.attributes('-fullscreen', True)
+    H_F, L_F = H_E, L_E
+else:
+    maitre.geometry(options["DEFAULT"]["taille"])
+    L_F, H_F = [int(i) for i in options["DEFAULT"]["taille"].split("x")]
+    
 
 
 # === images ===
 img = {
     #"V--" : tk.PhotoImage(file=ch("media/V--.png")),
-    "I" : tk.PhotoImage(file=ch("media/fond.png")),
+    "I" : dim(L_F, H_F, tk.PhotoImage(file=ch("media/calibrator.png"))),
 }
 
 
@@ -89,8 +112,8 @@ def acceuil():
 
     B_quitter = tk.Button(
         text=loc["quitter"],
-        bg="grey",
         fg="black",
+        bg="grey",
         master=F_acceuil,
         command=maitre.destroy,
     )
@@ -152,6 +175,8 @@ def creer():
                 "inv" : "",
                 "pos" : "00;00"
             }
+            with open(ch("parties.txt")) as fichier:
+                parties.write(fichier)
             jeu()
     
     B_creer = tk.Button(
@@ -185,6 +210,23 @@ def param():
     F_param.rowconfigure(list(range(10)), weight=1)
     F_param.columnconfigure(list(range(10)), weight=1)
 
+        
+    opt = options["DEFAULT"]["langues_dispo"].split(",")
+    clic = (tk.StringVar())
+    clic.set(options["DEFAULT"]["langue"])
+        
+    V_son = tk.StringVar()
+    V_son.set(options["DEFAULT"]["son"])
+    
+    V_plein = tk.StringVar()
+    V_plein.set(options["DEFAULT"]["plein_ecran"])
+
+    def sono():
+        options["DEFAULT"]["son"] = V_son.get()
+        
+    def plein():
+        options["DEFAULT"]["plein_ecran"] = V_plein.get()
+        
     def quitter_sans():
         options.read(ch("options.txt"))
         acceuil()
@@ -193,33 +235,35 @@ def param():
         with open(ch('options.txt'), 'w') as fichier:
             options.write(fichier)
         acceuil()
-        
-    V_son = tk.IntVar().set(int(options["DEFAULT"]["son"]))
-        
-    def sono():
-        options["DEFAULT"]["son"] = V_son.get()
-
 
     afond = tk.Label(F_param, image=img["I"])
     afond.place(x=0, y=0, relwidth=1, relheight=1)
 
-    opt = list(options["DEFAULT"]["langues_dispo"].split(","))
-    clic = tk.StringVar()
-    clic.set(options["DEFAULT"]["langue"])
-    B_langue = tk.OptionMenu(F_param, clic, *opt)
-    
+    B_langue = tk.OptionMenu(
+        F_param,
+        clic,
+        *opt,
+    )
     B_son = tk.Checkbutton(
         master=F_param,
         bg="grey",
         fg="black",
         text=loc["son"],
         command=sono,
-        onvalue=1, 
-        offvalue=0,
-        variable = V_son
-
+        onvalue="True", 
+        offvalue="False",
+        variable = V_son,
     )
-
+    B_plein = tk.Checkbutton(
+        master=F_param,
+        bg="grey",
+        fg="black",
+        text=loc["plein"],
+        command=plein,
+        onvalue="True", 
+        offvalue="False",
+        variable = V_plein,
+    )
     B_quitter_sauv = tk.Button(
         master=F_param,
         bg="grey",
@@ -239,7 +283,8 @@ def param():
         options["DEFAULT"]["langue"] = clic.get()
     clic.trace('w', change)
 
-    B_langue.grid(row=3, column=4, sticky="nswe")
+    B_langue.grid(row=2, column=4, sticky="nswe")
+    B_plein.grid(row=3, column=4, sticky="nswe")
     B_quitter_sauv.grid(row=7, column=4, sticky="nswe")
     B_quitter_sans.grid(row=5, column=4, sticky="nswe")
     B_son.grid(row=4, column=4, sticky="nswe")
