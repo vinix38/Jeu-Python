@@ -8,7 +8,7 @@ fonctionement texture:
 possibilité d'utiliser n'importe quel caractère valable pour des noms de fichiers (tout sauf "/\*<>?|)
 """
 niv = {
-    11 : {
+    "11" : {
         "li" : 10,
         "col" : 10,
         "def_pos" : "05,05",
@@ -25,7 +25,7 @@ niv = {
             ["V--","V--","V--","V--","V--","V--","V--","V--","V--","V--"],
         ]
     },
-    12 : {
+    "12" : {
         "li" : 10,
         "col" : 10,
         "grille" : [

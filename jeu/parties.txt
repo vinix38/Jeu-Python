@@ -1,5 +1,5 @@
 [test]
-niv = 00
+niv = 11
 score = 0
 temps = 0
 inv = 

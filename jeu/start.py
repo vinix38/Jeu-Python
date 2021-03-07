@@ -10,7 +10,7 @@ from niveaux import niv
 import sys
 import os
 
-temp = []
+temp = {}
 
 
 # === chemins ===
@@ -173,7 +173,7 @@ def creer():
             showinfo(loc["err"], loc["déjà"])
         else:
             parties[nom] = {
-                "niv": "00",
+                "niv": "11",
                 "score": 0,
                 "temps": 0,
                 "inv": "",
@@ -330,7 +330,7 @@ def charger():
     B_charger = tk.Button(
         master=F_barre,
         text=loc["charger"],
-        command=lambda : jeu(B_liste.curselection()),
+        command=lambda : jeu(B_liste.get(B_liste.curselection()).split("|")[0]),
         **style,
     )
     B_importer = tk.Button(
@@ -356,7 +356,7 @@ def charger():
             **style,
         )
         for x in sauv:
-            B_liste.insert("end", x.upper() + "    " + loc["XP"] + " : " + parties[x]["score"] +
+            B_liste.insert("end", x + "|" + loc["XP"] + " : " + parties[x]["score"] +
                            " | " + loc["niv"] + " : " + parties[x]["niv"] + " | " + parties[x]["temps"])
         B_liste.pack()
 
@@ -403,24 +403,31 @@ def jeu(nom):
         global img
         global temp
         nonlocal F_carte
-        li = int(niv[n]["li"])
-        col = int(niv[n]["col"])
+        temp = {}
         for enfant in F_carte.winfo_children():
             enfant.destroy()
+        li = int(niv[n]["li"])
+        col = int(niv[n]["col"])
         x = int(min([L_F * 0.8 / col, H_F / li]))
         F_carte.rowconfigure(list(range(li+1)), weight=1, minsize=x)
         F_carte.columnconfigure(list(range(col+1)), weight=1, minsize=x)
         for i in range(li):
             for j in range(col):
-                image = dim(x, x, img[niv[n]["grille"][i][j]])
+                s = niv[n]["grille"][i][j]
+                if s in temp:
+                    image = temp[s]
+                else:
+                    image = dim(x, x, img[s])
+                    temp[s] = image
+                    
                 gen_img = tk.Label(
                     master=F_carte,
                     image=image,
                     height=x,
                     width=x,
                 )
-                temp.append(image)
-                gen_img.grid(row=i, column=j, sticky="nswe")    
+                gen_img.grid(row=i, column=j, sticky="nswe")
+        tk.Label(F_carte, bg="pink", text=None, height=int(H_F % li), width=int((L_F * 0.8) % col)).grid(row=li+1,column=col+1)
 
     B_quitter = tk.Button(
         master=F_barre,
@@ -431,7 +438,7 @@ def jeu(nom):
 
     B_quitter.grid(row=9, column=1, sticky="nswe")
     
-    charge(11)
+    charge(parties[nom]["niv"])
 
 
 acceuil()
