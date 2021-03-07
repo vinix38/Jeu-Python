@@ -1,0 +1,238 @@
+[aaaa]
+niv = 00
+score = 0
+temps = 0
+inv = 
+pos = 00;00
+
+[bbbb]
+niv = 00
+score = 0
+temps = 0
+inv = 
+pos = 00;00
+
+[test]
+niv = 00
+score = 0
+temps = 0
+inv = 
+pos = 00;00
+
+[a]
+niv = 00
+score = 0
+temps = 0
+inv = 
+pos = 00;00
+
+[b]
+niv = 00
+score = 0
+temps = 0
+inv = 
+pos = 00;00
+
+[c]
+niv = 00
+score = 0
+temps = 0
+inv = 
+pos = 00;00
+
+[d]
+niv = 00
+score = 0
+temps = 0
+inv = 
+pos = 00;00
+
+[f]
+niv = 00
+score = 0
+temps = 0
+inv = 
+pos = 00;00
+
+[o]
+niv = 00
+score = 0
+temps = 0
+inv = 
+pos = 00;00
+
+[j]
+niv = 00
+score = 0
+temps = 0
+inv = 
+pos = 00;00
+
+[jm]
+niv = 00
+score = 0
+temps = 0
+inv = 
+pos = 00;00
+
+[v]
+niv = 00
+score = 0
+temps = 0
+inv = 
+pos = 00;00
+
+[h]
+niv = 00
+score = 0
+temps = 0
+inv = 
+pos = 00;00
+
+[u]
+niv = 00
+score = 0
+temps = 0
+inv = 
+pos = 00;00
+
+[s]
+niv = 00
+score = 0
+temps = 0
+inv = 
+pos = 00;00
+
+[hjk]
+niv = 00
+score = 0
+temps = 0
+inv = 
+pos = 00;00
+
+[dfghjkiolm]
+niv = 00
+score = 0
+temps = 0
+inv = 
+pos = 00;00
+
+[zedrfghjk]
+niv = 00
+score = 0
+temps = 0
+inv = 
+pos = 00;00
+
+[sdfghj]
+niv = 00
+score = 0
+temps = 0
+inv = 
+pos = 00;00
+
+[zedfrghjklm]
+niv = 00
+score = 0
+temps = 0
+inv = 
+pos = 00;00
+
+[fghjk]
+niv = 00
+score = 0
+temps = 0
+inv = 
+pos = 00;00
+
+[erftghy]
+niv = 00
+score = 0
+temps = 0
+inv = 
+pos = 00;00
+
+[ertyhui]
+niv = 00
+score = 0
+temps = 0
+inv = 
+pos = 00;00
+
+[rftgyhujik]
+niv = 00
+score = 0
+temps = 0
+inv = 
+pos = 00;00
+
+[sdfghjkl]
+niv = 00
+score = 0
+temps = 0
+inv = 
+pos = 00;00
+
+[dfghjk]
+niv = 00
+score = 0
+temps = 0
+inv = 
+pos = 00;00
+
+[rtyhuj]
+niv = 00
+score = 0
+temps = 0
+inv = 
+pos = 00;00
+
+[dfghjkhjkjhgf]
+niv = 00
+score = 0
+temps = 0
+inv = 
+pos = 00;00
+
+[ghjklmlk]
+niv = 00
+score = 0
+temps = 0
+inv = 
+pos = 00;00
+
+[ghjkjhgf]
+niv = 00
+score = 0
+temps = 0
+inv = 
+pos = 00;00
+
+[oiuyhtr]
+niv = 00
+score = 0
+temps = 0
+inv = 
+pos = 00;00
+
+[jhgfd]
+niv = 00
+score = 0
+temps = 0
+inv = 
+pos = 00;00
+
+[oiuhyg]
+niv = 00
+score = 0
+temps = 0
+inv = 
+pos = 00;00
+
+[kjh]
+niv = 00
+score = 0
+temps = 0
+inv = 
+pos = 00;00
+

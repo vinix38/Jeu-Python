@@ -1,43 +1,43 @@
 # === imports ===
 import tkinter as tk
 import datetime as dt
-from configparser import ConfigParser, DEFAULTSECT
+from configparser import ConfigParser
 from fractions import Fraction
 from tkinter.messagebox import showinfo
-from langue import *
+from tkinter import ttk
+from langue import lang
+from niveaux import niv
 import sys
 import os
+
+temp = []
 
 
 # === chemins ===
 def ch(fichier):
     """
-    indique le chemin du fichier executé
+    indique le chemin absolu du fichier executé
     """
     return os.path.join(sys.path[0], str(fichier))
 
-#resize
+# resize
 def dim(L, H, img):
     """
     Largeur (px), Hauteur (px), image
     redimensionne l'image aux dimensions souhaitées
     """
-    print(L, H)
-    H = (Fraction(str(H/img.height()))).limit_denominator(100)
-    L = (Fraction(str(L/img.width()))).limit_denominator(100)
-    print(L, H)
-    img.subsample(L.denominator, H.denominator)
-    img.zoom(L.numerator, H.numerator)
+    H = (Fraction(str(H/img.height()))).limit_denominator(10)
+    L = (Fraction(str(L/img.width()))).limit_denominator(10)
+    return img.zoom(L.numerator, H.numerator).subsample(L.denominator, H.denominator)
 
-    return img
 
 # === lecture paramètres ===
 options = ConfigParser()
 if os.path.isfile(ch("options.txt")) == False:
     options["DEFAULT"] = {
         "plein_ecran": True,
-        "taille" : "1920x1080",
-        "taille_dispo" : "1920x1080,1366x768,1440x900,1600x900,1280x800,1280x1024,1024x768",
+        "taille": "1920x1080",
+        "taille_dispo": "1920x1080,1366x768,1440x900,1600x900,1280x800,1280x1024,1024x768",
         "son": True,
         "langue": "fr_FR",
         "langues_dispo": "fr_FR,en_US"
@@ -56,18 +56,22 @@ else:
 
 
 # === localisation ===
-loc = {}
-exec("loc = " + options["DEFAULT"]["langue"])
+loc = lang[options["DEFAULT"]["langue"]]
 
 
 # === initialisation fenêtre ===
 maitre = tk.Tk()
 maitre.title(loc["titre"])
 maitre.resizable(0, 0)
-#maitre.iconbitmap(ch("*.ico"))
+# maitre.iconbitmap(ch("*.ico"))
 H_E = maitre.winfo_screenheight()
 L_E = maitre.winfo_screenwidth()
 
+style = ttk.Style()
+style.configure(
+    'TButton',
+    font=('Helvetica', 11)
+)
 
 # === prise en compte plein écran ===
 if options["DEFAULT"].getboolean("plein_ecran"):
@@ -76,15 +80,13 @@ if options["DEFAULT"].getboolean("plein_ecran"):
 else:
     maitre.geometry(options["DEFAULT"]["taille"])
     L_F, H_F = [int(i) for i in options["DEFAULT"]["taille"].split("x")]
-    
 
 
 # === images ===
 img = {
-    #"V--" : tk.PhotoImage(file=ch("media/V--.png")),
-    "I" : dim(L_F, H_F, tk.PhotoImage(file=ch("media/calibrator.png"))),
+    "V--": tk.PhotoImage(file=ch("media/V--.png")),
+    "I": dim(L_F, H_F, tk.PhotoImage(file=ch("media/fond.png"))),
 }
-
 
 
 # === fonctions ===
@@ -150,19 +152,20 @@ def creer():
     global parties
     global maitre
     global img
-    
+
     efface()
-    
+
     F_creer = tk.Frame(maitre)
-    F_creer.place(relheight=1,relwidth=1)
-    F_creer.rowconfigure([0,1],weight=1)
-    F_creer.columnconfigure([0,1],weight=1)
-    
+    F_creer.place(relheight=1, relwidth=1)
+    F_creer.rowconfigure([0, 1], weight=1)
+    F_creer.columnconfigure([0, 1], weight=1)
+
     E_creer = tk.Entry(
         master=F_creer,
-        bg = "black",
-        fg = "white",
+        bg="black",
+        fg="white",
     )
+
     def creation():
         nonlocal E_creer
         nom = E_creer.get()
@@ -170,16 +173,16 @@ def creer():
             showinfo(loc["err"], loc["déjà"])
         else:
             parties[nom] = {
-                "niv" : "00",
-                "score" : 0,
-                "temps" : 0,
-                "inv" : "",
-                "pos" : "00;00"
+                "niv": "00",
+                "score": 0,
+                "temps": 0,
+                "inv": "",
+                "pos": "00;00"
             }
-            with open(ch("parties.txt")) as fichier:
+            with open(ch("parties.txt"), "w") as fichier:
                 parties.write(fichier)
-            jeu()
-    
+            jeu(nom)
+
     B_creer = tk.Button(
         master=F_creer,
         bg="grey",
@@ -192,12 +195,13 @@ def creer():
         bg="grey",
         fg="black",
         text=loc["annuler"],
-        command=acceuil,        
+        command=acceuil,
     )
-    
-    E_creer.grid(row=0,column=0,columnspan=2,sticky="nswe")
-    B_annuler.grid(row=1,column=0,sticky="nswe")
-    B_creer.grid(row=1,column=1,sticky="nswe")
+
+    E_creer.grid(row=0, column=0, columnspan=2, sticky="nswe")
+    B_annuler.grid(row=1, column=0, sticky="nswe")
+    B_creer.grid(row=1, column=1, sticky="nswe")
+
 
 def param():
     global options
@@ -211,23 +215,22 @@ def param():
     F_param.rowconfigure(list(range(10)), weight=1)
     F_param.columnconfigure(list(range(10)), weight=1)
 
-        
-    opt = options["DEFAULT"]["langues_dispo"].split(",")
-    clic = (tk.StringVar())
-    clic.set(options["DEFAULT"]["langue"])
-        
-    V_son = tk.StringVar()
-    V_son.set(options["DEFAULT"]["son"])
-    
-    V_plein = tk.StringVar()
-    V_plein.set(options["DEFAULT"]["plein_ecran"])
+    opt_l = options["DEFAULT"]["langues_dispo"].split(",")
+    clic_l = tk.StringVar()
+
+    opt_r = options["DEFAULT"]["taille_dispo"].split(",")
+    clic_r = tk.StringVar()
+
+    V_son = tk.StringVar(value=options["DEFAULT"]["son"])
+
+    V_plein = tk.StringVar(value=options["DEFAULT"]["plein_ecran"])
 
     def sono():
         options["DEFAULT"]["son"] = V_son.get()
-        
+
     def plein():
         options["DEFAULT"]["plein_ecran"] = V_plein.get()
-        
+
     def quitter_sans():
         options.read(ch("options.txt"))
         acceuil()
@@ -240,10 +243,17 @@ def param():
     afond = tk.Label(F_param, image=img["I"])
     afond.place(x=0, y=0, relwidth=1, relheight=1)
 
-    B_langue = tk.OptionMenu(
+    B_langue = ttk.OptionMenu(
         F_param,
-        clic,
-        *opt,
+        clic_l,
+        options["DEFAULT"]["langue"],
+        *opt_l,
+    )
+    B_taille = ttk.OptionMenu(
+        F_param,
+        clic_r,
+        options["DEFAULT"]["taille"],
+        *opt_r,
     )
     B_son = tk.Checkbutton(
         master=F_param,
@@ -251,9 +261,9 @@ def param():
         fg="black",
         text=loc["son"],
         command=sono,
-        onvalue="True", 
+        onvalue="True",
         offvalue="False",
-        variable = V_son,
+        variable=V_son,
     )
     B_plein = tk.Checkbutton(
         master=F_param,
@@ -261,9 +271,9 @@ def param():
         fg="black",
         text=loc["plein"],
         command=plein,
-        onvalue="True", 
+        onvalue="True",
         offvalue="False",
-        variable = V_plein,
+        variable=V_plein,
     )
     B_quitter_sauv = tk.Button(
         master=F_param,
@@ -280,15 +290,22 @@ def param():
         command=quitter_sans,
     )
 
-    def change(*args):
-        options["DEFAULT"]["langue"] = clic.get()
-    clic.trace('w', change)
+    def C_langue(*args):
+        options["DEFAULT"]["langue"] = clic_l.get()
+    clic_l.trace('w', C_langue)
 
+    def C_taille(*args):
+        options["DEFAULT"]["taille"] = clic_r.get()
+        V_plein.set("False")
+        plein()
+    clic_r.trace('w', C_taille)
+
+    B_taille.grid(row=5, column=4, sticky="nswe")
     B_langue.grid(row=2, column=4, sticky="nswe")
-    B_plein.grid(row=3, column=4, sticky="nswe")
-    B_quitter_sauv.grid(row=7, column=4, sticky="nswe")
-    B_quitter_sans.grid(row=5, column=4, sticky="nswe")
-    B_son.grid(row=4, column=4, sticky="nswe")
+    B_plein.grid(row=4, column=4, sticky="nswe")
+    B_quitter_sauv.grid(row=9, column=4, sticky="nswe")
+    B_quitter_sans.grid(row=8, column=4, sticky="nswe")
+    B_son.grid(row=4, column=6, sticky="nswe")
 
 
 def charger():
@@ -315,13 +332,13 @@ def charger():
 
     if sauv != []:
         roue = tk.Scrollbar(F_liste)
-        roue.pack(side="right", fill="Y")
+        roue.pack(side="right", fill="y")
 
         B_liste = tk.Listbox(
             maitre=F_liste,
             height=len(sauv),
             selectmode="SINGLE",
-            width=l_ecran,
+            width=L_F,
             yscrollcommand=roue.set,
         )
 
@@ -332,7 +349,7 @@ def charger():
         def charge():
             a = B_liste.get()
             print(a)
-            
+
         B_liste.pack()
 
     else:
@@ -371,35 +388,66 @@ def charger():
     B_retour.grid(row=0, column=1, sticky="nswe")
     B_charger.grid(row=0, column=2, sticky="nswe")
 
-def jeu(sauv):
+
+def jeu(nom):
     global maitre
     global options
     global parties
     global img
-    
+
     def quitter():
-        nonlocal sauv
-        with open(ch("parties.txt")) as fichier:
-            pass
+        with open(ch("parties.txt"), "w") as fichier:
+            parties.write(fichier)
         acceuil()
-    
+
     F_jeu = tk.Frame(maitre)
-    F_jeu.place(relheight=1,relwidth=1)
-    
+    F_jeu.place(relheight=1, relwidth=1)
+
     F_carte = tk.Frame(F_jeu)
-    F_carte.place(relheight=1,relwidth=0.8)
-    
+    F_carte.place(relheight=1, relwidth=0.8)
+
     F_barre = tk.Frame(F_jeu)
-    F_barre.place(relheight=1,relwidth=0.2,relx=0.8)
-    
+    F_barre.place(relheight=1, relwidth=0.2, relx=0.8)
+
     F_barre.rowconfigure(list(range(10)), weight=1)
     F_barre.columnconfigure([0, 1, 2], weight=1)
     
+    def charge(n):
+        global niv
+        global img
+        global temp
+        nonlocal F_carte
+        li = int(niv[n]["li"])
+        col = int(niv[n]["col"])
+        for enfant in F_carte.winfo_children():
+            enfant.destroy()
+        x = int(min([L_F * 0.8 / col, H_F / li]))
+        F_carte.rowconfigure(list(range(li)), weight=1, minsize=x)
+        F_carte.columnconfigure(list(range(col)), weight=1, minsize=x)
+        for i in range(li):
+            for j in range(col):
+                image = dim(x, x, img[niv[n]["grille"][i][j]])
+                gen_img = tk.Label(
+                    master=F_carte,
+                    image=image,
+                    text=f"l: {i}, h: {j}",
+                    height=x,
+                    width=x,
+                )
+                temp.append(image)
+                gen_img.grid(row=i, column=j, sticky="nswe")    
+
     B_quitter = tk.Button(
         master=F_barre,
-        bg = "grey",
-        command = quitter,
+        bg="grey",
+        text=loc["quitter"],
+        command=quitter,
     )
+
+    B_quitter.grid(row=9, column=1, sticky="nswe")
+    
+    charge(11)
+
 
 acceuil()
 
