@@ -67,10 +67,15 @@ maitre.resizable(0, 0)
 H_E = maitre.winfo_screenheight()
 L_E = maitre.winfo_screenwidth()
 
-style = ttk.Style()
-style.configure(
-    'TButton',
-    font=('Helvetica', 11)
+style = {
+    "font" : ('Helvetica', 11),
+    "background" : "grey",
+    "foreground" : "black",
+}
+ttkStyle = ttk.Style(maitre)
+ttkStyle.configure(
+    "TMenubutton",
+    **style
 )
 
 # === prise en compte plein écran ===
@@ -115,31 +120,27 @@ def acceuil():
 
     B_quitter = tk.Button(
         text=loc["quitter"],
-        fg="black",
-        bg="grey",
         master=F_acceuil,
         command=maitre.destroy,
+        **style,
     )
     B_options = tk.Button(
         text=loc["options"],
-        bg="grey",
-        fg="black",
         master=F_acceuil,
         command=param,
+        **style,
     )
     B_charger = tk.Button(
         text=loc[">partie"],
-        bg="grey",
-        fg="black",
         master=F_acceuil,
         command=charger,
+        **style,
     )
     B_creer = tk.Button(
         text=loc["+partie"],
-        bg="grey",
-        fg="black",
         master=F_acceuil,
         command=creer,
+        **style,
     )
 
     B_quitter.grid(column=3, row=12, sticky="nswe")
@@ -162,8 +163,7 @@ def creer():
 
     E_creer = tk.Entry(
         master=F_creer,
-        bg="black",
-        fg="white",
+        **style,
     )
 
     def creation():
@@ -185,17 +185,15 @@ def creer():
 
     B_creer = tk.Button(
         master=F_creer,
-        bg="grey",
-        fg="black",
         text=loc["creer"],
         command=creation,
+        **style,
     )
     B_annuler = tk.Button(
         master=F_creer,
-        bg="grey",
-        fg="black",
         text=loc["annuler"],
         command=acceuil,
+        **style,
     )
 
     E_creer.grid(row=0, column=0, columnspan=2, sticky="nswe")
@@ -257,37 +255,33 @@ def param():
     )
     B_son = tk.Checkbutton(
         master=F_param,
-        bg="grey",
-        fg="black",
         text=loc["son"],
         command=sono,
         onvalue="True",
         offvalue="False",
         variable=V_son,
+        **style,
     )
     B_plein = tk.Checkbutton(
         master=F_param,
-        bg="grey",
-        fg="black",
         text=loc["plein"],
         command=plein,
         onvalue="True",
         offvalue="False",
         variable=V_plein,
+        **style,
     )
     B_quitter_sauv = tk.Button(
         master=F_param,
-        bg="grey",
-        fg="black",
         text=loc["q+sauv"],
         command=quitter_avec,
+        **style,
     )
     B_quitter_sans = tk.Button(
         master=F_param,
-        bg="grey",
-        fg="black",
         text=loc["q-sauv"],
         command=quitter_sans,
+        **style,
     )
 
     def C_langue(*args):
@@ -326,6 +320,25 @@ def charger():
     F_barre.place(relheight=0.1, relwidth=1, rely=0.9)
     F_barre.rowconfigure(0, weight=1)
     F_barre.columnconfigure([0, 1, 2], weight=1)
+    
+    B_retour = tk.Button(
+        master=F_barre,
+        text=loc["retour"],
+        command=acceuil,
+        **style,
+    )
+    B_charger = tk.Button(
+        master=F_barre,
+        text=loc["charger"],
+        command=lambda : jeu(B_liste.curselection()),
+        **style,
+    )
+    B_importer = tk.Button(
+        master=F_barre,
+        text=loc["import"],
+        command=None,
+        **style,
+    )
 
     parties.read(ch("parties.txt"))
     sauv = parties.sections()
@@ -335,54 +348,27 @@ def charger():
         roue.pack(side="right", fill="y")
 
         B_liste = tk.Listbox(
-            maitre=F_liste,
+            master=F_liste,
             height=len(sauv),
-            selectmode="SINGLE",
+            selectmode="single",
             width=L_F,
             yscrollcommand=roue.set,
+            **style,
         )
-
         for x in sauv:
-            B_liste.insert("END", x.upper() + "\t" + loc["XP"] + " : " + parties[x]["score"] +
+            B_liste.insert("end", x.upper() + "    " + loc["XP"] + " : " + parties[x]["score"] +
                            " | " + loc["niv"] + " : " + parties[x]["niv"] + " | " + parties[x]["temps"])
-
-        def charge():
-            a = B_liste.get()
-            print(a)
-
         B_liste.pack()
 
     else:
         vide = tk.Label(
             master=F_liste,
-            text=loc["-sauv"]
+            text=loc["-sauv"],
+            **style,
         )
         vide.pack(fill="both")
+        B_charger.config(state="disabled")
 
-        def charge():
-            pass
-
-    B_retour = tk.Button(
-        master=F_barre,
-        text=loc["retour"],
-        bg="grey",
-        fg="black",
-        command=acceuil,
-    )
-    B_charger = tk.Button(
-        master=F_barre,
-        text=loc["charger"],
-        bg="grey",
-        fg="black",
-        command=charge,
-    )
-    B_importer = tk.Button(
-        master=F_barre,
-        text=loc["import"],
-        bg="grey",
-        fg="black",
-        command=None,
-    )
 
     B_importer.grid(row=0, column=0, sticky="nswe")
     B_retour.grid(row=0, column=1, sticky="nswe")
@@ -422,15 +408,14 @@ def jeu(nom):
         for enfant in F_carte.winfo_children():
             enfant.destroy()
         x = int(min([L_F * 0.8 / col, H_F / li]))
-        F_carte.rowconfigure(list(range(li)), weight=1, minsize=x)
-        F_carte.columnconfigure(list(range(col)), weight=1, minsize=x)
+        F_carte.rowconfigure(list(range(li+1)), weight=1, minsize=x)
+        F_carte.columnconfigure(list(range(col+1)), weight=1, minsize=x)
         for i in range(li):
             for j in range(col):
                 image = dim(x, x, img[niv[n]["grille"][i][j]])
                 gen_img = tk.Label(
                     master=F_carte,
                     image=image,
-                    text=f"l: {i}, h: {j}",
                     height=x,
                     width=x,
                 )
@@ -439,9 +424,9 @@ def jeu(nom):
 
     B_quitter = tk.Button(
         master=F_barre,
-        bg="grey",
         text=loc["quitter"],
         command=quitter,
+        **style,
     )
 
     B_quitter.grid(row=9, column=1, sticky="nswe")
