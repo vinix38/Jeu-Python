@@ -395,13 +395,13 @@ def jeu(nom):
             parties.write(fichier)
         acceuil()
 
-    F_jeu = tk.Frame(maitre)
+    F_jeu = tk.Frame(maitre, background=None)
     F_jeu.place(relheight=1, relwidth=1)
 
-    F_carte = tk.Frame(F_jeu)
+    F_carte = tk.Frame(F_jeu, background=None)
     F_carte.place(relheight=1, relwidth=0.8)
 
-    F_barre = tk.Frame(F_jeu)
+    F_barre = tk.Frame(F_jeu, background=None)
     F_barre.place(relheight=1, relwidth=0.2, relx=0.8)
 
     F_barre.rowconfigure(list(range(10)), weight=1)
@@ -422,6 +422,9 @@ def jeu(nom):
         F_terrain = tk.Frame(F_carte)
         F_terrain.place(height=li*x, width=col*x,
                         relx=0.5, rely=0.5, anchor="center")
+        
+        afond = tk.Label(F_terrain, image=img["I"])
+        afond.place(x=0, y=0, relwidth=1, relheight=1)
 
         F_terrain.rowconfigure(list(range(li)), weight=1)
         F_terrain.columnconfigure(list(range(col)), weight=1)
@@ -437,8 +440,6 @@ def jeu(nom):
                 gen_img = tk.Label(
                     master=F_terrain,
                     image=image,
-                    padx=0,
-                    pady=0,
                 )
                 gen_img.grid(row=i, column=j, sticky="nswe")
 
