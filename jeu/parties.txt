@@ -5,3 +5,10 @@ temps = 0
 inv = 
 pos = 00;00
 
+[aaaaaaaaaaaaaaaaaaaaaaaaaaa]
+niv = 11
+score = 0
+temps = 0
+inv = 
+pos = 00;00
+

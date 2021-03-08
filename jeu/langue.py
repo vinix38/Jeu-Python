@@ -1,5 +1,3 @@
-def a():
-    print("")
 lang =  {
     #====== FRANCAIS ======
     "fr_FR" : {

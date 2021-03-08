@@ -26,8 +26,8 @@ def dim(L, H, img):
     Largeur (px), Hauteur (px), image
     redimensionne l'image aux dimensions souhaitées
     """
-    H = (Fraction(str(H/img.height()))).limit_denominator(10)
-    L = (Fraction(str(L/img.width()))).limit_denominator(10)
+    H = (Fraction(str(H/img.height()))).limit_denominator(100)
+    L = (Fraction(str(L/img.width()))).limit_denominator(100)
     return img.zoom(L.numerator, H.numerator).subsample(L.denominator, H.denominator)
 
 
@@ -91,6 +91,9 @@ else:
 img = {
     "V--": tk.PhotoImage(file=ch("media/V--.png")),
     "I": dim(L_F, H_F, tk.PhotoImage(file=ch("media/fond.png"))),
+    "MPC" : tk.PhotoImage(file=ch("media/MPC.png")),
+    "MPF" : tk.PhotoImage(file=ch("media/MPF.png")),
+    "MPD" : tk.PhotoImage(file=ch("media/MPD.png")),
 }
 
 
@@ -330,7 +333,7 @@ def charger():
     B_charger = tk.Button(
         master=F_barre,
         text=loc["charger"],
-        command=lambda : jeu(B_liste.get(B_liste.curselection()).split("|")[0]),
+        command=lambda : jeu(sauv[B_liste.curselection()[0]]),
         **style,
     )
     B_importer = tk.Button(
@@ -408,9 +411,13 @@ def jeu(nom):
             enfant.destroy()
         li = int(niv[n]["li"])
         col = int(niv[n]["col"])
-        x = int(min([L_F * 0.8 / col, H_F / li]))
-        F_carte.rowconfigure(list(range(li+1)), weight=1, minsize=x)
-        F_carte.columnconfigure(list(range(col+1)), weight=1, minsize=x)
+        x = min([L_F * 0.8 // col, H_F // li])
+        
+        F_terrain = tk.Frame(F_carte)
+        F_terrain.place(height=li*x,width=col*x)
+        
+        F_terrain.rowconfigure(list(range(li)), weight=1)
+        F_terrain.columnconfigure(list(range(col)), weight=1)
         for i in range(li):
             for j in range(col):
                 s = niv[n]["grille"][i][j]
@@ -421,13 +428,14 @@ def jeu(nom):
                     temp[s] = image
                     
                 gen_img = tk.Label(
-                    master=F_carte,
+                    master=F_terrain,
                     image=image,
-                    height=x,
-                    width=x,
+                    #height=x,
+                    #width=x,
+                    padx=0,
+                    pady=0,
                 )
                 gen_img.grid(row=i, column=j, sticky="nswe")
-        tk.Label(F_carte, bg="pink", text=None, height=int(H_F % li), width=int((L_F * 0.8) % col)).grid(row=li+1,column=col+1)
 
     B_quitter = tk.Button(
         master=F_barre,
