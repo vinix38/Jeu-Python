@@ -14,7 +14,6 @@ import os
 temp = {}
 
 # ====== FONCTIONS DE BASE ======
-
 # === chemins ===
 def ch(fichier):
     """
@@ -99,7 +98,7 @@ else:
     L_F, H_F = [int(i) for i in options["DEFAULT"]["taille"].split("x")]
 
 
-# === images ===
+# ====== IMAGES ======
 img = {
     "V--": tk.PhotoImage(file=ch("media/V--.png")),
     "I": dim(L_F, H_F, tk.PhotoImage(file=ch("media/fond.png"))),
