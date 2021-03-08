@@ -1,4 +1,4 @@
-# === imports ===
+# ====== IMPORTS ======
 import tkinter as tk
 import datetime as dt
 from configparser import ConfigParser
@@ -10,8 +10,10 @@ from niveaux import niv
 import sys
 import os
 
+# ====== VARIABLES ======
 temp = {}
 
+# ====== FONCTIONS DE BASE ======
 
 # === chemins ===
 def ch(fichier):
@@ -20,7 +22,7 @@ def ch(fichier):
     """
     return os.path.join(sys.path[0], str(fichier))
 
-# resize
+# === changement de taille ===
 def dim(L, H, img):
     """
     Largeur (px), Hauteur (px), image
@@ -30,8 +32,15 @@ def dim(L, H, img):
     L = (Fraction(str(L/img.width()))).limit_denominator(100)
     return img.zoom(L.numerator, H.numerator).subsample(L.denominator, H.denominator)
 
+# === tout effacer ===
+def efface():
+    global maitre
+    for enfant in maitre.winfo_children():
+        enfant.destroy()
 
-# === lecture paramètres ===
+
+# ====== LECTURE DES FICHIERS ======
+# === lecture des paramètres ===
 options = ConfigParser()
 if os.path.isfile(ch("options.txt")) == False:
     options["DEFAULT"] = {
@@ -47,6 +56,7 @@ if os.path.isfile(ch("options.txt")) == False:
 else:
     options.read(ch("options.txt"))
 
+# === lecture des parties sauvegardées ===
 parties = ConfigParser()
 if os.path.isfile(ch("parties.txt")):
     parties.read(ch("parties.txt"))
@@ -55,22 +65,22 @@ else:
         parties.write(fichier)
 
 
-# === localisation ===
+# ====== LOCALISATION ======
 loc = lang[options["DEFAULT"]["langue"]]
 
 
-# === initialisation fenêtre ===
+# ====== INITIALISATION ======
+# === déclaration fenêtre ===
 maitre = tk.Tk()
 maitre.title(loc["titre"])
 maitre.resizable(0, 0)
 # maitre.iconbitmap(ch("*.ico"))
-H_E = maitre.winfo_screenheight()
-L_E = maitre.winfo_screenwidth()
 
+# === styles ===
 style = {
-    "font" : ('Helvetica', 11),
-    "background" : "grey",
-    "foreground" : "black",
+    "font": ('Helvetica', 11),
+    "background": "grey",
+    "foreground": "black",
 }
 ttkStyle = ttk.Style(maitre)
 ttkStyle.configure(
@@ -79,6 +89,8 @@ ttkStyle.configure(
 )
 
 # === prise en compte plein écran ===
+H_E = maitre.winfo_screenheight()
+L_E = maitre.winfo_screenwidth()
 if options["DEFAULT"].getboolean("plein_ecran"):
     maitre.attributes('-fullscreen', True)
     H_F, L_F = H_E, L_E
@@ -91,17 +103,10 @@ else:
 img = {
     "V--": tk.PhotoImage(file=ch("media/V--.png")),
     "I": dim(L_F, H_F, tk.PhotoImage(file=ch("media/fond.png"))),
-    "MPC" : tk.PhotoImage(file=ch("media/MPC.png")),
-    "MPF" : tk.PhotoImage(file=ch("media/MPF.png")),
-    "MPD" : tk.PhotoImage(file=ch("media/MPD.png")),
+    "MPC": tk.PhotoImage(file=ch("media/MPC.png")),
+    "MPF": tk.PhotoImage(file=ch("media/MPF.png")),
+    "MPD": tk.PhotoImage(file=ch("media/MPD.png")),
 }
-
-
-# === fonctions ===
-def efface():
-    global maitre
-    for enfant in maitre.winfo_children():
-        enfant.destroy()
 
 
 # ***====== FENETRES ======***
@@ -178,9 +183,12 @@ def creer():
             parties[nom] = {
                 "niv": "11",
                 "score": 0,
-                "temps": 0,
                 "inv": "",
-                "pos": "00;00"
+                "pos": "00;00",
+                "S_niv" : "11",
+                "S_score" : 0,
+                "S_inv" : "",
+                "temps": 0,
             }
             with open(ch("parties.txt"), "w") as fichier:
                 parties.write(fichier)
@@ -323,7 +331,7 @@ def charger():
     F_barre.place(relheight=0.1, relwidth=1, rely=0.9)
     F_barre.rowconfigure(0, weight=1)
     F_barre.columnconfigure([0, 1, 2], weight=1)
-    
+
     B_retour = tk.Button(
         master=F_barre,
         text=loc["retour"],
@@ -333,7 +341,7 @@ def charger():
     B_charger = tk.Button(
         master=F_barre,
         text=loc["charger"],
-        command=lambda : jeu(sauv[B_liste.curselection()[0]]),
+        command=lambda: jeu(sauv[B_liste.curselection()[0]]),
         **style,
     )
     B_importer = tk.Button(
@@ -372,7 +380,6 @@ def charger():
         vide.pack(fill="both")
         B_charger.config(state="disabled")
 
-
     B_importer.grid(row=0, column=0, sticky="nswe")
     B_retour.grid(row=0, column=1, sticky="nswe")
     B_charger.grid(row=0, column=2, sticky="nswe")
@@ -400,7 +407,7 @@ def jeu(nom):
 
     F_barre.rowconfigure(list(range(10)), weight=1)
     F_barre.columnconfigure([0, 1, 2], weight=1)
-    
+
     def charge(n):
         global niv
         global img
@@ -411,11 +418,12 @@ def jeu(nom):
             enfant.destroy()
         li = int(niv[n]["li"])
         col = int(niv[n]["col"])
-        x = min([L_F * 0.8 // col, H_F // li])
-        
+        x = min((L_F * 0.8) // col, H_F // li)
+
         F_terrain = tk.Frame(F_carte)
-        F_terrain.place(height=li*x,width=col*x)
-        
+        F_terrain.place(height=li*x, width=col*x,
+                        relx=0.5, rely=0.5, anchor="center")
+
         F_terrain.rowconfigure(list(range(li)), weight=1)
         F_terrain.columnconfigure(list(range(col)), weight=1)
         for i in range(li):
@@ -426,12 +434,10 @@ def jeu(nom):
                 else:
                     image = dim(x, x, img[s])
                     temp[s] = image
-                    
+
                 gen_img = tk.Label(
                     master=F_terrain,
                     image=image,
-                    #height=x,
-                    #width=x,
                     padx=0,
                     pady=0,
                 )
@@ -445,7 +451,7 @@ def jeu(nom):
     )
 
     B_quitter.grid(row=9, column=1, sticky="nswe")
-    
+
     charge(parties[nom]["niv"])
 
 
