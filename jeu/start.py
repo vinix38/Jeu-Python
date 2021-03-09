@@ -419,15 +419,15 @@ def jeu(nom):
         col = int(niv[n]["col"])
         x = min((L_F * 0.8) // col, H_F // li)
 
-        F_terrain = tk.Frame(F_carte)
-        F_terrain.place(height=li*x, width=col*x,
-                        relx=0.5, rely=0.5, anchor="center")
-        
-        afond = tk.Label(F_terrain, image=img["I"])
-        afond.place(x=0, y=0, relwidth=1, relheight=1)
+        F_terrain = tk.Canvas(
+                            F_carte,
+                            height=li*x,
+                            width=col*x,
+                            )
+        F_terrain.place(relx=0.5, rely=0.5, anchor="center")
 
-        F_terrain.rowconfigure(list(range(li)), weight=1)
-        F_terrain.columnconfigure(list(range(col)), weight=1)
+        F_terrain.create_image(0, 0, image=img["I"], anchor="nw")
+
         for i in range(li):
             for j in range(col):
                 s = niv[n]["grille"][i][j]
@@ -436,13 +436,9 @@ def jeu(nom):
                 else:
                     image = dim(x, x, img[s])
                     temp[s] = image
-
-                gen_img = tk.Label(
-                    master=F_terrain,
-                    image=image,
-                )
-                gen_img.grid(row=i, column=j, sticky="nswe")
-
+                F_terrain.create_image(j*x, i*x, image=image, anchor= "nw")
+    
+    
     B_quitter = tk.Button(
         master=F_barre,
         text=loc["quitter"],
