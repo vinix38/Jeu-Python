@@ -10,13 +10,29 @@ from niveaux import niv
 import sys
 import os
 
-# ====== VARIABLES ======
-temp = {}
+# === déclaration fenêtre ===
+maitre = tk.Tk()
+maitre.resizable(0, 0)
+# maitre.iconbitmap(ch("*.ico"))
+H_E = maitre.winfo_screenheight()
+L_E = maitre.winfo_screenwidth()
 
-# ====== FONCTIONS DE BASE ======
+# === styles ===
+style = {
+    "font": ('Helvetica', 11),
+    "background": "grey",
+    "foreground": "black",
+}
+ttkStyle = ttk.Style(maitre)
+ttkStyle.configure(
+    "TMenubutton",
+    **style
+)
+
 # === chemins ===
 def ch(fichier):
     """
+    (fichier)\n
     indique le chemin absolu du fichier executé
     """
     return os.path.join(sys.path[0], str(fichier))
@@ -24,7 +40,7 @@ def ch(fichier):
 # === changement de taille ===
 def dim(L, H, img):
     """
-    Largeur (px), Hauteur (px), image
+    (Largeur (px), Hauteur (px), image)\n
     redimensionne l'image aux dimensions souhaitées
     """
     H = (Fraction(str(H/img.height()))).limit_denominator(100)
@@ -32,13 +48,55 @@ def dim(L, H, img):
     return img.zoom(L.numerator, H.numerator).subsample(L.denominator, H.denominator)
 
 # === tout effacer ===
-def efface():
-    global maitre
-    for enfant in maitre.winfo_children():
+def efface(parent):
+    """
+    (parent)\n
+    Efface tous les widgets présents dans le parent indiqué
+    """
+    for enfant in parent.winfo_children():
         enfant.destroy()
 
+# ====== changer langue ======
+def localisation():
+    """
+    ()\n
+    Change la langue
+    """
+    global loc
+    global lang
+    global options
+    global maitre
+    loc = lang[options["DEFAULT"]["langue"]]
+    maitre.title(loc["titre"])
 
-# ====== LECTURE DES FICHIERS ======
+# === prise en compte plein écran ===
+def ecran():
+    """
+    ()\n
+    Redimensionne la taille de l'écran
+    """
+    global maitre
+    global options
+    global H_E, L_E
+    if options["DEFAULT"].getboolean("plein_ecran"):
+        maitre.attributes('-fullscreen', True)
+        return L_E, H_E
+    else:
+        maitre.attributes('-fullscreen', False)
+        maitre.geometry(options["DEFAULT"]["taille"])
+        return tuple(int(i) for i in options["DEFAULT"]["taille"].split("x"))
+
+# ====== VARIABLES ======
+temp = {}
+img = {
+    "V--": tk.PhotoImage(file=ch("media/V--.png")),
+    "I": tk.PhotoImage(file=ch("media/fond.png")),
+    "MPC": tk.PhotoImage(file=ch("media/MPC.png")),
+    "MPF": tk.PhotoImage(file=ch("media/MPF.png")),
+    "MPD": tk.PhotoImage(file=ch("media/MPD.png")),
+    "perso": tk.PhotoImage(file=ch("media/MPC--.png")),
+}
+
 # === lecture des paramètres ===
 options = ConfigParser()
 if os.path.isfile(ch("options.txt")) == False:
@@ -63,50 +121,8 @@ else:
     with open(ch('parties.txt'), 'w') as fichier:
         parties.write(fichier)
 
-
-# ====== LOCALISATION ======
-loc = lang[options["DEFAULT"]["langue"]]
-
-
-# ====== INITIALISATION ======
-# === déclaration fenêtre ===
-maitre = tk.Tk()
-maitre.title(loc["titre"])
-maitre.resizable(0, 0)
-# maitre.iconbitmap(ch("*.ico"))
-
-# === styles ===
-style = {
-    "font": ('Helvetica', 11),
-    "background": "grey",
-    "foreground": "black",
-}
-ttkStyle = ttk.Style(maitre)
-ttkStyle.configure(
-    "TMenubutton",
-    **style
-)
-
-# === prise en compte plein écran ===
-H_E = maitre.winfo_screenheight()
-L_E = maitre.winfo_screenwidth()
-if options["DEFAULT"].getboolean("plein_ecran"):
-    maitre.attributes('-fullscreen', True)
-    H_F, L_F = H_E, L_E
-else:
-    maitre.geometry(options["DEFAULT"]["taille"])
-    L_F, H_F = [int(i) for i in options["DEFAULT"]["taille"].split("x")]
-
-
-# ====== IMAGES ======
-img = {
-    "V--": tk.PhotoImage(file=ch("media/V--.png")),
-    "I": dim(L_F, H_F, tk.PhotoImage(file=ch("media/fond.png"))),
-    "MPC": tk.PhotoImage(file=ch("media/MPC.png")),
-    "MPF": tk.PhotoImage(file=ch("media/MPF.png")),
-    "MPD": tk.PhotoImage(file=ch("media/MPD.png")),
-}
-
+localisation()
+L_F, H_F = ecran()
 
 # ***====== FENETRES ======***
 def acceuil():
@@ -114,7 +130,7 @@ def acceuil():
     global options
     global img
 
-    efface()
+    efface(maitre)
 
     F_acceuil = tk.Frame(master=maitre)
     F_acceuil.place(relheight=1, relwidth=1)
@@ -122,7 +138,9 @@ def acceuil():
     F_acceuil.rowconfigure(list(range(15)), weight=1)
     F_acceuil.columnconfigure(list(range(7)), weight=1)
 
-    fond = tk.Label(F_acceuil, image=img["I"])
+    temp["I"] = dim(L_F, H_F, img["I"])
+
+    fond = tk.Label(F_acceuil, image=temp["I"])
     fond.place(x=0, y=0, relwidth=1, relheight=1)
 
     B_quitter = tk.Button(
@@ -161,7 +179,7 @@ def creer():
     global maitre
     global img
 
-    efface()
+    efface(maitre)
 
     F_creer = tk.Frame(maitre)
     F_creer.place(relheight=1, relwidth=1)
@@ -183,10 +201,10 @@ def creer():
                 "niv": "11",
                 "score": 0,
                 "inv": "",
-                "pos": "00;00",
-                "S_niv" : "11",
-                "S_score" : 0,
-                "S_inv" : "",
+                "pos": "",
+                "S_niv": "11",
+                "S_score": 0,
+                "S_inv": "",
                 "temps": 0,
             }
             with open(ch("parties.txt"), "w") as fichier:
@@ -216,7 +234,7 @@ def param():
     global maitre
     global img
 
-    efface()
+    efface(maitre)
 
     F_param = tk.Frame(master=maitre)
     F_param.place(relheight=1, relwidth=1)
@@ -244,8 +262,11 @@ def param():
         acceuil()
 
     def quitter_avec():
+        global L_F, H_F
         with open(ch('options.txt'), 'w') as fichier:
             options.write(fichier)
+        localisation()
+        L_F, H_F = ecran()
         acceuil()
 
     afond = tk.Label(F_param, image=img["I"])
@@ -318,7 +339,7 @@ def charger():
     global img
     global parties
 
-    efface()
+    efface(maitre)
 
     F_charge = tk.Frame(maitre)
     F_charge.place(relheight=1, relwidth=1)
@@ -390,6 +411,8 @@ def jeu(nom):
     global parties
     global img
 
+    efface(maitre)
+
     def quitter():
         with open(ch("parties.txt"), "w") as fichier:
             parties.write(fichier)
@@ -413,20 +436,18 @@ def jeu(nom):
         global temp
         nonlocal F_carte
         temp = {}
-        for enfant in F_carte.winfo_children():
-            enfant.destroy()
+        efface(F_carte)
         li = int(niv[n]["li"])
         col = int(niv[n]["col"])
         x = min((L_F * 0.8) // col, H_F // li)
 
         F_terrain = tk.Canvas(
-                            F_carte,
-                            height=li*x,
-                            width=col*x,
-                            )
+            F_carte,
+            height=li*x,
+            width=col*x,
+        )
         F_terrain.place(relx=0.5, rely=0.5, anchor="center")
-
-        F_terrain.create_image(0, 0, image=img["I"], anchor="nw")
+        F_terrain.create_image(0, 0, image=img["I"], anchor="nw", tag="fond")
 
         for i in range(li):
             for j in range(col):
@@ -436,9 +457,29 @@ def jeu(nom):
                 else:
                     image = dim(x, x, img[s])
                     temp[s] = image
-                F_terrain.create_image(j*x, i*x, image=image, anchor= "nw")
-    
-    
+                F_terrain.create_image(
+                    j*x,
+                    i*x,
+                    image=image,
+                    anchor="nw",
+                    tag="case"
+                )
+
+        if parties[nom]["pos"] == "":
+            parties[nom]["pos"] = str(niv[n]["def_pos"][0] - 1) \
+                                    + ";" + str(niv[n]["def_pos"][1] - 1)
+
+        
+        image = dim(x, x, img["perso"])
+        temp["perso"] = image
+        F_terrain.create_image(
+            int(parties[nom]["pos"].split(";")[0]) * x,
+            int(parties[nom]["pos"].split(";")[1]) * x,
+            image=image,
+            tag="perso",
+            anchor="nw",
+        )
+
     B_quitter = tk.Button(
         master=F_barre,
         text=loc["quitter"],
