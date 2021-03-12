@@ -95,6 +95,8 @@ img = {
     "MPF": tk.PhotoImage(file=ch("media/MPF.png")),
     "MPD": tk.PhotoImage(file=ch("media/MPD.png")),
     "perso": tk.PhotoImage(file=ch("media/MPC--.png")),
+    "SG-": tk.PhotoImage(file=ch("media/SG-.png")),
+    "CD1": tk.PhotoImage(file=ch("media/CD1.png")),
 }
 
 # === lecture des paramètres ===
@@ -488,6 +490,9 @@ def jeu(nom):
     )
 
     B_quitter.grid(row=9, column=1, sticky="nswe")
+    
+    maitre.bind_all()
+    
 
     charge(parties[nom]["niv"])
 
