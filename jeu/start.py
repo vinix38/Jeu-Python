@@ -97,6 +97,7 @@ img = {
     "perso": tk.PhotoImage(file=ch("media/MPC--.png")),
     "SG-": tk.PhotoImage(file=ch("media/SG-.png")),
     "CD1": tk.PhotoImage(file=ch("media/CD1.png")),
+    "FB1": tk.PhotoImage(file=ch("media/CD1.png")),
 }
 
 # === lecture des paramètres ===
