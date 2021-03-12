@@ -17,6 +17,7 @@ maitre.resizable(0, 0)
 H_E = maitre.winfo_screenheight()
 L_E = maitre.winfo_screenwidth()
 
+
 # === styles ===
 style = {
     "font": ('Helvetica', 11),
@@ -109,7 +110,12 @@ if os.path.isfile(ch("options.txt")) == False:
         "taille_dispo": "1920x1080,1366x768,1440x900,1600x900,1280x800,1280x1024,1024x768",
         "son": True,
         "langue": "fr_FR",
-        "langues_dispo": "fr_FR,en_US"
+        "langues_dispo": "fr_FR,en_US",
+        "haut" : "z",
+        "gauche" : "a",
+        "bas" : "s",
+        "droite" : "e",
+        "action" : "Tab",
     }
     with open(ch('options.txt'), 'w') as fichier:
         options.write(fichier)
@@ -238,6 +244,8 @@ def param():
     global img
 
     efface(maitre)
+    
+    cap = False
 
     F_param = tk.Frame(master=maitre)
     F_param.place(relheight=1, relwidth=1)
@@ -253,7 +261,15 @@ def param():
     V_son = tk.StringVar(value=options["DEFAULT"]["son"])
 
     V_plein = tk.StringVar(value=options["DEFAULT"]["plein_ecran"])
-
+    
+    V_dir = {
+        "haut" : tk.StringVar(value=options["DEFAULT"]["haut"]),
+        "bas" : tk.StringVar(value=options["DEFAULT"]["bas"]),
+        "gauche" : tk.StringVar(value=options["DEFAULT"]["gauche"]),
+        "droite" : tk.StringVar(value=options["DEFAULT"]["droite"]),
+        "action" : tk.StringVar(value=options["DEFAULT"]["action"]),
+    }
+    
     def sono():
         options["DEFAULT"]["son"] = V_son.get()
 
@@ -327,13 +343,68 @@ def param():
         V_plein.set("False")
         plein()
     clic_r.trace('w', C_taille)
+    
+    def C_touche(touche):
+        nonlocal cap
+        nonlocal B_quitter_sauv
+        if cap == False:
+            V_dir[touche].set("")
+            B_quitter_sauv["state"] = "disabled"
+            cap = touche
+    
+    B_haut = tk.Button(
+        master = F_param,
+        textvariable=V_dir["haut"],
+        command=lambda x="haut": C_touche(x),
+        **style,
+    )
+    B_bas = tk.Button(
+        master = F_param,
+        textvariable=V_dir["bas"],
+        command=lambda x="bas": C_touche(x),
+        **style,
+    )
+    B_gauche = tk.Button(
+        master = F_param,
+        textvariable=V_dir["gauche"],
+        command=lambda x="gauche": C_touche(x),
+        **style,
+    )
+    B_droite = tk.Button(
+        master = F_param,
+        textvariable=V_dir["droite"],
+        command=lambda x="droite": C_touche(x),
+        **style,
+    )
+    B_action = tk.Button(
+        master = F_param,
+        textvariable=V_dir["action"],
+        command=lambda x="action": C_touche(x),
+        **style,
+    )
+    
+    def capture(e):
+        nonlocal cap
+        if cap != False:
+            e = e.keysym
+            V_dir[cap].set(e)
+            options["DEFAULT"][cap] = e
+            cap = False
+            B_quitter_sauv["state"] = "normal"
+        
+    maitre.bind("<KeyPress>", capture)
 
     B_taille.grid(row=5, column=4, sticky="nswe")
     B_langue.grid(row=2, column=4, sticky="nswe")
     B_plein.grid(row=4, column=4, sticky="nswe")
     B_quitter_sauv.grid(row=9, column=4, sticky="nswe")
     B_quitter_sans.grid(row=8, column=4, sticky="nswe")
-    B_son.grid(row=4, column=6, sticky="nswe")
+    B_son.grid(row=4, column=2, sticky="nswe")
+    B_haut.grid(row=2, column=6, sticky="nswe")
+    B_bas.grid(row=3, column=6, sticky="nswe")
+    B_gauche.grid(row=4, column=6, sticky="nswe")
+    B_droite.grid(row=5, column=6, sticky="nswe")
+    B_action.grid(row=6, column=6, sticky="nswe")
 
 
 def charger():
@@ -492,7 +563,11 @@ def jeu(nom):
 
     B_quitter.grid(row=9, column=1, sticky="nswe")
     
-    maitre.bind_all()
+    def clavier(e):
+        print(e)
+        print(e.char)
+    
+    maitre.bind_all("<KeyPress>", clavier)
     
 
     charge(parties[nom]["niv"])
