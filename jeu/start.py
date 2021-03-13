@@ -395,8 +395,28 @@ def param():
     T_haut = tk.Label(
         F_param,
         text=loc["haut"],
+        **style,
     )
-    ################################################################
+    T_bas = tk.Label(
+        F_param,
+        text=loc["bas"],
+        **style,
+    )
+    T_gauche = tk.Label(
+        F_param,
+        text=loc["gauche"],
+        **style,
+    )
+    T_droite = tk.Label(
+        F_param,
+        text=loc["droite"],
+        **style,
+    )
+    T_action = tk.Label(
+        F_param,
+        text=loc["action"],
+        **style,
+    )
     
     #écoute du clavier
     def capture(e):
@@ -416,11 +436,16 @@ def param():
     B_quitter_sauv.grid(row=9, column=4, sticky="nswe")
     B_quitter_sans.grid(row=8, column=4, sticky="nswe")
     B_son.grid(row=4, column=2, sticky="nswe")
-    B_haut.grid(row=2, column=6, sticky="nswe")
-    B_bas.grid(row=3, column=6, sticky="nswe")
-    B_gauche.grid(row=4, column=6, sticky="nswe")
-    B_droite.grid(row=5, column=6, sticky="nswe")
-    B_action.grid(row=6, column=6, sticky="nswe")
+    B_haut.grid(row=2, column=8, sticky="nswe")
+    B_bas.grid(row=3, column=8, sticky="nswe")
+    B_gauche.grid(row=4, column=8, sticky="nswe")
+    B_droite.grid(row=5, column=8, sticky="nswe")
+    B_action.grid(row=6, column=8, sticky="nswe")
+    T_haut.grid(row=2, column=7, sticky="nswe")
+    T_bas.grid(row=3, column=7, sticky="nswe")
+    T_gauche.grid(row=4, column=7, sticky="nswe")
+    T_droite.grid(row=5, column=7, sticky="nswe")
+    T_action.grid(row=6, column=7, sticky="nswe")
 
 
 def charger():
