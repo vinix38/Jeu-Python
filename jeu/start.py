@@ -5,15 +5,14 @@ from configparser import ConfigParser
 from fractions import Fraction
 from tkinter.messagebox import showinfo
 from tkinter import ttk
-from langue import lang
 from niveaux import niv
+import time
 import sys
 import os
 
 # === déclaration fenêtre ===
 maitre = tk.Tk()
 maitre.resizable(0, 0)
-# maitre.iconbitmap(ch("*.ico"))
 H_E = maitre.winfo_screenheight()
 L_E = maitre.winfo_screenwidth()
 
@@ -63,11 +62,11 @@ def localisation():
     ()\n
     Change la langue
     """
+    from langue import langue
     global loc
-    global lang
     global options
     global maitre
-    loc = lang[options["DEFAULT"]["langue"]]
+    loc = langue[options["DEFAULT"]["langue"]]
     maitre.title(loc["titre"])
 
 # === prise en compte plein écran ===
@@ -100,6 +99,7 @@ img = {
     "CD1": tk.PhotoImage(file=ch("media/CD1.png")),
     "FB1": tk.PhotoImage(file=ch("media/CD1.png")),
 }
+# maitre.iconbitmap(ch("*.ico"))
 
 # === lecture des paramètres ===
 options = ConfigParser()
@@ -141,17 +141,18 @@ def acceuil():
 
     efface(maitre)
 
+    #fenetre
     F_acceuil = tk.Frame(master=maitre)
     F_acceuil.place(relheight=1, relwidth=1)
-
     F_acceuil.rowconfigure(list(range(15)), weight=1)
     F_acceuil.columnconfigure(list(range(7)), weight=1)
 
+    #fond
     temp["I"] = dim(L_F, H_F, img["I"])
-
     fond = tk.Label(F_acceuil, image=temp["I"])
     fond.place(x=0, y=0, relwidth=1, relheight=1)
 
+    #boutons
     B_quitter = tk.Button(
         text=loc["quitter"],
         master=F_acceuil,
@@ -176,7 +177,7 @@ def acceuil():
         command=creer,
         **style,
     )
-
+    #placement
     B_quitter.grid(column=3, row=12, sticky="nswe")
     B_options.grid(column=3, row=10, sticky="nswe")
     B_charger.grid(column=3, row=8, sticky="nswe")
@@ -190,6 +191,7 @@ def creer():
 
     efface(maitre)
 
+    #fenetre
     F_creer = tk.Frame(maitre)
     F_creer.place(relheight=1, relwidth=1)
     F_creer.rowconfigure([0, 1], weight=1)
@@ -220,6 +222,7 @@ def creer():
                 parties.write(fichier)
             jeu(nom)
 
+    #boutons
     B_creer = tk.Button(
         master=F_creer,
         text=loc["creer"],
@@ -232,7 +235,7 @@ def creer():
         command=acceuil,
         **style,
     )
-
+    #placement
     E_creer.grid(row=0, column=0, columnspan=2, sticky="nswe")
     B_annuler.grid(row=1, column=0, sticky="nswe")
     B_creer.grid(row=1, column=1, sticky="nswe")
@@ -245,23 +248,30 @@ def param():
 
     efface(maitre)
     
+    #statut écoute du cla  vier
     cap = False
 
+    #fenetre
     F_param = tk.Frame(master=maitre)
     F_param.place(relheight=1, relwidth=1)
     F_param.rowconfigure(list(range(10)), weight=1)
     F_param.columnconfigure(list(range(10)), weight=1)
 
+    #variables menus déroulants
     opt_l = options["DEFAULT"]["langues_dispo"].split(",")
     clic_l = tk.StringVar()
-
     opt_r = options["DEFAULT"]["taille_dispo"].split(",")
     clic_r = tk.StringVar()
 
+    #variables cases à cocher
     V_son = tk.StringVar(value=options["DEFAULT"]["son"])
-
+    def sono():
+        options["DEFAULT"]["son"] = V_son.get()
     V_plein = tk.StringVar(value=options["DEFAULT"]["plein_ecran"])
+    def plein():
+        options["DEFAULT"]["plein_ecran"] = V_plein.get()
     
+    #variables touches de clavier
     V_dir = {
         "haut" : tk.StringVar(value=options["DEFAULT"]["haut"]),
         "bas" : tk.StringVar(value=options["DEFAULT"]["bas"]),
@@ -270,12 +280,7 @@ def param():
         "action" : tk.StringVar(value=options["DEFAULT"]["action"]),
     }
     
-    def sono():
-        options["DEFAULT"]["son"] = V_son.get()
-
-    def plein():
-        options["DEFAULT"]["plein_ecran"] = V_plein.get()
-
+    #fonctions de sortie
     def quitter_sans():
         options.read(ch("options.txt"))
         acceuil()
@@ -288,9 +293,11 @@ def param():
         L_F, H_F = ecran()
         acceuil()
 
+    #fond
     afond = tk.Label(F_param, image=img["I"])
     afond.place(x=0, y=0, relwidth=1, relheight=1)
 
+    #boutons
     B_langue = ttk.OptionMenu(
         F_param,
         clic_l,
@@ -334,6 +341,7 @@ def param():
         **style,
     )
 
+    #suivi des interactions
     def C_langue(*args):
         options["DEFAULT"]["langue"] = clic_l.get()
     clic_l.trace('w', C_langue)
@@ -344,6 +352,7 @@ def param():
         plein()
     clic_r.trace('w', C_taille)
     
+    #assignement des touches
     def C_touche(touche):
         nonlocal cap
         nonlocal B_quitter_sauv
@@ -352,6 +361,7 @@ def param():
             B_quitter_sauv["state"] = "disabled"
             cap = touche
     
+    #boutons des touches
     B_haut = tk.Button(
         master = F_param,
         textvariable=V_dir["haut"],
@@ -382,7 +392,13 @@ def param():
         command=lambda x="action": C_touche(x),
         **style,
     )
+    T_haut = tk.Label(
+        F_param,
+        text=loc["haut"],
+    )
+    ################################################################
     
+    #écoute du clavier
     def capture(e):
         nonlocal cap
         if cap != False:
@@ -391,9 +407,9 @@ def param():
             options["DEFAULT"][cap] = e
             cap = False
             B_quitter_sauv["state"] = "normal"
-        
     maitre.bind("<KeyPress>", capture)
 
+    #placement
     B_taille.grid(row=5, column=4, sticky="nswe")
     B_langue.grid(row=2, column=4, sticky="nswe")
     B_plein.grid(row=4, column=4, sticky="nswe")
@@ -487,11 +503,13 @@ def jeu(nom):
 
     efface(maitre)
 
+    #fonction de sortie
     def quitter():
         with open(ch("parties.txt"), "w") as fichier:
             parties.write(fichier)
         acceuil()
 
+    #fenetre
     F_jeu = tk.Frame(maitre, background=None)
     F_jeu.place(relheight=1, relwidth=1)
 
@@ -500,22 +518,32 @@ def jeu(nom):
 
     F_barre = tk.Frame(F_jeu, background=None)
     F_barre.place(relheight=1, relwidth=0.2, relx=0.8)
-
     F_barre.rowconfigure(list(range(10)), weight=1)
     F_barre.columnconfigure([0, 1, 2], weight=1)
+    
+    #\_(°-°)_/
+    n = x = 0
+    mvt = 0
+    
+    F_terrain = tk.Canvas(F_carte)
 
-    def charge(n):
+    #chargement des niveaux
+    def charge(niv_cbl):
         global niv
         global img
         global temp
+        nonlocal x
+        nonlocal n
+        nonlocal F_terrain
         nonlocal F_carte
+        n = niv_cbl
         temp = {}
         efface(F_carte)
         li = int(niv[n]["li"])
         col = int(niv[n]["col"])
-        x = min((L_F * 0.8) // col, H_F // li)
+        x = int(min((L_F * 0.8) / col, H_F / li))
 
-        F_terrain = tk.Canvas(
+        F_terrain= tk.Canvas(
             F_carte,
             height=li*x,
             width=col*x,
@@ -553,6 +581,41 @@ def jeu(nom):
             tag="perso",
             anchor="nw",
         )
+        
+    def mouv(mov):
+        nonlocal n
+        nonlocal x
+        nonlocal mvt
+        nonlocal F_terrain
+        coords = [i / x for i in F_terrain.coords("perso")]
+        cible = [int(coords[i] + mov[i]) for i in range(2)]
+        if niv[n]["grille"][cible[1]][cible[0]][0] == "S":
+            parties[nom]["pos"] =  ";".join([str(i) for i in cible])
+            mov = [i*x for i in mov]
+            F_terrain.move("perso", *mov)
+        mvt = 0
+
+    
+    def clavier(e):
+        nonlocal mvt
+        if mvt == 0:
+            e = e.keysym
+            mov = [0, 0]
+            if e == options["DEFAULT"]["haut"]:
+                mov[1] = -1
+            elif e == options["DEFAULT"]["bas"]:
+                mov[1] = 1
+            elif e == options["DEFAULT"]["gauche"]:
+                mov[0] = -1
+            elif e == options["DEFAULT"]["droite"]:
+                mov[0] = 1
+            elif e == options["DEFAULT"]["action"]:
+                pass
+            mvt = 1
+            mouv(mov)
+            
+    
+    maitre.bind_all("<Key>", clavier)
 
     B_quitter = tk.Button(
         master=F_barre,
@@ -563,15 +626,7 @@ def jeu(nom):
 
     B_quitter.grid(row=9, column=1, sticky="nswe")
     
-    def clavier(e):
-        print(e)
-        print(e.char)
-    
-    maitre.bind_all("<KeyPress>", clavier)
-    
-
     charge(parties[nom]["niv"])
-
 
 acceuil()
 

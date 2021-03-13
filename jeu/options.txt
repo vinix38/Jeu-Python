@@ -5,9 +5,9 @@ taille_dispo = 1920x1080,1366x768,1440x900,1600x900,1280x800,1280x1024,1024x768
 son = True
 langue = fr_FR
 langues_dispo = fr_FR,en_US
-haut = z
-gauche = a
-bas = s
-droite = e
+haut = Up
+gauche = Left
+bas = Down
+droite = Right
 action = Tab
 

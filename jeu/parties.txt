@@ -10,7 +10,7 @@ niv = 11
 score = 0
 temps = 0
 inv = 
-pos = 5;18
+pos = 19;8
 
 [test2]
 niv = 11

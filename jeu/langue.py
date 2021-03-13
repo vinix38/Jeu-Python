@@ -1,4 +1,4 @@
-lang =  {
+langue =  {
     #====== FRANCAIS ======
     "fr_FR" : {
         "titre" : "je suis un titre",
@@ -21,6 +21,11 @@ lang =  {
         "déjà" : "Ce nom existe déjà!",
         "son" : "Son du jeu",
         "plein" : "Plein écran",
+        "haut" : "Monter",
+        "bas" : "Descendre",
+        "gauche" : "Aller à gauche",
+        "droite" : "Aller à droite",
+        "action" : "Interagir",
     },
     #====== ANGLAIS ======
     "en_US" : {
@@ -44,5 +49,10 @@ lang =  {
         "déjà" : "This name already exists!",
         "son" : "Game sound",
         "plein" : "Fullscreen",
+        "haut" : "Go up",
+        "bas" : "Go down",
+        "gauche" : "Go left",
+        "droite" : "Go right",
+        "action" : "Interact",
     },
 }
