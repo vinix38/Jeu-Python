@@ -5,18 +5,11 @@ temps = 0
 inv = 
 pos = 00;00
 
-[aaaaaaaaaaaaaaaaaaaaaaaaaaa]
-niv = 11
-score = 0
-temps = 0
-inv = 
-pos = 19;8
-
-[test2]
+[testnsi]
 niv = 11
 score = 0
 inv = 
-pos = 00;00
+pos = 15;10
 s_niv = 11
 s_score = 0
 s_inv = 

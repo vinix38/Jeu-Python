@@ -10,16 +10,20 @@ import time
 import sys
 import os
 
+def log(*arg):
+    print("LOG =", *arg)
+
 # === déclaration fenêtre ===
 maitre = tk.Tk()
 maitre.resizable(0, 0)
 H_E = maitre.winfo_screenheight()
 L_E = maitre.winfo_screenwidth()
+log("taille de fenetre",H_E,L_E)
 
 
 # === styles ===
 style = {
-    "font": ('Helvetica', 11),
+    "font": ('Fixedsys', 24),
     "background": "grey",
     "foreground": "black",
 }
@@ -68,6 +72,7 @@ def localisation():
     global maitre
     loc = langue[options["DEFAULT"]["langue"]]
     maitre.title(loc["titre"])
+    log("changement de langue -", loc["lang"])
 
 # === prise en compte plein écran ===
 def ecran():
@@ -78,6 +83,7 @@ def ecran():
     global maitre
     global options
     global H_E, L_E
+    log("actualisation taille d'écran")
     if options["DEFAULT"].getboolean("plein_ecran"):
         maitre.attributes('-fullscreen', True)
         return L_E, H_E
@@ -141,6 +147,8 @@ def acceuil():
 
     efface(maitre)
 
+    log("création accueil")
+    
     #fenetre
     F_acceuil = tk.Frame(master=maitre)
     F_acceuil.place(relheight=1, relwidth=1)
@@ -191,6 +199,8 @@ def creer():
 
     efface(maitre)
 
+    log("création nouvelle partie")
+
     #fenetre
     F_creer = tk.Frame(maitre)
     F_creer.place(relheight=1, relwidth=1)
@@ -207,6 +217,7 @@ def creer():
         nom = E_creer.get()
         if nom in parties.sections():
             showinfo(loc["err"], loc["déjà"])
+            log("erreur, cette partie existe déjà")
         else:
             parties[nom] = {
                 "niv": "11",
@@ -218,9 +229,11 @@ def creer():
                 "S_inv": "",
                 "temps": 0,
             }
+            log("nouvelle partie -", nom)
             with open(ch("parties.txt"), "w") as fichier:
                 parties.write(fichier)
             jeu(nom)
+        
 
     #boutons
     B_creer = tk.Button(
@@ -247,6 +260,8 @@ def param():
     global img
 
     efface(maitre)
+    
+    log("création paramètres")
     
     #statut écoute du cla  vier
     cap = False
@@ -455,6 +470,8 @@ def charger():
     global parties
 
     efface(maitre)
+    
+    log("création chargement")
 
     F_charge = tk.Frame(maitre)
     F_charge.place(relheight=1, relwidth=1)
@@ -488,6 +505,7 @@ def charger():
 
     parties.read(ch("parties.txt"))
     sauv = parties.sections()
+    log("parties existantes -", sauv)
 
     if sauv != []:
         roue = tk.Scrollbar(F_liste)
@@ -514,6 +532,7 @@ def charger():
         )
         vide.pack(fill="both")
         B_charger.config(state="disabled")
+        log("pas de parties disponibles")
 
     B_importer.grid(row=0, column=0, sticky="nswe")
     B_retour.grid(row=0, column=1, sticky="nswe")
@@ -527,6 +546,8 @@ def jeu(nom):
     global img
 
     efface(maitre)
+    
+    log("chargement du jeu")
 
     #fonction de sortie
     def quitter():
@@ -567,6 +588,7 @@ def jeu(nom):
         li = int(niv[n]["li"])
         col = int(niv[n]["col"])
         x = int(min((L_F * 0.8) / col, H_F / li))
+        log("lignes:",li,"| colonnes:",col,"| coté de case (px):",x)
 
         F_terrain= tk.Canvas(
             F_carte,
@@ -593,8 +615,7 @@ def jeu(nom):
                 )
 
         if parties[nom]["pos"] == "":
-            parties[nom]["pos"] = str(niv[n]["def_pos"][0] - 1) \
-                                    + ";" + str(niv[n]["def_pos"][1] - 1)
+            parties[nom]["pos"] = str(niv[n]["def_pos"][0]) + ";" + str(niv[n]["def_pos"][1])
 
         
         image = dim(x, x, img["perso"])
@@ -612,19 +633,27 @@ def jeu(nom):
         nonlocal x
         nonlocal mvt
         nonlocal F_terrain
+        log("coordonnés de déplacement -",mov)
         coords = [i / x for i in F_terrain.coords("perso")]
+        log("coordonnés actuels -", coords)
         cible = [int(coords[i] + mov[i]) for i in range(2)]
+        log("coordonnés cibles -", cible)
         if niv[n]["grille"][cible[1]][cible[0]][0] == "S":
+            log("mouvement accepté")
             parties[nom]["pos"] =  ";".join([str(i) for i in cible])
             mov = [i*x for i in mov]
             F_terrain.move("perso", *mov)
+        else:
+            log("mouvement refusé")
         mvt = 0
 
     
     def clavier(e):
         nonlocal mvt
+        e = e.keysym
+        log("touche pressée -",e)
         if mvt == 0:
-            e = e.keysym
+            log("mouvement possible")
             mov = [0, 0]
             if e == options["DEFAULT"]["haut"]:
                 mov[1] = -1
@@ -637,7 +666,9 @@ def jeu(nom):
             elif e == options["DEFAULT"]["action"]:
                 pass
             mvt = 1
-            mouv(mov)
+            if mov != [0, 0]:
+                log("tentative de mouvement")
+                mouv(mov)
             
     
     maitre.bind_all("<Key>", clavier)
@@ -652,6 +683,8 @@ def jeu(nom):
     B_quitter.grid(row=9, column=1, sticky="nswe")
     
     charge(parties[nom]["niv"])
+    
+log("début de l'execution")
 
 acceuil()
 

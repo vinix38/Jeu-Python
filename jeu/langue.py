@@ -1,6 +1,7 @@
 langue =  {
     #====== FRANCAIS ======
     "fr_FR" : {
+        "lang" : "Français",
         "titre" : "je suis un titre",
         "quitter" : "Quitter",
         "options" : "Paramètres",
@@ -29,6 +30,7 @@ langue =  {
     },
     #====== ANGLAIS ======
     "en_US" : {
+        "lang" : "English (US)",
         "titre" : "I'm a title",
         "quitter" : "Quit",
         "options" : "Settings",
