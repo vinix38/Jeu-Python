@@ -12,7 +12,7 @@ import os
 
 # fonction de log
 def log(*arg):
-    print("[-LOG-]", *arg)
+    print("[LOG", dt.datetime.now().strftime("%X"),"]" , *arg)
 
 
 # === déclaration fenêtre ===
