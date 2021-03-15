@@ -10,15 +10,17 @@ import time
 import sys
 import os
 
+# fonction de log
 def log(*arg):
-    print("LOG =", *arg)
+    print("[-LOG-]", *arg)
+
 
 # === déclaration fenêtre ===
 maitre = tk.Tk()
 maitre.resizable(0, 0)
 H_E = maitre.winfo_screenheight()
 L_E = maitre.winfo_screenwidth()
-log("taille de fenetre",H_E,L_E)
+log("taille d'écran =", H_E, "x", L_E)
 
 
 # === styles ===
@@ -47,8 +49,9 @@ def dim(L, H, img):
     (Largeur (px), Hauteur (px), image)\n
     redimensionne l'image aux dimensions souhaitées
     """
-    H = (Fraction(str(H/img.height()))).limit_denominator(100)
-    L = (Fraction(str(L/img.width()))).limit_denominator(100)
+    H = (Fraction(str(H/img.height()))).limit_denominator(30)
+    L = (Fraction(str(L/img.width()))).limit_denominator(30)
+    log("image =",H,"par",L)
     return img.zoom(L.numerator, H.numerator).subsample(L.denominator, H.denominator)
 
 # === tout effacer ===
@@ -92,6 +95,7 @@ def ecran():
         maitre.geometry(options["DEFAULT"]["taille"])
         return tuple(int(i) for i in options["DEFAULT"]["taille"].split("x"))
 
+
 # ====== VARIABLES ======
 temp = {}
 img = {
@@ -100,12 +104,13 @@ img = {
     "MPC": tk.PhotoImage(file=ch("media/MPC.png")),
     "MPF": tk.PhotoImage(file=ch("media/MPF.png")),
     "MPD": tk.PhotoImage(file=ch("media/MPD.png")),
-    "perso": tk.PhotoImage(file=ch("media/MPC--.png")),
+    "perso": tk.PhotoImage(file=ch("media/icone.png")),
     "SG-": tk.PhotoImage(file=ch("media/SG-.png")),
     "CD1": tk.PhotoImage(file=ch("media/CD1.png")),
     "FB1": tk.PhotoImage(file=ch("media/CD1.png")),
+    "OP1" : tk.PhotoImage(file=ch("media/OP1.png")),
 }
-# maitre.iconbitmap(ch("*.ico"))
+maitre.iconbitmap(ch("media/icone.ico"))
 
 # === lecture des paramètres ===
 options = ConfigParser()
@@ -117,11 +122,11 @@ if os.path.isfile(ch("options.txt")) == False:
         "son": True,
         "langue": "fr_FR",
         "langues_dispo": "fr_FR,en_US",
-        "haut" : "z",
-        "gauche" : "a",
-        "bas" : "s",
-        "droite" : "e",
-        "action" : "Tab",
+        "haut": "z",
+        "gauche": "a",
+        "bas": "s",
+        "droite": "e",
+        "action": "Tab",
     }
     with open(ch('options.txt'), 'w') as fichier:
         options.write(fichier)
@@ -147,20 +152,20 @@ def acceuil():
 
     efface(maitre)
 
-    log("création accueil")
-    
-    #fenetre
+    log("=== accueil ===")
+
+    # fenetre
     F_acceuil = tk.Frame(master=maitre)
     F_acceuil.place(relheight=1, relwidth=1)
     F_acceuil.rowconfigure(list(range(15)), weight=1)
     F_acceuil.columnconfigure(list(range(7)), weight=1)
 
-    #fond
+    # fond
     temp["I"] = dim(L_F, H_F, img["I"])
     fond = tk.Label(F_acceuil, image=temp["I"])
     fond.place(x=0, y=0, relwidth=1, relheight=1)
 
-    #boutons
+    # boutons
     B_quitter = tk.Button(
         text=loc["quitter"],
         master=F_acceuil,
@@ -185,7 +190,7 @@ def acceuil():
         command=creer,
         **style,
     )
-    #placement
+    # placement
     B_quitter.grid(column=3, row=12, sticky="nswe")
     B_options.grid(column=3, row=10, sticky="nswe")
     B_charger.grid(column=3, row=8, sticky="nswe")
@@ -199,9 +204,9 @@ def creer():
 
     efface(maitre)
 
-    log("création nouvelle partie")
+    log("=== nouvelle partie ===")
 
-    #fenetre
+    # fenetre
     F_creer = tk.Frame(maitre)
     F_creer.place(relheight=1, relwidth=1)
     F_creer.rowconfigure([0, 1], weight=1)
@@ -233,9 +238,8 @@ def creer():
             with open(ch("parties.txt"), "w") as fichier:
                 parties.write(fichier)
             jeu(nom)
-        
 
-    #boutons
+    # boutons
     B_creer = tk.Button(
         master=F_creer,
         text=loc["creer"],
@@ -248,7 +252,7 @@ def creer():
         command=acceuil,
         **style,
     )
-    #placement
+    # placement
     E_creer.grid(row=0, column=0, columnspan=2, sticky="nswe")
     B_annuler.grid(row=1, column=0, sticky="nswe")
     B_creer.grid(row=1, column=1, sticky="nswe")
@@ -260,42 +264,44 @@ def param():
     global img
 
     efface(maitre)
-    
-    log("création paramètres")
-    
-    #statut écoute du cla  vier
+
+    log("=== paramètres ===")
+
+    # statut écoute du clavier
     cap = False
 
-    #fenetre
+    # fenetre
     F_param = tk.Frame(master=maitre)
     F_param.place(relheight=1, relwidth=1)
     F_param.rowconfigure(list(range(10)), weight=1)
     F_param.columnconfigure(list(range(10)), weight=1)
 
-    #variables menus déroulants
+    # variables menus déroulants
     opt_l = options["DEFAULT"]["langues_dispo"].split(",")
     clic_l = tk.StringVar()
     opt_r = options["DEFAULT"]["taille_dispo"].split(",")
     clic_r = tk.StringVar()
 
-    #variables cases à cocher
+    # variables cases à cocher
     V_son = tk.StringVar(value=options["DEFAULT"]["son"])
+
     def sono():
         options["DEFAULT"]["son"] = V_son.get()
     V_plein = tk.StringVar(value=options["DEFAULT"]["plein_ecran"])
+
     def plein():
         options["DEFAULT"]["plein_ecran"] = V_plein.get()
-    
-    #variables touches de clavier
+
+    # variables touches de clavier
     V_dir = {
-        "haut" : tk.StringVar(value=options["DEFAULT"]["haut"]),
-        "bas" : tk.StringVar(value=options["DEFAULT"]["bas"]),
-        "gauche" : tk.StringVar(value=options["DEFAULT"]["gauche"]),
-        "droite" : tk.StringVar(value=options["DEFAULT"]["droite"]),
-        "action" : tk.StringVar(value=options["DEFAULT"]["action"]),
+        "haut": tk.StringVar(value=options["DEFAULT"]["haut"]),
+        "bas": tk.StringVar(value=options["DEFAULT"]["bas"]),
+        "gauche": tk.StringVar(value=options["DEFAULT"]["gauche"]),
+        "droite": tk.StringVar(value=options["DEFAULT"]["droite"]),
+        "action": tk.StringVar(value=options["DEFAULT"]["action"]),
     }
-    
-    #fonctions de sortie
+
+    # fonctions de sortie
     def quitter_sans():
         options.read(ch("options.txt"))
         acceuil()
@@ -308,11 +314,11 @@ def param():
         L_F, H_F = ecran()
         acceuil()
 
-    #fond
+    # fond
     afond = tk.Label(F_param, image=img["I"])
     afond.place(x=0, y=0, relwidth=1, relheight=1)
 
-    #boutons
+    # boutons
     B_langue = ttk.OptionMenu(
         F_param,
         clic_l,
@@ -356,7 +362,7 @@ def param():
         **style,
     )
 
-    #suivi des interactions
+    # suivi des interactions
     def C_langue(*args):
         options["DEFAULT"]["langue"] = clic_l.get()
     clic_l.trace('w', C_langue)
@@ -366,8 +372,8 @@ def param():
         V_plein.set("False")
         plein()
     clic_r.trace('w', C_taille)
-    
-    #assignement des touches
+
+    # assignement des touches
     def C_touche(touche):
         nonlocal cap
         nonlocal B_quitter_sauv
@@ -375,34 +381,34 @@ def param():
             V_dir[touche].set("")
             B_quitter_sauv["state"] = "disabled"
             cap = touche
-    
-    #boutons des touches
+
+    # boutons des touches
     B_haut = tk.Button(
-        master = F_param,
+        master=F_param,
         textvariable=V_dir["haut"],
         command=lambda x="haut": C_touche(x),
         **style,
     )
     B_bas = tk.Button(
-        master = F_param,
+        master=F_param,
         textvariable=V_dir["bas"],
         command=lambda x="bas": C_touche(x),
         **style,
     )
     B_gauche = tk.Button(
-        master = F_param,
+        master=F_param,
         textvariable=V_dir["gauche"],
         command=lambda x="gauche": C_touche(x),
         **style,
     )
     B_droite = tk.Button(
-        master = F_param,
+        master=F_param,
         textvariable=V_dir["droite"],
         command=lambda x="droite": C_touche(x),
         **style,
     )
     B_action = tk.Button(
-        master = F_param,
+        master=F_param,
         textvariable=V_dir["action"],
         command=lambda x="action": C_touche(x),
         **style,
@@ -432,8 +438,8 @@ def param():
         text=loc["action"],
         **style,
     )
-    
-    #écoute du clavier
+
+    # écoute du clavier
     def capture(e):
         nonlocal cap
         if cap != False:
@@ -444,7 +450,7 @@ def param():
             B_quitter_sauv["state"] = "normal"
     maitre.bind("<KeyPress>", capture)
 
-    #placement
+    # placement
     B_taille.grid(row=5, column=4, sticky="nswe")
     B_langue.grid(row=2, column=4, sticky="nswe")
     B_plein.grid(row=4, column=4, sticky="nswe")
@@ -470,8 +476,8 @@ def charger():
     global parties
 
     efface(maitre)
-    
-    log("création chargement")
+
+    log("=== charger une partie ===")
 
     F_charge = tk.Frame(maitre)
     F_charge.place(relheight=1, relwidth=1)
@@ -546,16 +552,16 @@ def jeu(nom):
     global img
 
     efface(maitre)
-    
-    log("chargement du jeu")
 
-    #fonction de sortie
+    log("=== chargement du jeu ===")
+
+    # fonction de sortie
     def quitter():
         with open(ch("parties.txt"), "w") as fichier:
             parties.write(fichier)
         acceuil()
 
-    #fenetre
+    # fenetre
     F_jeu = tk.Frame(maitre, background=None)
     F_jeu.place(relheight=1, relwidth=1)
 
@@ -566,14 +572,14 @@ def jeu(nom):
     F_barre.place(relheight=1, relwidth=0.2, relx=0.8)
     F_barre.rowconfigure(list(range(10)), weight=1)
     F_barre.columnconfigure([0, 1, 2], weight=1)
-    
-    #\_(°-°)_/
+
+    # \_(°-°)_/
     n = x = 0
     mvt = 0
-    
+
     F_terrain = tk.Canvas(F_carte)
 
-    #chargement des niveaux
+    # chargement des niveaux
     def charge(niv_cbl):
         global niv
         global img
@@ -588,9 +594,9 @@ def jeu(nom):
         li = int(niv[n]["li"])
         col = int(niv[n]["col"])
         x = int(min((L_F * 0.8) / col, H_F / li))
-        log("lignes:",li,"| colonnes:",col,"| coté de case (px):",x)
+        log("lignes:", li, "| colonnes:", col, "| coté de case (px):", x)
 
-        F_terrain= tk.Canvas(
+        F_terrain = tk.Canvas(
             F_carte,
             height=li*x,
             width=col*x,
@@ -615,9 +621,9 @@ def jeu(nom):
                 )
 
         if parties[nom]["pos"] == "":
-            parties[nom]["pos"] = str(niv[n]["def_pos"][0]) + ";" + str(niv[n]["def_pos"][1])
+            parties[nom]["pos"] = str(
+                niv[n]["def_pos"][0]) + ";" + str(niv[n]["def_pos"][1])
 
-        
         image = dim(x, x, img["perso"])
         temp["perso"] = image
         F_terrain.create_image(
@@ -627,31 +633,30 @@ def jeu(nom):
             tag="perso",
             anchor="nw",
         )
-        
+
     def mouv(mov):
         nonlocal n
         nonlocal x
         nonlocal mvt
         nonlocal F_terrain
-        log("coordonnés de déplacement -",mov)
+        log("coordonnés de déplacement -", mov)
         coords = [i / x for i in F_terrain.coords("perso")]
         log("coordonnés actuels -", coords)
         cible = [int(coords[i] + mov[i]) for i in range(2)]
         log("coordonnés cibles -", cible)
         if niv[n]["grille"][cible[1]][cible[0]][0] == "S":
             log("mouvement accepté")
-            parties[nom]["pos"] =  ";".join([str(i) for i in cible])
+            parties[nom]["pos"] = ";".join([str(i) for i in cible])
             mov = [i*x for i in mov]
             F_terrain.move("perso", *mov)
         else:
             log("mouvement refusé")
         mvt = 0
 
-    
     def clavier(e):
         nonlocal mvt
         e = e.keysym
-        log("touche pressée -",e)
+        log("touche pressée -", e)
         if mvt == 0:
             log("mouvement possible")
             mov = [0, 0]
@@ -669,8 +674,7 @@ def jeu(nom):
                 log("tentative de mouvement")
                 mvt = 1
                 mouv(mov)
-            
-    
+
     maitre.bind_all("<Key>", clavier)
 
     B_quitter = tk.Button(
@@ -681,9 +685,10 @@ def jeu(nom):
     )
 
     B_quitter.grid(row=9, column=1, sticky="nswe")
-    
+
     charge(parties[nom]["niv"])
-    
+
+
 log("début de l'execution")
 
 acceuil()
