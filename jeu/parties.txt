@@ -1,15 +1,8 @@
-[test]
-niv = 11
-score = 0
-temps = 0
-inv = 
-pos = 00;00
-
 [testnsi]
 niv = 11
 score = 0
 inv = 
-pos = 15;10
+pos = 14;15
 s_niv = 11
 s_score = 0
 s_inv = 

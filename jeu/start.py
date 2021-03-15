@@ -665,9 +665,9 @@ def jeu(nom):
                 mov[0] = 1
             elif e == options["DEFAULT"]["action"]:
                 pass
-            mvt = 1
             if mov != [0, 0]:
                 log("tentative de mouvement")
+                mvt = 1
                 mouv(mov)
             
     
