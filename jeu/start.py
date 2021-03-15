@@ -88,11 +88,12 @@ def ecran():
     global H_E, L_E
     log("actualisation taille d'écran")
     if options["DEFAULT"].getboolean("plein_ecran"):
-        maitre.attributes('-fullscreen', True)
+        maitre.overrideredirect(True)
+        maitre.geometry(str(L_E)+"x"+str(H_E)+"+0+0")
         return L_E, H_E
     else:
-        maitre.attributes('-fullscreen', False)
         maitre.geometry(options["DEFAULT"]["taille"])
+        maitre.overrideredirect(False)
         return tuple(int(i) for i in options["DEFAULT"]["taille"].split("x"))
 
 
@@ -109,11 +110,12 @@ img = {
     "CD1": tk.PhotoImage(file=ch("media/CD1.png")),
     "FB1": tk.PhotoImage(file=ch("media/CD1.png")),
     "OP1" : tk.PhotoImage(file=ch("media/OP1.png")),
+    "icone" : tk.PhotoImage(file=ch("media/icone.png")),
 }
-maitre.iconbitmap(ch("media/icone.ico"))
+maitre.iconphoto(True ,img["icone"])
 
 # === lecture des paramètres ===
-options = ConfigParser()
+options = ConfigParser(allow_no_value=True)
 if os.path.isfile(ch("options.txt")) == False:
     options["DEFAULT"] = {
         "plein_ecran": True,
@@ -134,7 +136,7 @@ else:
     options.read(ch("options.txt"))
 
 # === lecture des parties sauvegardées ===
-parties = ConfigParser()
+parties = ConfigParser(allow_no_value=True)
 if os.path.isfile(ch("parties.txt")):
     parties.read(ch("parties.txt"))
 else:
