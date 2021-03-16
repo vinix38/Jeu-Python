@@ -89,7 +89,7 @@ def ecran():
     global options
     global H_E, L_E
     log("actualisation taille d'écran")
-    log(pf.system())
+    log("système d'exploitation =", pf.system())
     if options["DEFAULT"].getboolean("plein_ecran"):
         if pf.system() == ("Windows" or "Darwin"):
             maitre.wm_attributes("-fullscreen", True)
@@ -537,7 +537,7 @@ def charger():
         )
         for x in sauv:
             B_liste.insert("end", x + "|" + loc["XP"] + " : " + parties[x]["score"] +
-                           " | " + loc["niv"] + " : " + parties[x]["niv"] + " | " + parties[x]["temps"])
+                           " | " + loc["niv"] + " : " + parties[x]["niv"][0] + " | " + parties[x]["temps"])
         B_liste.pack()
 
     else:
@@ -584,8 +584,7 @@ def jeu(nom):
     F_barre.columnconfigure([0, 1, 2], weight=1)
 
     # \_(°-°)_/
-    n = x = 0
-    mvt = 0
+    mvt = n = x = 0
 
     F_terrain = tk.Canvas(F_carte)
 
@@ -598,7 +597,10 @@ def jeu(nom):
         nonlocal n
         nonlocal F_terrain
         nonlocal F_carte
+        nonlocal mvt
+        mvt = 1
         n = niv_cbl
+        log("chargement du niveau",n)
         temp = {}
         efface(F_carte)
         li = int(niv[n]["li"])
@@ -614,9 +616,8 @@ def jeu(nom):
         F_terrain.place(relx=0.5, rely=0.5, anchor="center")
         F_terrain.create_image(0, 0, image=img["I"], anchor="nw", tag="fond")
         
-        
+        log("image par défaut -", niv[n]["def_img"])
         temp["def_img"] = dim(x, x, img[niv[n]["def_img"]], "def")
-        log("image par défaut -", img[niv[n]["def_img"]])
 
         for i in range(li):
             for j in range(col):
@@ -660,6 +661,7 @@ def jeu(nom):
             tag="perso",
             anchor="nw",
         )
+        mvt = 0
 
     def mouv(mov):
         nonlocal n
@@ -680,6 +682,9 @@ def jeu(nom):
             log("mouvement refusé")
         mvt = 0
 
+    def inter():
+        pass
+
     def clavier(e):
         nonlocal mvt
         e = e.keysym
@@ -696,7 +701,8 @@ def jeu(nom):
             elif e == options["DEFAULT"]["droite"]:
                 mov[0] = 1
             elif e == options["DEFAULT"]["action"]:
-                pass
+                log("essai d'interaction")
+                inter()
             if mov != [0, 0]:
                 log("tentative de mouvement")
                 mvt = 1
