@@ -1,6 +1,6 @@
 [DEFAULT]
 plein_ecran = False
-taille = 1024x768
+taille = 1600x900
 taille_dispo = 1920x1080,1366x768,1440x900,1600x900,1280x800,1280x1024,1024x768
 son = True
 langue = fr_FR
