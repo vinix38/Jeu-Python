@@ -1,6 +1,7 @@
 # ====== IMPORTS ======
 import tkinter as tk
 import datetime as dt
+import platform as pf
 from configparser import ConfigParser
 from fractions import Fraction
 from tkinter.messagebox import showinfo
@@ -12,10 +13,11 @@ import os
 
 # fonction de log
 def log(*arg):
-    print("[LOG", dt.datetime.now().strftime("%X"),"]" , *arg)
+    print("[LOG", str(dt.datetime.now())[11:23],"]" , *arg)
 
 
 # === déclaration fenêtre ===
+log("=== INITIALISATION ===")
 maitre = tk.Tk()
 maitre.resizable(0, 0)
 H_E = maitre.winfo_screenheight()
@@ -44,14 +46,14 @@ def ch(fichier):
     return os.path.join(sys.path[0], str(fichier))
 
 # === changement de taille ===
-def dim(L, H, img):
+def dim(L, H, img, nom="?"):
     """
     (Largeur (px), Hauteur (px), image)\n
     redimensionne l'image aux dimensions souhaitées
     """
     H = (Fraction(str(H/img.height()))).limit_denominator(30)
     L = (Fraction(str(L/img.width()))).limit_denominator(30)
-    log("image =",H,"par",L)
+    log("image", nom,"=",H,"par",L)
     return img.zoom(L.numerator, H.numerator).subsample(L.denominator, H.denominator)
 
 # === tout effacer ===
@@ -88,31 +90,38 @@ def ecran():
     global H_E, L_E
     log("actualisation taille d'écran")
     if options["DEFAULT"].getboolean("plein_ecran"):
-        maitre.overrideredirect(True)
-        maitre.geometry(str(L_E)+"x"+str(H_E)+"+0+0")
+        if pf.system() == ("Windows" or "Darwin"):
+            maitre.wm_attributes("-fullscreen", True)
+        elif pf.system() == "Linux":
+            maitre.wm_attributes("-zoomed", True)
+        else:
+            maitre.geometry(str(L_E)+"x"+str(H_E)+"+0+0")
         return L_E, H_E
     else:
+        if pf.system() == ("Windows" or "Darwin"):
+            maitre.wm_attributes("-fullscreen", False)
+        elif pf.system() == "Linux":
+            maitre.wm_attributes("-zoomed", False)
         maitre.geometry(options["DEFAULT"]["taille"])
-        maitre.overrideredirect(False)
         return tuple(int(i) for i in options["DEFAULT"]["taille"].split("x"))
 
 
 # ====== VARIABLES ======
 temp = {}
 img = {
-    "V--": tk.PhotoImage(file=ch("media/V--.png")),
+    "V-": tk.PhotoImage(file=ch("media/V--.png")),
     "I": tk.PhotoImage(file=ch("media/fond.png")),
-    "MPC": tk.PhotoImage(file=ch("media/MPC.png")),
-    "MPF": tk.PhotoImage(file=ch("media/MPF.png")),
-    "MPD": tk.PhotoImage(file=ch("media/MPD.png")),
+    "MP": tk.PhotoImage(file=ch("media/MPC.png")),
+    "MF": tk.PhotoImage(file=ch("media/MPF.png")),
+    "Mp": tk.PhotoImage(file=ch("media/MPD.png")),
     "perso": tk.PhotoImage(file=ch("media/icone.png")),
-    "SG-": tk.PhotoImage(file=ch("media/SG-.png")),
-    "CD1": tk.PhotoImage(file=ch("media/CD1.png")),
-    "FB1": tk.PhotoImage(file=ch("media/CD1.png")),
-    "OP1" : tk.PhotoImage(file=ch("media/OP1.png")),
+    "SG": tk.PhotoImage(file=ch("media/SG-.png")),
+    "CD": tk.PhotoImage(file=ch("media/CD1.png")),
+    "FB": tk.PhotoImage(file=ch("media/CD1.png")),
+    "OP" : tk.PhotoImage(file=ch("media/OP1.png")),
     "icone" : tk.PhotoImage(file=ch("media/icone.png")),
 }
-maitre.iconphoto(True ,img["icone"])
+maitre.iconphoto(True, img["icone"])
 
 # === lecture des paramètres ===
 options = ConfigParser(allow_no_value=True)
@@ -163,7 +172,7 @@ def acceuil():
     F_acceuil.columnconfigure(list(range(7)), weight=1)
 
     # fond
-    temp["I"] = dim(L_F, H_F, img["I"])
+    temp["I"] = dim(L_F, H_F, img["I"], "fond")
     fond = tk.Label(F_acceuil, image=temp["I"])
     fond.place(x=0, y=0, relwidth=1, relheight=1)
 
@@ -605,15 +614,32 @@ def jeu(nom):
         )
         F_terrain.place(relx=0.5, rely=0.5, anchor="center")
         F_terrain.create_image(0, 0, image=img["I"], anchor="nw", tag="fond")
+        
+        
+        temp["def_img"] = dim(x, x, img[niv[n]["def_img"]], "def")
+        log("image par défaut -", img[niv[n]["def_img"]])
 
         for i in range(li):
             for j in range(col):
-                s = niv[n]["grille"][i][j]
+                s = niv[n]["grille"][i][j][0:2]
+                
+                #gestion transparence
+                if s[0] not in "SMV":
+                    F_terrain.create_image(
+                        j*x,
+                        i*x,
+                        image=temp["def_img"],
+                        anchor="nw",
+                        tag="case",
+                    )
+                
+                #enregistrement de la case
                 if s in temp:
                     image = temp[s]
                 else:
-                    image = dim(x, x, img[s])
+                    image = dim(x, x, img[s], s)
                     temp[s] = image
+                #affichage de la case
                 F_terrain.create_image(
                     j*x,
                     i*x,

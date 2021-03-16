@@ -2,7 +2,7 @@
 niv = 11
 score = 0
 inv = 
-pos = 16;10
+pos = 18;10
 s_niv = 11
 s_score = 0
 s_inv = 
