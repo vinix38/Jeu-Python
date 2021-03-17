@@ -27,6 +27,11 @@ langue =  {
         "gauche" : "Aller à gauche",
         "droite" : "Aller à droite",
         "action" : "Interagir",
+        "1_monstre1" : "Opus: Halte!",
+        "1_monstre2" : "Opus: Tu n’iras pas plus loin!",
+        "1_fantome1" : "Au-delà de cette porte, tu risques de rencontrer plus que ton passé…",
+        "1_fantome2" : "Si tu ne gagnes pas contre tes ennemis, tu ne pourras pas avancer.",
+        "1_fantome3" : "Si tu es ici c’est que tu as réussi… tu t’approches de la vérité",
     },
     #====== ANGLAIS ======
     "en_US" : {
@@ -56,5 +61,10 @@ langue =  {
         "gauche" : "Go left",
         "droite" : "Go right",
         "action" : "Interact",
+        "1_monstre1" : "Opus: Stop!",
+        "1_monstre2" : "Opus: You will not go any further!",
+        "1_fantome1" : "Beyond this door, you will meet more than your past…",
+        "1_fantome2" : "If you don't win against your enemies, you can't move forward.",
+        "1_fantome3" : "If you are here, it means that you succeeded… you are getting nearer from the truth",
     },
 }

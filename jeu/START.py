@@ -239,6 +239,7 @@ def creer():
                 "score": 0,
                 "inv": "",
                 "pos": "",
+                "vie": 10,
                 "S_niv": "11",
                 "S_score": 0,
                 "S_inv": "",
@@ -580,27 +581,26 @@ def jeu(nom):
 
     F_barre = tk.Frame(F_jeu, background=None)
     F_barre.place(relheight=1, relwidth=0.2, relx=0.8)
-    F_barre.rowconfigure(list(range(10)), weight=1)
-    F_barre.columnconfigure([0, 1, 2], weight=1)
+    F_barre.rowconfigure(list(range(10)), weight=1,minsize=H_F/10)
+    F_barre.columnconfigure([0, 1, 2], weight=1, minsize=L_F/15)
 
     # \_(°-°)_/
-    mvt = n = x = 0
+    mvt = x = 0
 
     F_terrain = tk.Canvas(F_carte)
 
     # chargement des niveaux
-    def charge(niv_cbl):
+    def charge(n):
         global niv
         global img
         global temp
         nonlocal x
-        nonlocal n
         nonlocal F_terrain
         nonlocal F_carte
         nonlocal mvt
         mvt = 1
-        n = niv_cbl
         log("chargement du niveau",n)
+        V_niv.set(n[0])
         temp = {}
         efface(F_carte)
         li = int(niv[n]["li"])
@@ -664,7 +664,6 @@ def jeu(nom):
         mvt = 0
 
     def mouv(mov):
-        nonlocal n
         nonlocal x
         nonlocal mvt
         nonlocal F_terrain
@@ -673,7 +672,7 @@ def jeu(nom):
         log("coordonnés actuels -", coords)
         cible = [int(coords[i] + mov[i]) for i in range(2)]
         log("coordonnés cibles -", cible)
-        if niv[n]["grille"][cible[1]][cible[0]][0] == "S":
+        if niv[parties[nom]["niv"]]["grille"][cible[1]][cible[0]][0] == "S":
             log("mouvement accepté")
             parties[nom]["pos"] = ";".join([str(i) for i in cible])
             mov = [i*x for i in mov]
@@ -716,7 +715,23 @@ def jeu(nom):
         command=quitter,
         **style,
     )
+    T_niveau = tk.Label(
+        master=F_barre,
+        text=loc["niv"]+" :",
+        **style,
+    )
+    V_niv = tk.StringVar(value="/!\\")
+    A_niveau = tk.Label(
+        master=F_barre,
+        textvariable=V_niv,
+        **style,
+    )
+    
+    def vie(delta):
+        pass
 
+    T_niveau.grid(row=5, column=0, sticky="nswe")
+    A_niveau.grid(row=5, column=1, sticky="nswe")
     B_quitter.grid(row=9, column=1, sticky="nswe")
 
     charge(parties[nom]["niv"])
