@@ -32,10 +32,12 @@ style = {
     "foreground": "black",
 }
 ttkStyle = ttk.Style(maitre)
+ttkStyle.theme_use('clam')
 ttkStyle.configure(
     "TMenubutton",
     **style
 )
+ttkStyle.configure("TProgressbar", foreground="black", background="black", troughcolor="black")
 
 # === chemins ===
 def ch(fichier):
@@ -77,7 +79,7 @@ def localisation():
     global maitre
     global img
     loc = langue[options["DEFAULT"]["langue"]]
-    img["BG"] = tk.PhotoImage(file=ch("media/BG_" + options["DEFAULT"]["langue"][0:2] + ".png")),
+    img["BG"] = tk.PhotoImage(file=ch("media/BG_" + options["DEFAULT"]["langue"][0:2] + ".png"))
     maitre.title(loc["titre"])
     log("changement de langue -", loc["lang"])
 
@@ -172,8 +174,8 @@ def acceuil():
     F_acceuil.columnconfigure(list(range(7)), weight=1)
 
     # fond
-    temp["I"] = dim(L_F, H_F, img["I"], "fond")
-    fond = tk.Label(F_acceuil, image=temp["I"])
+    temp["BG"] = dim(L_F, H_F, img["BG"], "fond")
+    fond = tk.Label(F_acceuil, image=temp["BG"])
     fond.place(x=0, y=0, relwidth=1, relheight=1)
 
     # boutons
@@ -327,7 +329,7 @@ def param():
         acceuil()
 
     # fond
-    afond = tk.Label(F_param, image=img["I"])
+    afond = tk.Label(F_param, image=img["BG"])
     afond.place(x=0, y=0, relwidth=1, relheight=1)
 
     # boutons
@@ -591,7 +593,7 @@ def jeu(nom):
     F_barre = tk.Frame(F_jeu, background="black")
     F_barre.place(relheight=1, relwidth=0.2, relx=0.8)
     F_barre.rowconfigure(list(range(15)), weight=1,minsize=H_F/15)
-    F_barre.columnconfigure([0, 1, 2, 4], weight=1, minsize=L_F/20)
+    F_barre.columnconfigure([0, 1, 2, 3], weight=1, minsize=L_F/20)
 
     # \_(°-°)_/
     mvt = x = 0
@@ -755,19 +757,30 @@ def jeu(nom):
         charge(parties[nom]["niv"])
         
     def vie(delta):
+        global parties
         valeur = A_vie["value"]
         valeur += delta
         if valeur <= 0:
             retour()
         else:
             A_vie["value"] = valeur
-            parties[nom]["vie"] = valeur
+            parties[nom]["vie"] = str(valeur)
+            if valeur < 5:
+                couleur = "red"
+            elif 5 <= valeur < 10:
+                couleur = "orange"
+            elif 10 <= valeur < 15:
+                couleur = "green"
+            else:
+                 couleur = "blue"
+            ttkStyle.configure("TProgressbar", foreground=couleur, background=couleur)
     
     A_vie.grid(row=2, column=0, sticky="nswe", columnspan=4)
     T_niveau.grid(row=8, column=0, sticky="nswe", columnspan=2)
     A_niveau.grid(row=8, column=2, sticky="nswe", columnspan=2)
     B_quitter.grid(row=14, column=1, sticky="nswe", columnspan=2)
 
+    vie(0)
     charge(parties[nom]["niv"])
 
 

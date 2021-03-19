@@ -2,7 +2,7 @@ langue =  {
     #====== FRANCAIS ======
     "fr_FR" : {
         "lang" : "Français",
-        "titre" : "je suis un titre",
+        "titre" : "Le Donjon de Daleah",
         "quitter" : "Quitter",
         "options" : "Paramètres",
         ">partie" : "Charger une partie",
@@ -51,7 +51,7 @@ langue =  {
     #====== ANGLAIS ======
     "en_US" : {
         "lang" : "English (US)",
-        "titre" : "I'm a title",
+        "titre" : "Daleah's Dungeon",
         "quitter" : "Quit",
         "options" : "Settings",
         ">partie" : "Load a game",
