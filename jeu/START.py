@@ -230,7 +230,7 @@ def creer():
     def creation():
         nonlocal E_creer
         nom = E_creer.get()
-        if nom in parties.sections():
+        if nom in parties.sections() or nom == "":
             showinfo(loc["err"], loc["déjà"])
             log("erreur, cette partie existe déjà")
         else:

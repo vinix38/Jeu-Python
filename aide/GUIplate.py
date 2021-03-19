@@ -58,13 +58,13 @@ Mentre.delete("1.0", "1.4")
 Mentre.delete("1.0", tk.END)
 Mentre.insert("1.0", "insertion")
 
-texte.pack(fill=tk.X, side=tk.LEFT, expand=True)
-bouton.pack(fill=tk.Y)
-entre.pack(fill=tk.BOTH)
-Mentre.place(x=0, y=0)
+#texte.pack(fill=tk.X, side=tk.LEFT, expand=True)
+#bouton.pack(fill=tk.Y)
+#entre.pack(fill=tk.BOTH)
+#Mentre.place(x=0, y=0)
 
 cadre.pack()
-cadre1.pack()
+#cadre1.pack()
 
 for i in range(3):
     fenetre.columnconfigure(i, weight=1, minsize=75)
@@ -130,7 +130,6 @@ btn_increase.grid_remove()
 btn_increase.grid_forget()
 
 fenetre.mainloop()
-fenetre.destroy()
 """
 https://realpython.com/python-gui-tkinter/
 https://tkdocs.com/tutorial/index.html
