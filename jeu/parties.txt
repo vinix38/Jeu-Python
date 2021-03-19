@@ -7,4 +7,3 @@ s_niv = 11
 s_score = 0
 s_inv = 
 temps = 0
-
