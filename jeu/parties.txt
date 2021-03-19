@@ -7,3 +7,26 @@ s_niv = 11
 s_score = 0
 s_inv = 
 temps = 0
+
+[fezrt]
+niv = 11
+score = 0
+inv = 
+pos = 5;9
+vie = 10
+s_niv = 11
+s_score = 0
+s_inv = 
+temps = 0
+
+[tyyty]
+niv = 11
+score = 0
+inv = 
+pos = 5;8
+vie = 10
+s_niv = 11
+s_score = 0
+s_inv = 
+temps = 0
+
