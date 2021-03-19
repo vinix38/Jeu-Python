@@ -573,21 +573,21 @@ def jeu(nom):
         acceuil()
 
     # fenetre
-    F_jeu = tk.Frame(maitre, background=None)
+    F_jeu = tk.Frame(maitre, background="black")
     F_jeu.place(relheight=1, relwidth=1)
 
-    F_carte = tk.Frame(F_jeu, background=None)
+    F_carte = tk.Frame(F_jeu, background="black")
     F_carte.place(relheight=1, relwidth=0.8)
 
-    F_barre = tk.Frame(F_jeu, background=None)
+    F_barre = tk.Frame(F_jeu, background="black")
     F_barre.place(relheight=1, relwidth=0.2, relx=0.8)
-    F_barre.rowconfigure(list(range(10)), weight=1,minsize=H_F/10)
+    F_barre.rowconfigure(list(range(15)), weight=1,minsize=H_F/10)
     F_barre.columnconfigure([0, 1, 2], weight=1, minsize=L_F/15)
 
     # \_(°-°)_/
     mvt = x = 0
 
-    F_terrain = tk.Canvas(F_carte)
+    F_terrain = tk.Canvas(F_carte, background="black")
 
     # chargement des niveaux
     def charge(n):
@@ -612,9 +612,10 @@ def jeu(nom):
             F_carte,
             height=li*x,
             width=col*x,
+            background="black",
         )
         F_terrain.place(relx=0.5, rely=0.5, anchor="center")
-        F_terrain.create_image(0, 0, image=img["I"], anchor="nw", tag="fond")
+        #F_terrain.create_image(0, 0, image=img["I"], anchor="nw", tag="fond")
         
         log("image par défaut -", niv[n]["def_img"])
         temp["def_img"] = dim(x, x, img[niv[n]["def_img"]], "def")
@@ -726,10 +727,19 @@ def jeu(nom):
         textvariable=V_niv,
         **style,
     )
+    A_vie = ttk.Progressbar(
+        master=F_barre,
+        orient = "horizontal", 
+        length = 100,
+        mode = 'determinate',
+        maximum = 20,
+        value=5,
+    )
     
     def vie(delta):
         pass
-
+    
+    A_vie.grid(row=2, column=0, sticky="nswe", columnspan=3)
     T_niveau.grid(row=5, column=0, sticky="nswe")
     A_niveau.grid(row=5, column=1, sticky="nswe")
     B_quitter.grid(row=9, column=1, sticky="nswe")
