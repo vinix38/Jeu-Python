@@ -14,6 +14,7 @@ langue =  {
         "retour" : "Retour",
         "charger" : "Charger Sauvegarde",
         "import" : "Importer",
+        "suppr" : "Supprimer",
         "XP" : "Expérience",
         "niv" : "Niveau",
         "creer" : "Créer",
@@ -31,7 +32,7 @@ langue =  {
         "1_monstre2" : "Opus: Tu n’iras pas plus loin!",
         "1_fantome1" : "Au-delà de cette porte, tu risques de rencontrer plus que ton passé…",
         "1_fantome2" : "Si tu ne gagnes pas contre tes ennemis, tu ne pourras pas avancer.",
-        "1_fantome3" : "Si tu es ici c’est que tu as réussi… Tu t’approches de la vérité"
+        "1_fantome3" : "Si tu es ici c’est que tu as réussi… Tu t’approches de la vérité",
         "2_monstre1" : "Opus: Je comptes bien te couper dans ton élan",
         "2_monstre2" : "Givine: Voyons voir à quel point tu es malin...",
         "2_monstre3" : "Givine: Tu ne gangeras pas contre moi!",
@@ -46,9 +47,6 @@ langue =  {
         "3_monstre5" : "Struk Boon:",
         "3_monstre6" : "Struk Boon:",
         "3_monstre7" : "Drak Boon:" ,
-        
-        
-        ",
     },
     #====== ANGLAIS ======
     "en_US" : {
@@ -65,6 +63,7 @@ langue =  {
         "retour" : "Back",
         "charger" : "Load Save",
         "import" : "Import",
+        "suppr" : "Delete",
         "XP" : "Experience",
         "niv" : "Level",
         "creer" : "Create",

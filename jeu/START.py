@@ -75,7 +75,9 @@ def localisation():
     global loc
     global options
     global maitre
+    global img
     loc = langue[options["DEFAULT"]["langue"]]
+    img["BG"] = tk.PhotoImage(file=ch("media/BG_" + options["DEFAULT"]["langue"][0:2] + ".png")),
     maitre.title(loc["titre"])
     log("changement de langue -", loc["lang"])
 
@@ -108,16 +110,15 @@ def ecran():
 # ====== VARIABLES ======
 temp = {}
 img = {
-    "V-": tk.PhotoImage(file=ch("media/V--.png")),
-    "I": tk.PhotoImage(file=ch("media/fond.png")),
-    "MP": tk.PhotoImage(file=ch("media/MPC.png")),
-    "MF": tk.PhotoImage(file=ch("media/MPF.png")),
-    "Mp": tk.PhotoImage(file=ch("media/MPD.png")),
+    "V-": tk.PhotoImage(file=ch("media/T.png")),
+    "MP": tk.PhotoImage(file=ch("media/MP.png")),
+    "MF": tk.PhotoImage(file=ch("media/MF.png")),
+    "Mp": tk.PhotoImage(file=ch("media/Mp-.png")),
     "perso": tk.PhotoImage(file=ch("media/icone.png")),
-    "SG": tk.PhotoImage(file=ch("media/SG-.png")),
-    "CD": tk.PhotoImage(file=ch("media/CD1.png")),
-    "FB": tk.PhotoImage(file=ch("media/CD1.png")),
-    "OP" : tk.PhotoImage(file=ch("media/OP1.png")),
+    "SG": tk.PhotoImage(file=ch("media/SG.png")),
+    "CD": tk.PhotoImage(file=ch("media/CD.png")),
+    "FB": tk.PhotoImage(file=ch("media/FB.png")),
+    "OP" : tk.PhotoImage(file=ch("media/OP.png")),
     "icone" : tk.PhotoImage(file=ch("media/icone.png")),
 }
 maitre.iconphoto(True, img["icone"])
@@ -239,7 +240,7 @@ def creer():
                 "score": 0,
                 "inv": "",
                 "pos": "",
-                "vie": 10,
+                "vie": 5,
                 "S_niv": "11",
                 "S_score": 0,
                 "S_inv": "",
@@ -513,10 +514,18 @@ def charger():
         command=lambda: jeu(sauv[B_liste.curselection()[0]]),
         **style,
     )
-    B_importer = tk.Button(
+    def supprimer(sel):
+        if sel != ():
+            parties.remove_section()
+            with open(ch('parties.txt'), 'w') as fichier:
+                parties.write(fichier)
+            charger()
+        
+        
+    B_supprimer = tk.Button(
         master=F_barre,
-        text=loc["import"],
-        command=None,
+        text=loc["suppr"],
+        command=lambda: supprimer(sauv[B_liste.curselection()[0]]),
         **style,
     )
 
@@ -551,7 +560,7 @@ def charger():
         B_charger.config(state="disabled")
         log("pas de parties disponibles")
 
-    B_importer.grid(row=0, column=0, sticky="nswe")
+    B_supprimer.grid(row=0, column=0, sticky="nswe")
     B_retour.grid(row=0, column=1, sticky="nswe")
     B_charger.grid(row=0, column=2, sticky="nswe")
 
@@ -581,8 +590,8 @@ def jeu(nom):
 
     F_barre = tk.Frame(F_jeu, background="black")
     F_barre.place(relheight=1, relwidth=0.2, relx=0.8)
-    F_barre.rowconfigure(list(range(15)), weight=1,minsize=H_F/10)
-    F_barre.columnconfigure([0, 1, 2], weight=1, minsize=L_F/15)
+    F_barre.rowconfigure(list(range(15)), weight=1,minsize=H_F/15)
+    F_barre.columnconfigure([0, 1, 2, 4], weight=1, minsize=L_F/20)
 
     # \_(°-°)_/
     mvt = x = 0
@@ -730,19 +739,34 @@ def jeu(nom):
     A_vie = ttk.Progressbar(
         master=F_barre,
         orient = "horizontal", 
-        length = 100,
+        length = int(L_F/5),
         mode = 'determinate',
         maximum = 20,
-        value=5,
+        value=parties[nom].getint("vie"),
     )
-    
+    def retour():
+        nonlocal mvt
+        global parties
+        parties[nom]["inv"] = parties[nom]["S_inv"]
+        parties[nom]["niv"] = parties[nom]["S_niv"]
+        parties[nom]["score"] = parties[nom]["S_score"]
+        parties[nom]["pos"] = ""
+        parties[nom]["vie"] = 5
+        charge(parties[nom]["niv"])
+        
     def vie(delta):
-        pass
+        valeur = A_vie["value"]
+        valeur += delta
+        if valeur <= 0:
+            retour()
+        else:
+            A_vie["value"] = valeur
+            parties[nom]["vie"] = valeur
     
-    A_vie.grid(row=2, column=0, sticky="nswe", columnspan=3)
-    T_niveau.grid(row=5, column=0, sticky="nswe")
-    A_niveau.grid(row=5, column=1, sticky="nswe")
-    B_quitter.grid(row=9, column=1, sticky="nswe")
+    A_vie.grid(row=2, column=0, sticky="nswe", columnspan=4)
+    T_niveau.grid(row=8, column=0, sticky="nswe", columnspan=2)
+    A_niveau.grid(row=8, column=2, sticky="nswe", columnspan=2)
+    B_quitter.grid(row=14, column=1, sticky="nswe", columnspan=2)
 
     charge(parties[nom]["niv"])
 

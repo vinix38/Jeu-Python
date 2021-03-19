@@ -1,52 +1,9 @@
-[DEFAULT]
+[test]
 niv = 11
 score = 0
 inv = 
-pos = 2;1
-vie = 10
-s_niv = 11
-s_score = 0
-s_inv = 
-temps = 0
-
-[testnsi]
-niv = 11
-score = 0
-inv = 
-pos = 10;10
-s_niv = 11
-s_score = 0
-s_inv = 
-temps = 0
-
-[MAMMMMMMMA!]
-niv = 11
-score = 0
-inv = 
-pos = 21;7
-vie = 10
-s_niv = 11
-s_score = 0
-s_inv = 
-temps = 0
-
-[fezrt]
-niv = 11
-score = 0
-inv = 
-pos = 5;9
-vie = 10
-s_niv = 11
-s_score = 0
-s_inv = 
-temps = 0
-
-[tyyty]
-niv = 11
-score = 0
-inv = 
-pos = 5;8
-vie = 10
+pos = 15;10
+vie = 5
 s_niv = 11
 s_score = 0
 s_inv = 
