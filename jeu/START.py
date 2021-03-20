@@ -1,15 +1,16 @@
 # ====== IMPORTS ======
-import tkinter as tk
-import datetime as dt
-import platform as pf
-from configparser import ConfigParser
-from fractions import Fraction
-from tkinter.messagebox import showinfo
-from tkinter import ttk
-from niveaux import niv
-import time
-import sys
-import os
+import tkinter as tk                        #librairie graphique
+import datetime as dt                       #infos de temps
+import platform as pf                       #detection de l'OS
+from boombox import BoomBox                 #gestion du son
+from configparser import ConfigParser       #gestion des fichiers persistants
+from fractions import Fraction              #calcul des ratios d'images
+from tkinter.messagebox import showinfo     #message d'erreur
+from tkinter import ttk                     #tkinter en plus beau
+from niveaux import niv                     #infos de niveaux
+import time                                 #retarder l'execution du programe
+import sys                                  #gestion des chemins de fichiers
+import os                                   # ^^idem^^
 
 # fonction de log
 def log(*arg):
@@ -18,20 +19,20 @@ def log(*arg):
 
 # === déclaration fenêtre ===
 log("=== INITIALISATION ===")
-maitre = tk.Tk()
-maitre.resizable(0, 0)
-H_E = maitre.winfo_screenheight()
-L_E = maitre.winfo_screenwidth()
+maitre = tk.Tk()                            #déclaration de fenetre
+maitre.resizable(0, 0)                      #empecher le changement de taille
+H_E = maitre.winfo_screenheight()           #hauteur d'écran
+L_E = maitre.winfo_screenwidth()            #largeur d'écran
 log("taille d'écran =", H_E, "x", L_E)
 
 
 # === styles ===
-style = {
+style = {   #style par défaut pour tk
     "font": ('Fixedsys', 24),
     "background": "grey",
     "foreground": "black",
 }
-ttkStyle = ttk.Style(maitre)
+ttkStyle = ttk.Style(maitre) #styles par défaut pour ttk
 ttkStyle.theme_use('clam')
 ttkStyle.configure(
     "TMenubutton",
@@ -53,8 +54,8 @@ def dim(L, H, img, nom="?"):
     (Largeur (px), Hauteur (px), image)\n
     redimensionne l'image aux dimensions souhaitées
     """
-    H = (Fraction(str(H/img.height()))).limit_denominator(30)
-    L = (Fraction(str(L/img.width()))).limit_denominator(30)
+    H = (Fraction(str(H/img.height()))).limit_denominator(30) #ratio de hauteur
+    L = (Fraction(str(L/img.width()))).limit_denominator(30)  #ratio de largeur
     log("image", nom,"=",H,"par",L)
     return img.zoom(L.numerator, H.numerator).subsample(L.denominator, H.denominator)
 
@@ -73,14 +74,14 @@ def localisation():
     ()\n
     Change la langue
     """
-    from langue import langue
+    from langue import langue #fichier de localisation
     global loc
     global options
     global maitre
     global img
-    loc = langue[options["DEFAULT"]["langue"]]
-    img["BG"] = tk.PhotoImage(file=ch("media/BG_" + options["DEFAULT"]["langue"][0:2] + ".png"))
-    maitre.title(loc["titre"])
+    loc = langue[options["DEFAULT"]["langue"]] #changement de la localisation par défaut
+    img["BG"] = tk.PhotoImage(file=ch("media/BG_" + options["DEFAULT"]["langue"][0:2] + ".png")) #changement du fond d'écran
+    maitre.title(loc["titre"]) #changement du titre
     log("changement de langue -", loc["lang"])
 
 # === prise en compte plein écran ===
@@ -98,21 +99,23 @@ def ecran():
         if pf.system() == ("Windows" or "Darwin"):
             maitre.wm_attributes("-fullscreen", True)
         else:
-            #maitre.attributes("-zoomed", True)
+            maitre.iconify()
+            maitre.deiconify()
             maitre.geometry(str(L_E)+"x"+str(H_E)+"+0+0")
         return L_E, H_E
     else:
         if pf.system() == ("Windows" or "Darwin"):
             maitre.wm_attributes("-fullscreen", False)
-            #maitre.attributes("-zoomed", False)
+        else:
+            maitre.iconify()
+            maitre.deiconify()
         maitre.geometry(options["DEFAULT"]["taille"])
         return tuple(int(i) for i in options["DEFAULT"]["taille"].split("x"))
 
 
 # ====== VARIABLES ======
-temp = {}
-img = {
-    "V-": tk.PhotoImage(file=ch("media/T.png")),
+temp = {}       #empêche que les images soient effacées par le garbage collector
+img = {         #traduction des noms de textures en objets images
     "MP": tk.PhotoImage(file=ch("media/MP.png")),
     "MF": tk.PhotoImage(file=ch("media/MF.png")),
     "Mp": tk.PhotoImage(file=ch("media/Mp-.png")),
@@ -123,10 +126,10 @@ img = {
     "OP" : tk.PhotoImage(file=ch("media/OP.png")),
     "icone" : tk.PhotoImage(file=ch("media/icone.png")),
 }
-maitre.iconphoto(True, img["icone"])
+maitre.iconphoto(True, img["icone"]) #icone de fenetre
 
 # === lecture des paramètres ===
-options = ConfigParser(allow_no_value=True)
+options = ConfigParser(allow_no_value=True) 
 if os.path.isfile(ch("options.txt")) == False:
     options["DEFAULT"] = {
         "plein_ecran": True,
@@ -153,6 +156,10 @@ if os.path.isfile(ch("parties.txt")):
 else:
     with open(ch('parties.txt'), 'w') as fichier:
         parties.write(fichier)
+
+def son(fichier):
+    if options["DEFAULT"].getboolean("son"):
+        BoomBox(ch("media/"+fichier+".wav"), False).play()
 
 localisation()
 L_F, H_F = ecran()
@@ -400,33 +407,34 @@ def param():
     B_haut = tk.Button(
         master=F_param,
         textvariable=V_dir["haut"],
-        command=lambda x="haut": C_touche(x),
+        command=lambda: C_touche("haut"),
         **style,
     )
     B_bas = tk.Button(
         master=F_param,
         textvariable=V_dir["bas"],
-        command=lambda x="bas": C_touche(x),
+        command=lambda: C_touche("bas"),
         **style,
     )
     B_gauche = tk.Button(
         master=F_param,
         textvariable=V_dir["gauche"],
-        command=lambda x="gauche": C_touche(x),
+        command=lambda: C_touche("gauche"),
         **style,
     )
     B_droite = tk.Button(
         master=F_param,
         textvariable=V_dir["droite"],
-        command=lambda x="droite": C_touche(x),
+        command=lambda: C_touche("droite"),
         **style,
     )
     B_action = tk.Button(
         master=F_param,
         textvariable=V_dir["action"],
-        command=lambda x="action": C_touche(x),
+        command=lambda: C_touche("action"),
         **style,
     )
+    #texte associé aux bouton
     T_haut = tk.Label(
         F_param,
         text=loc["haut"],
@@ -602,6 +610,10 @@ def jeu(nom):
 
     # chargement des niveaux
     def charge(n):
+        """
+        (n)\n
+        charge le niveau (n) spécifié
+        """
         global niv
         global img
         global temp
@@ -624,43 +636,48 @@ def jeu(nom):
             height=li*x,
             width=col*x,
             background="black",
+            #highlightthickness=0
         )
         F_terrain.place(relx=0.5, rely=0.5, anchor="center")
         #F_terrain.create_image(0, 0, image=img["I"], anchor="nw", tag="fond")
         
         log("image par défaut -", niv[n]["def_img"])
-        temp["def_img"] = dim(x, x, img[niv[n]["def_img"]], "def")
+        temp["def_img"] = dim(x, x, img[niv[n]["def_img"]], "def") #image par défaut en cas de transparence
 
         for i in range(li):
             for j in range(col):
-                s = niv[n]["grille"][i][j][0:2]
+                s = niv[n]["grille"][i][j][0:2] #récupération du nom de la texture
                 
-                #gestion transparence
-                if s[0] not in "SMV":
+                
+                if s[0] != "V": #pas d'image à afficher si la case est vide
+                    
+                    #gestion transparence
+                    if s[0] not in "SMV":
+                        F_terrain.create_image(
+                            j*x,
+                            i*x,
+                            image=temp["def_img"],
+                            anchor="nw",
+                            tag="case",
+                        )
+                    
+                    #enregistrement de la case
+                    if s in temp:
+                        image = temp[s]
+                    else:
+                        image = dim(x, x, img[s], s)
+                        temp[s] = image
+                    #affichage de la case
                     F_terrain.create_image(
                         j*x,
                         i*x,
-                        image=temp["def_img"],
+                        image=image,
                         anchor="nw",
-                        tag="case",
+                        tag="case"
                     )
-                
-                #enregistrement de la case
-                if s in temp:
-                    image = temp[s]
-                else:
-                    image = dim(x, x, img[s], s)
-                    temp[s] = image
-                #affichage de la case
-                F_terrain.create_image(
-                    j*x,
-                    i*x,
-                    image=image,
-                    anchor="nw",
-                    tag="case"
-                )
+        # ---=== fin charge() ===---
 
-        if parties[nom]["pos"] == "":
+        if parties[nom]["pos"] == "": #si il n'y a pas encore de position enregistrée
             parties[nom]["pos"] = str(
                 niv[n]["def_pos"][0]) + ";" + str(niv[n]["def_pos"][1])
 
@@ -675,17 +692,21 @@ def jeu(nom):
         )
         mvt = 0
 
-    def mouv(mov):
+    def mouv(mov, coords):
+        """
+        déplace le personnage si possible
+        """
         nonlocal x
         nonlocal mvt
         nonlocal F_terrain
         log("coordonnés de déplacement -", mov)
-        coords = [i / x for i in F_terrain.coords("perso")]
+        
         log("coordonnés actuels -", coords)
         cible = [int(coords[i] + mov[i]) for i in range(2)]
         log("coordonnés cibles -", cible)
         if niv[parties[nom]["niv"]]["grille"][cible[1]][cible[0]][0] == "S":
             log("mouvement accepté")
+            son("pas")
             parties[nom]["pos"] = ";".join([str(i) for i in cible])
             mov = [i*x for i in mov]
             F_terrain.move("perso", *mov)
@@ -693,15 +714,46 @@ def jeu(nom):
             log("mouvement refusé")
         mvt = 0
 
-    def inter():
-        pass
+    def action(case):
+        global loc
+        global parties
+        log("interaction avec", case)
+        nonlocal mvt
+        if case[0:2] == "FB":
+            showinfo("", loc[parties[nom]["niv"][0] + "_fantome" + case[2]])
+            
+        mvt = 0
+        
+
+    def inter(coords):
+        """
+        cherche si il y a un objet avec lequel interagir
+        """
+        tr = False
+        for i in range(-1,2):
+            for j in range(-1,2):
+                if niv[parties[nom]["niv"]]["grille"][coords[1]+i][coords[0]+j][0] not in "MSV":
+                    log("objet trouvé")
+                    tr = True
+                    break
+            if tr:
+                break
+        if tr:
+            action(niv[parties[nom]["niv"]]["grille"][coords[1]+i][coords[0]+j])
+        else:
+            nonlocal mvt
+            mvt = 0
 
     def clavier(e):
+        """
+        intercepte toutes les touches tapées et décide l'action appropriée
+        """
         nonlocal mvt
         e = e.keysym
         log("touche pressée -", e)
         if mvt == 0:
-            log("mouvement possible")
+            coords = [int(i / x) for i in F_terrain.coords("perso")]
+            log("coords", coords)
             mov = [0, 0]
             if e == options["DEFAULT"]["haut"]:
                 mov[1] = -1
@@ -712,15 +764,17 @@ def jeu(nom):
             elif e == options["DEFAULT"]["droite"]:
                 mov[0] = 1
             elif e == options["DEFAULT"]["action"]:
-                log("essai d'interaction")
-                inter()
+                log("tentative d'interaction")
+                mvt = 1
+                inter(coords)
             if mov != [0, 0]:
                 log("tentative de mouvement")
                 mvt = 1
-                mouv(mov)
+                mouv(mov, coords)
 
     maitre.bind_all("<Key>", clavier)
 
+    #=== barre latérale ===
     B_quitter = tk.Button(
         master=F_barre,
         text=loc["quitter"],
@@ -741,12 +795,14 @@ def jeu(nom):
     A_vie = ttk.Progressbar(
         master=F_barre,
         orient = "horizontal", 
-        length = int(L_F/5),
         mode = 'determinate',
         maximum = 20,
         value=parties[nom].getint("vie"),
     )
     def retour():
+        """
+        retour au dernier checkpoint
+        """
         nonlocal mvt
         global parties
         parties[nom]["inv"] = parties[nom]["S_inv"]
@@ -757,6 +813,9 @@ def jeu(nom):
         charge(parties[nom]["niv"])
         
     def vie(delta):
+        """
+        effectue les changements de niveau de vie
+        """
         global parties
         valeur = A_vie["value"]
         valeur += delta
@@ -775,6 +834,7 @@ def jeu(nom):
                  couleur = "blue"
             ttkStyle.configure("TProgressbar", foreground=couleur, background=couleur)
     
+    #placement
     A_vie.grid(row=2, column=0, sticky="nswe", columnspan=4)
     T_niveau.grid(row=8, column=0, sticky="nswe", columnspan=2)
     A_niveau.grid(row=8, column=2, sticky="nswe", columnspan=2)
@@ -788,4 +848,4 @@ log("début de l'execution")
 
 acceuil()
 
-maitre.mainloop()
+maitre.mainloop() #fin du script !
