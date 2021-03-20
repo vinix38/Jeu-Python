@@ -42,7 +42,7 @@ langue =  {
         "2_fantome2" : "Bouh!",
         "3_fantome1" : "Le donjon de Daleah est isolé du reste des royaumes",
         "3_fantome2" : "Pour atteindre le coffre tu devras vaincre le Drak Boon",
-        "3_fantome3" . "Je me demande bien quel était mon prénom...",
+        "3_fantome3" : "Je me demande bien quel était mon prénom...",
         "3_monstre1" : "Opus: ",
         "3_monstre2" : "Givine: Impossible...tu es arrivé jusqu'ici",
         "3_monstre3" : "Givine:",
