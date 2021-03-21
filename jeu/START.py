@@ -42,7 +42,9 @@ ttkStyle.configure(
     "TMenubutton",
     **style
 )
-ttkStyle.configure("TProgressbar", foreground="black", background="black", troughcolor="black")
+ttkStyle.configure("TProgressbar", foreground="black", background="black", troughcolor="black") #temporaire
+ttkStyle.configure("Treeview", highlightthickness=0, bd=0, font=('Fixedsys', 20), rowheight=40) # style des cases
+ttkStyle.configure("Treeview.Heading", font=('Fixedsys', 20,'bold')) # style de l'en-tête
 
 # === chemins ===
 def ch(fichier):
@@ -512,24 +514,30 @@ def charger():
         command=acceuil,
         **style,
     )
+    def charge(B_liste):
+        sel = B_liste.focus()
+        log(sel)
+        if sel:
+            jeu(B_liste.item(sel)["values"][0])
+            
     B_charger = tk.Button(
         master=F_barre,
         text=loc["charger"],
-        command=lambda: jeu(sauv[B_liste.curselection()[0]]),
+        command=lambda: charge(B_liste),
         **style,
     )
-    def supprimer(sel):
-        if sel != ():
-            parties.remove_section()
+    def supprimer(B_liste):
+        sel = B_liste.focus()
+        if sel:
+            parties.remove_section(B_liste.item(sel)["values"][0])
             with open(ch('parties.txt'), 'w') as fichier:
                 parties.write(fichier)
             charger()
-        
-        
+
     B_supprimer = tk.Button(
         master=F_barre,
         text=loc["suppr"],
-        command=lambda: supprimer(sauv[B_liste.curselection()[0]]),
+        command=lambda: supprimer(B_liste),
         **style,
     )
 
@@ -541,18 +549,27 @@ def charger():
         roue = tk.Scrollbar(F_liste)
         roue.pack(side="right", fill="y")
 
-        B_liste = tk.Listbox(
+        colonnes = (loc["nom"], loc["niv"], loc["XP"], loc["temps"])
+        B_liste = ttk.Treeview(
             master=F_liste,
+            show="headings",
+            column=colonnes,
             height=len(sauv),
-            selectmode="single",
-            width=L_F,
+            selectmode="browse",
             yscrollcommand=roue.set,
-            **style,
+
         )
+        for c in colonnes:
+            B_liste.column(c, anchor="center")
+            B_liste.heading(c, text=c.title(), anchor="center")            
+            
         for x in sauv:
-            B_liste.insert("end", x + "|" + loc["XP"] + " : " + parties[x]["score"] +
-                           " | " + loc["niv"] + " : " + parties[x]["niv"][0] + " | " + parties[x]["temps"])
-        B_liste.pack()
+            B_liste.insert(
+                parent='',
+                index='end',
+                values=(x, parties[x]["niv"][0], parties[x]["score"], parties[x]["temps"])
+            )
+        B_liste.pack(fill="both")
 
     else:
         vide = tk.Label(
@@ -637,7 +654,6 @@ def jeu(nom):
 
         for i in range(li):
             for j in range(col):
-                log(i, j, niv[n]["grille"][i][j])
                 s = niv[n]["grille"][i][j][0:2] #récupération du nom de la texture
                 
                 if s[0] != "V": #pas d'image à afficher si la case est vide
@@ -767,13 +783,24 @@ def jeu(nom):
     )
     T_niveau = tk.Label(
         master=F_barre,
-        text=loc["niv"]+" :",
+        text=loc["niv"],
         **style,
     )
     V_niv = tk.StringVar(value="/!\\")
     A_niveau = tk.Label(
         master=F_barre,
         textvariable=V_niv,
+        **style,
+    )
+    T_xp = tk.Label(
+        master=F_barre,
+        text=loc["XP"],
+        **style,
+    )
+    V_xp = tk.IntVar(value=parties[nom].getint("score"))
+    A_xp = tk.Label(
+        master=F_barre,
+        textvariable=V_xp,
         **style,
     )
     A_vie = ttk.Progressbar(
@@ -783,6 +810,7 @@ def jeu(nom):
         maximum = 20,
         value=parties[nom].getint("vie"),
     )
+    
     def retour():
         """
         retour au dernier checkpoint
@@ -817,14 +845,28 @@ def jeu(nom):
             else:
                  couleur = "blue"
             ttkStyle.configure("TProgressbar", foreground=couleur, background=couleur)
+            
+    def xp(delta):
+        """
+        effectue les changements de score
+        """
+        global parties
+        valeur = V_xp.get()
+        valeur += delta
+        V_xp.set(valeur)
+        parties[nom]["score"] = str(valeur)
+    
     
     #placement
     A_vie.grid(row=2, column=0, sticky="nswe", columnspan=4)
     T_niveau.grid(row=8, column=0, sticky="nswe", columnspan=2)
     A_niveau.grid(row=8, column=2, sticky="nswe", columnspan=2)
+    T_xp.grid(row=6, column=0, sticky="nswe", columnspan=2)
+    A_xp.grid(row=6, column=2, sticky="nswe", columnspan=2)
     B_quitter.grid(row=14, column=1, sticky="nswe", columnspan=2)
 
     vie(0)
+    xp(0)
     charge(parties[nom]["niv"])
 
 
