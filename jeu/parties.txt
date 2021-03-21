@@ -2,7 +2,29 @@
 niv = 11
 score = 0
 inv = 
-pos = 15;10
+pos = 17;9
+vie = 5
+s_niv = 11
+s_score = 0
+s_inv = 
+temps = 0
+
+[eez]
+niv = 11
+score = 0
+inv = 
+pos = 13;10
+vie = 5
+s_niv = 11
+s_score = 0
+s_inv = 
+temps = 0
+
+[test1]
+niv = 11
+score = 0
+inv = 
+pos = 6;18
 vie = 5
 s_niv = 11
 s_score = 0
