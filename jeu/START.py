@@ -154,9 +154,9 @@ else:
     with open(ch('parties.txt'), 'w') as fichier:
         parties.write(fichier)
 
-def son(fichier):
+def son(nom):
     if options["DEFAULT"].getboolean("son"):
-        BoomBox(ch("media/"+fichier+".wav"), False).play()
+        BoomBox(ch("media/"+nom+".wav"), False).play()
 
 L_F, H_F = ecran()
 localisation()
@@ -165,6 +165,7 @@ localisation()
 def acceuil():
     global maitre
     global options
+    global temp
 
     efface(maitre)
 
@@ -177,7 +178,8 @@ def acceuil():
     F_acceuil.columnconfigure(list(range(7)), weight=1)
 
     # fond
-    fond = tk.Label(F_acceuil, image=temp["BG"])
+    temp={}
+    fond = tk.Label(F_acceuil, image=img(L_F, H_F, "BG_"+options["DEFAULT"]["langue"][0:2]))
     fond.place(x=0, y=0, relwidth=1, relheight=1)
 
     # boutons
@@ -329,7 +331,7 @@ def param():
         acceuil()
 
     # fond
-    afond = tk.Label(F_param, image=temp["BG"])
+    afond = tk.Label(F_param, image=temp["BG_"+options["DEFAULT"]["langue"][0:2]])
     afond.place(x=0, y=0, relwidth=1, relheight=1)
 
     # boutons
@@ -635,6 +637,7 @@ def jeu(nom):
 
         for i in range(li):
             for j in range(col):
+                log(i, j, niv[n]["grille"][i][j])
                 s = niv[n]["grille"][i][j][0:2] #récupération du nom de la texture
                 
                 if s[0] != "V": #pas d'image à afficher si la case est vide
@@ -646,7 +649,7 @@ def jeu(nom):
                             image=temp["def_img"],
                             anchor="nw",
                             tag="case",
-                        )
+                        )       
                     
                     #affichage de la case
                     F_terrain.create_image(
@@ -678,9 +681,7 @@ def jeu(nom):
         nonlocal x
         nonlocal mvt
         nonlocal F_terrain
-        log("coordonnés de déplacement -", mov)
         
-        log("coordonnés actuels -", coords)
         cible = [int(coords[i] + mov[i]) for i in range(2)]
         log("coordonnés cibles -", cible)
         if niv[parties[nom]["niv"]]["grille"][cible[1]][cible[0]][0] == "S":
@@ -694,12 +695,16 @@ def jeu(nom):
         mvt = 0
 
     def action(case):
-        global loc
         global parties
         log("interaction avec", case)
         nonlocal mvt
-        if case[0:2] == "FB":
+        ca = case[0:2]
+        if ca == "FB":
             showinfo("", loc[parties[nom]["niv"][0] + "_fantome" + case[2]])
+        elif ca == "OP":
+            pass
+        elif ca == "EP":
+            charge(case[2])
             
         mvt = 0
         

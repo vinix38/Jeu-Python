@@ -2,7 +2,7 @@
 niv = 11
 score = 0
 inv = 
-pos = 17;9
+pos = 9;2
 vie = 5
 s_niv = 11
 s_score = 0
@@ -20,11 +20,11 @@ s_score = 0
 s_inv = 
 temps = 0
 
-[test1]
-niv = 11
+[test2]
+niv = 21
 score = 0
 inv = 
-pos = 6;18
+pos = 8;6
 vie = 5
 s_niv = 11
 s_score = 0
