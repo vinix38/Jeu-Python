@@ -1,5 +1,9 @@
 # ====== IMPORTS ======
-import tkinter as tk                        #librairie graphique
+try:
+    import tkinter as tk                    #librairie graphique
+except ImportError:
+    print("sudo apt-get install python-tk") #pour installer tkinter sur les distributions debian
+    raise
 import datetime as dt                       #infos de temps
 import platform as pf                       #detection de l'OS
 from boombox import BoomBox                 #gestion du son
@@ -49,15 +53,20 @@ def ch(fichier):
     return os.path.join(sys.path[0], str(fichier))
 
 # === changement de taille ===
-def dim(L, H, img, nom="?"):
+def img(L, H, nom):
     """
-    (Largeur (px), Hauteur (px), image)\n
+    (Largeur (px), Hauteur (px), nom de l'image)\n
     redimensionne l'image aux dimensions souhaitées
     """
-    H = (Fraction(str(H/img.height()))).limit_denominator(30) #ratio de hauteur
-    L = (Fraction(str(L/img.width()))).limit_denominator(30)  #ratio de largeur
-    log("image", nom,"=",H,"par",L)
-    return img.zoom(L.numerator, H.numerator).subsample(L.denominator, H.denominator)
+    global temp
+    if nom not in temp:
+        img = tk.PhotoImage(file=ch("media/"+nom+".png")) #ressource image
+        H = (Fraction(str(H/img.height()))).limit_denominator(30) #ratio de hauteur
+        L = (Fraction(str(L/img.width()))).limit_denominator(30)  #ratio de largeur
+        log("image", nom,"=",H,"par",L)
+        img = img.zoom(L.numerator, H.numerator).subsample(L.denominator, H.denominator)
+        temp[nom] = img
+    return temp[nom]
 
 # === tout effacer ===
 def efface(parent):
@@ -78,9 +87,8 @@ def localisation():
     global loc
     global options
     global maitre
-    global img
     loc = langue[options["DEFAULT"]["langue"]] #changement de la localisation par défaut
-    img["BG"] = tk.PhotoImage(file=ch("media/BG_" + options["DEFAULT"]["langue"][0:2] + ".png")) #changement du fond d'écran
+    temp["BG"] = img(L_F, H_F, "BG_"+options["DEFAULT"]["langue"][0:2]) #changement du fond d'écran
     maitre.title(loc["titre"]) #changement du titre
     log("changement de langue -", loc["lang"])
 
@@ -115,18 +123,7 @@ def ecran():
 
 # ====== VARIABLES ======
 temp = {}       #empêche que les images soient effacées par le garbage collector
-img = {         #traduction des noms de textures en objets images
-    "MP": tk.PhotoImage(file=ch("media/MP.png")),
-    "MF": tk.PhotoImage(file=ch("media/MF.png")),
-    "Mp": tk.PhotoImage(file=ch("media/Mp-.png")),
-    "perso": tk.PhotoImage(file=ch("media/icone.png")),
-    "SG": tk.PhotoImage(file=ch("media/SG.png")),
-    "CD": tk.PhotoImage(file=ch("media/CD.png")),
-    "FB": tk.PhotoImage(file=ch("media/FB.png")),
-    "OP" : tk.PhotoImage(file=ch("media/OP.png")),
-    "icone" : tk.PhotoImage(file=ch("media/icone.png")),
-}
-maitre.iconphoto(True, img["icone"]) #icone de fenetre
+maitre.iconphoto(True, img(200, 200, "icone")) #icone de fenetre
 
 # === lecture des paramètres ===
 options = ConfigParser(allow_no_value=True) 
@@ -161,14 +158,13 @@ def son(fichier):
     if options["DEFAULT"].getboolean("son"):
         BoomBox(ch("media/"+fichier+".wav"), False).play()
 
-localisation()
 L_F, H_F = ecran()
+localisation()
 
 # ***====== FENETRES ======***
 def acceuil():
     global maitre
     global options
-    global img
 
     efface(maitre)
 
@@ -181,7 +177,6 @@ def acceuil():
     F_acceuil.columnconfigure(list(range(7)), weight=1)
 
     # fond
-    temp["BG"] = dim(L_F, H_F, img["BG"], "fond")
     fond = tk.Label(F_acceuil, image=temp["BG"])
     fond.place(x=0, y=0, relwidth=1, relheight=1)
 
@@ -220,7 +215,6 @@ def acceuil():
 def creer():
     global parties
     global maitre
-    global img
 
     efface(maitre)
 
@@ -282,7 +276,6 @@ def creer():
 def param():
     global options
     global maitre
-    global img
 
     efface(maitre)
 
@@ -331,12 +324,12 @@ def param():
         global L_F, H_F
         with open(ch('options.txt'), 'w') as fichier:
             options.write(fichier)
-        localisation()
         L_F, H_F = ecran()
+        localisation()
         acceuil()
 
     # fond
-    afond = tk.Label(F_param, image=img["BG"])
+    afond = tk.Label(F_param, image=temp["BG"])
     afond.place(x=0, y=0, relwidth=1, relheight=1)
 
     # boutons
@@ -494,7 +487,6 @@ def param():
 def charger():
     global options
     global maitre
-    global img
     global parties
 
     efface(maitre)
@@ -579,7 +571,6 @@ def jeu(nom):
     global maitre
     global options
     global parties
-    global img
 
     efface(maitre)
 
@@ -615,7 +606,6 @@ def jeu(nom):
         charge le niveau (n) spécifié
         """
         global niv
-        global img
         global temp
         nonlocal x
         nonlocal F_terrain
@@ -636,21 +626,18 @@ def jeu(nom):
             height=li*x,
             width=col*x,
             background="black",
-            #highlightthickness=0
+            #highlightthickness=0,
         )
         F_terrain.place(relx=0.5, rely=0.5, anchor="center")
-        #F_terrain.create_image(0, 0, image=img["I"], anchor="nw", tag="fond")
         
         log("image par défaut -", niv[n]["def_img"])
-        temp["def_img"] = dim(x, x, img[niv[n]["def_img"]], "def") #image par défaut en cas de transparence
+        temp["def_img"] = img(x, x, niv[n]["def_img"]) #image par défaut en cas de transparence
 
         for i in range(li):
             for j in range(col):
                 s = niv[n]["grille"][i][j][0:2] #récupération du nom de la texture
                 
-                
                 if s[0] != "V": #pas d'image à afficher si la case est vide
-                    
                     #gestion transparence
                     if s[0] not in "SMV":
                         F_terrain.create_image(
@@ -661,17 +648,11 @@ def jeu(nom):
                             tag="case",
                         )
                     
-                    #enregistrement de la case
-                    if s in temp:
-                        image = temp[s]
-                    else:
-                        image = dim(x, x, img[s], s)
-                        temp[s] = image
                     #affichage de la case
                     F_terrain.create_image(
                         j*x,
                         i*x,
-                        image=image,
+                        image=img(x, x, s),
                         anchor="nw",
                         tag="case"
                     )
@@ -680,13 +661,11 @@ def jeu(nom):
         if parties[nom]["pos"] == "": #si il n'y a pas encore de position enregistrée
             parties[nom]["pos"] = str(
                 niv[n]["def_pos"][0]) + ";" + str(niv[n]["def_pos"][1])
-
-        image = dim(x, x, img["perso"])
-        temp["perso"] = image
+         
         F_terrain.create_image(
             int(parties[nom]["pos"].split(";")[0]) * x,
             int(parties[nom]["pos"].split(";")[1]) * x,
-            image=image,
+            image=img(x, x, "perso"),
             tag="perso",
             anchor="nw",
         )
