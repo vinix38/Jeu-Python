@@ -821,6 +821,11 @@ class maitre(tk.Tk): #objet de notre fenetre
             valeur += delta
             V_xp.set(valeur)
             self.parties[nom]["score"] = str(valeur)
+            
+        def inv(obj):
+            liste = self.parties[nom]["inv"].split(",")
+            if obj not in liste:
+                self.parties[nom]["inv"] = ",".join(liste)
         
         
         #placement
