@@ -37,7 +37,7 @@ langue =  {
         "1_fantome3" : "Si tu es ici c’est que tu as réussi… Tu t’approches de la vérité",
         "2_monstre1" : "Opus: Je comptes bien te couper dans ton élan",
         "2_monstre2" : "Givine: Voyons voir à quel point tu es malin...",
-        "2_monstre3" : "Givine: Tu ne gangeras pas contre moi!",
+        "2_monstre3" : "Givine: Tu ne gagneras pas contre moi!",
         "2_monstre4" : "Struk Boon: Tu ne devrais pas pouvoir être ici...",
         "2_monstre5" : "Struk Boon: Je ne te laisserais jamais emporter la clé!",
         "2_fantome1" : "Les coffres te seront toujours d'aide",
