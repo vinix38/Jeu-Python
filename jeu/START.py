@@ -654,7 +654,7 @@ class maitre(tk.Tk): #objet de notre fenetre
             F_terrain.create_image(
                 int(self.parties[nom]["pos"].split(";")[0]) * x,
                 int(self.parties[nom]["pos"].split(";")[1]) * x,
-                image=self.img(x, x, "perso"),
+                image=self.img(x, x, "perso01"),
                 tag="perso",
                 anchor="nw",
             )
@@ -674,8 +674,8 @@ class maitre(tk.Tk): #objet de notre fenetre
                 log("mouvement accepté")
                 self.son("pas")
                 self.parties[nom]["pos"] = ";".join([str(i) for i in cible])
-                mov = [i*x for i in mov]
-                F_terrain.move("perso", *mov)
+                F_terrain.delete("perso")
+                F_terrain.create_image(*[i*x for i in cible], anchor="nw", tag="perso", image=self.img(x,x,"perso"+"".join([str(i) for i in mov])))
             else:
                 log("mouvement refusé")
             mvt = 0
