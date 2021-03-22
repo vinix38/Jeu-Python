@@ -18,6 +18,9 @@ import os                                   # ^^idem^^pytho
 
 # fonction de log
 def log(*arg):
+    """
+    enregistre les infos données
+    """
     print("[LOG", str(dt.datetime.now())[11:23]+"]" , *arg)
 
 # === chemins ===
@@ -38,6 +41,9 @@ def efface(parent):
         enfant.destroy()
 
 class maitre(tk.Tk): #objet de notre fenetre
+    """
+    classe de fenetre
+    """
     # ====== VARIABLES ======
     temp = {} #empêche que les images soient effacées par le garbage collector
     
@@ -156,6 +162,9 @@ class maitre(tk.Tk): #objet de notre fenetre
             return tuple(int(i) for i in self.options["DEFAULT"]["taille"].split("x"))
 
     def son(self, nom):
+        """
+        joue le son demandé
+        """
         if self.options["DEFAULT"].getboolean("son"):
             BoomBox(ch("media/"+nom+".wav"), False).play()
 
@@ -163,6 +172,7 @@ class maitre(tk.Tk): #objet de notre fenetre
     def acceuil(self):
 
         efface(self)
+        self.unbind_all("<Key>")
 
         log("=== accueil ===")
 
@@ -270,9 +280,6 @@ class maitre(tk.Tk): #objet de notre fenetre
 
         log("=== paramètres ===")
 
-        # statut écoute du clavier
-        cap = False
-
         # fenetre
         F_param = tk.Frame(master=self)
         F_param.place(relheight=1, relwidth=1)
@@ -377,12 +384,11 @@ class maitre(tk.Tk): #objet de notre fenetre
 
         # assignement des touches
         def C_touche(touche):
-            nonlocal cap
             nonlocal B_quitter_sauv
-            if cap == False:
+            if self.att == 0:
                 V_dir[touche].set("")
                 B_quitter_sauv["state"] = "disabled"
-                cap = touche
+                self.att = touche
 
         # boutons des touches
         B_haut = tk.Button(
@@ -444,14 +450,13 @@ class maitre(tk.Tk): #objet de notre fenetre
 
         # écoute du clavier
         def capture(e):
-            nonlocal cap
-            if cap != False:
+            if self.att != 0:
                 e = e.keysym
-                V_dir[cap].set(e)
-                self.options["DEFAULT"][cap] = e
-                cap = False
+                V_dir[self.att].set(e)
+                self.options["DEFAULT"][self.att] = e
+                self.att = 0
                 B_quitter_sauv["state"] = "normal"
-        self.bind("<KeyPress>", capture)
+        self.bind("<Key>", capture)
 
         # placement
         B_taille.grid(row=5, column=4, sticky="nswe")
@@ -663,12 +668,18 @@ class maitre(tk.Tk): #objet de notre fenetre
             déplace le personnage si possible
             """
             nonlocal F_terrain
-            
             cible = [int(coords[i] + mov[i]) for i in range(2)]
             log("coordonnés cibles -", cible)
-            if niv[self.parties[nom]["niv"]]["grille"][cible[1]][cible[0]][0] == "S":
-                log("mouvement accepté")
+            s = niv[self.parties[nom]["niv"]]["grille"][cible[1]][cible[0]]
+            log(s)
+            if s[0] == "S":
                 self.son("pas")
+                s = True
+            elif (s[0] == "P") and (("D" + s[2]) in self.parties[nom]["inv"].split(",")):
+                self.son("porte")
+                s = True
+            if s == True:
+                log("mouvement accepté")
                 self.parties[nom]["pos"] = ";".join([str(i) for i in cible])
                 F_terrain.delete("perso")
                 F_terrain.create_image(*[i*self.x for i in cible], anchor="nw", tag="perso", image=self.img(self.x,self.x,"perso"+"".join([str(i) for i in mov])))
@@ -684,15 +695,13 @@ class maitre(tk.Tk): #objet de notre fenetre
             elif ca == "OP":
                 pass
             elif ca == "EP":
+                self.son("escalier")
                 charge(case[2])
             elif ca == "CD":
-                inv(case[1:])
-
-
-                
+                self.son("coffre")
+                inv(case[1:]) 
             self.att = 0
             
-
         def inter(coords):
             """
             cherche si il y a un objet avec lequel interagir
@@ -776,11 +785,20 @@ class maitre(tk.Tk): #objet de notre fenetre
             maximum = 20,
             value=self.parties[nom].getint("vie"),
         )
+
+        A_inv = ttk.Treeview(
+            master = F_barre,
+            bg="black",
+            height = len(self.parties[nom]["inv"].split(",")),
+        )
+        for i in self.parties[nom]["inv"].split(","):
+            A_inv.insert("end", i)
         
         def retour():
             """
             retour au dernier checkpoint
             """
+            self.son("gameover")
             self.parties[nom]["inv"] = self.parties[nom]["S_inv"]
             self.parties[nom]["niv"] = self.parties[nom]["S_niv"]
             self.parties[nom]["score"] = self.parties[nom]["S_score"]
@@ -821,17 +839,24 @@ class maitre(tk.Tk): #objet de notre fenetre
         def inv(obj):
             liste = self.parties[nom]["inv"].split(",")
             if obj not in liste:
+                liste.append(obj)
                 self.parties[nom]["inv"] = ",".join(liste)
-        
+                
+        def ambiance():
+            self.son("ambiance")
+            F_jeu.after(22680, ambiance)
         
         #placement
-        A_vie.grid(row=2, column=0, sticky="nswe", columnspan=4)
-        T_niveau.grid(row=8, column=0, sticky="nswe", columnspan=2)
-        A_niveau.grid(row=8, column=2, sticky="nswe", columnspan=2)
-        T_xp.grid(row=6, column=0, sticky="nswe", columnspan=2)
-        A_xp.grid(row=6, column=2, sticky="nswe", columnspan=2)
+        A_inv.grid(row=7, column=0, sticky="nswe", columnspan=4, rowspan=6)
+        A_vie.grid(row=1, column=0, sticky="nswe", columnspan=4)
+        T_niveau.grid(row=3, column=0, sticky="nswe", columnspan=2)
+        A_niveau.grid(row=3, column=2, sticky="nswe", columnspan=2)
+        T_xp.grid(row=5, column=0, sticky="nswe", columnspan=2)
+        A_xp.grid(row=5, column=2, sticky="nswe", columnspan=2)
         B_quitter.grid(row=14, column=1, sticky="nswe", columnspan=2)
 
+        if self.options["DEFAULT"].getboolean("son"):
+            ambiance()
         vie(0)
         xp(0)
         charge(self.parties[nom]["niv"])
