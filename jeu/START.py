@@ -28,7 +28,19 @@ def ch(fichier):
     """
     return os.path.join(sys.path[0], str(fichier))
 
+    # === tout effacer ===
+def efface(parent):
+    """
+    (parent)\n
+    Efface tous les widgets présents dans le parent indiqué
+    """
+    for enfant in parent.winfo_children():
+        enfant.destroy()
+
 class maitre(tk.Tk): #objet de notre fenetre
+    # ====== VARIABLES ======
+    temp = {} #empêche que les images soient effacées par le garbage collector
+    
     def __init__(self):
         super().__init__() #fenetre tkinter de base
         # === déclaration fenêtre ===
@@ -55,12 +67,9 @@ class maitre(tk.Tk): #objet de notre fenetre
         self.ttkStyle.configure("Treeview", highlightthickness=0, bd=0, font=('Fixedsys', 20), rowheight=40) # style des cases
         self.ttkStyle.configure("Treeview.Heading", font=('Fixedsys', 20,'bold')) # style de l'en-tête
         
-        self.temp = {}
         self.iconphoto(True, self.img(200, 200, "icone")) #icone de fenetre
-        # ====== VARIABLES ======
-               #empêche que les images soient effacées par le garbage collector
         
-            # === lecture des paramètres ===
+        # === lecture des paramètres ===
         self.options = ConfigParser(allow_no_value=True) 
         if os.path.isfile(ch("options.txt")) == False:
             self.options["DEFAULT"] = {
@@ -107,15 +116,6 @@ class maitre(tk.Tk): #objet de notre fenetre
             self.temp[nom] = img
         return self.temp[nom]
 
-    # === tout effacer ===
-    def efface(self, parent):
-        """
-        (parent)\n
-        Efface tous les widgets présents dans le parent indiqué
-        """
-        for enfant in parent.winfo_children():
-            enfant.destroy()
-
     # ====== changer langue ======
     def localisation(self):
         """
@@ -160,7 +160,7 @@ class maitre(tk.Tk): #objet de notre fenetre
     # ***====== FENETRES ======***
     def acceuil(self):
 
-        self.efface(self)
+        efface(self)
 
         log("=== accueil ===")
 
@@ -206,9 +206,8 @@ class maitre(tk.Tk): #objet de notre fenetre
         B_charger.grid(column=3, row=8, sticky="nswe")
         B_creer.grid(column=3, row=6, sticky="nswe")
 
-
     def creer(self):
-        self.efface(self)
+        efface(self)
 
         log("=== nouvelle partie ===")
 
@@ -264,9 +263,8 @@ class maitre(tk.Tk): #objet de notre fenetre
         B_annuler.grid(row=1, column=0, sticky="nswe")
         B_creer.grid(row=1, column=1, sticky="nswe")
 
-
     def param(self):
-        self.efface(self)
+        efface(self)
 
         log("=== paramètres ===")
 
@@ -471,9 +469,8 @@ class maitre(tk.Tk): #objet de notre fenetre
         T_droite.grid(row=5, column=7, sticky="nswe")
         T_action.grid(row=6, column=7, sticky="nswe")
 
-
     def charger(self):
-        self.efface(self)
+        efface(self)
 
         log("=== charger une partie ===")
 
@@ -565,9 +562,8 @@ class maitre(tk.Tk): #objet de notre fenetre
         B_retour.grid(row=0, column=1, sticky="nswe")
         B_charger.grid(row=0, column=2, sticky="nswe")
 
-
     def jeu(self, nom):
-        self.efface(self)
+        efface(self)
 
         log("=== chargement du jeu ===")
 
@@ -608,7 +604,7 @@ class maitre(tk.Tk): #objet de notre fenetre
             log("chargement du niveau",n)
             V_niv.set(n[0])
             self.temp = {}
-            self.efface(F_carte)
+            efface(F_carte)
             li = int(niv[n]["li"])
             col = int(niv[n]["col"])
             x = int(min((self.L_F * 0.8) / col, self.H_F / li))
@@ -726,7 +722,6 @@ class maitre(tk.Tk): #objet de notre fenetre
             log("touche pressée -", e)
             if mvt == 0:
                 coords = [int(i / x) for i in F_terrain.coords("perso")]
-                log("coords", coords)
                 mov = [0, 0]
                 if e == self.options["DEFAULT"]["haut"]:
                     mov[1] = -1
@@ -741,6 +736,7 @@ class maitre(tk.Tk): #objet de notre fenetre
                     mvt = 1
                     inter(coords)
                 if mov != [0, 0]:
+                    log("coords", coords)
                     log("tentative de mouvement")
                     mvt = 1
                     mouv(mov, coords)
@@ -838,7 +834,6 @@ class maitre(tk.Tk): #objet de notre fenetre
         vie(0)
         xp(0)
         charge(self.parties[nom]["niv"])
-
 
 log("début de l'execution")
 fenetre = maitre()
