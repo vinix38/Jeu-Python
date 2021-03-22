@@ -30,7 +30,7 @@ langue =  {
         "gauche" : "Aller à gauche",
         "droite" : "Aller à droite",
         "action" : "Interagir",
-        "1_monstre1" : "Opus: Halte!",
+        "1_monstre1" : "Opus: Halte!", 
         "1_monstre2" : "Opus: Tu n’iras pas plus loin!",
         "1_fantome1" : "Au-delà de cette porte, tu risques de rencontrer plus que ton passé…",
         "1_fantome2" : "Si tu ne gagnes pas contre tes ennemis, tu ne pourras pas avancer.",
