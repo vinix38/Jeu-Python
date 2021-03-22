@@ -14,7 +14,7 @@ from tkinter import ttk                     #tkinter en plus beau
 from niveaux import niv                     #infos de niveaux
 import time                                 #retarder l'execution du programe
 import sys                                  #gestion des chemins de fichiers
-import os                                   # ^^idem^^
+import os                                   # ^^idem^^pytho
 
 # fonction de log
 def log(*arg):
@@ -28,7 +28,7 @@ def ch(fichier):
     """
     return os.path.join(sys.path[0], str(fichier))
 
-    # === tout effacer ===
+# === tout effacer ===
 def efface(parent):
     """
     (parent)\n
@@ -50,7 +50,6 @@ class maitre(tk.Tk): #objet de notre fenetre
         self.L_E = self.winfo_screenwidth()            #largeur d'écran
         log("taille d'écran =", self.H_E, "x", self.L_E)
 
-
         # === styles ===
         self.style = {   #style par défaut pour tk
             "font": ('Fixedsys', 24),
@@ -68,6 +67,9 @@ class maitre(tk.Tk): #objet de notre fenetre
         self.ttkStyle.configure("Treeview.Heading", font=('Fixedsys', 20,'bold')) # style de l'en-tête
         
         self.iconphoto(True, self.img(200, 200, "icone")) #icone de fenetre
+        self.att = 0
+        self.x = -1
+        self.n = -1
         
         # === lecture des paramètres ===
         self.options = ConfigParser(allow_no_value=True) 
@@ -540,11 +542,11 @@ class maitre(tk.Tk): #objet de notre fenetre
                 B_liste.column(c, anchor="center")
                 B_liste.heading(c, text=c.title(), anchor="center")            
                 
-            for x in sauv:
+            for i in sauv:
                 B_liste.insert(
                     parent='',
                     index='end',
-                    values=(x, self.parties[x]["niv"][0], self.parties[x]["score"], self.parties[x]["temps"])
+                    values=(i, self.parties[i]["niv"][0], self.parties[i]["score"], self.parties[i]["temps"])
                 )
             B_liste.pack(fill="both")
 
@@ -585,29 +587,25 @@ class maitre(tk.Tk): #objet de notre fenetre
         F_barre.rowconfigure(list(range(15)), weight=1,minsize=self.H_F/15)
         F_barre.columnconfigure([0, 1, 2, 3], weight=1, minsize=self.L_F/20)
 
-        # \_(°-°)_/
-        mvt = x = 0
-
         F_terrain = tk.Canvas(F_carte, background="black")
 
         # chargement des niveaux
-        def charge(n):
+        def charge(n=self.n):
             """
             (n)\n
             charge le niveau (n) spécifié
             """
-            nonlocal x
             nonlocal F_terrain
             nonlocal F_carte
-            nonlocal mvt
-            mvt = 1
+            self.att = 1
+            self.n = n
             log("chargement du niveau",n)
-            V_niv.set(n[0])
+            V_niv.set(n)
             self.temp = {}
             efface(F_carte)
             li = int(niv[n]["li"])
             col = int(niv[n]["col"])
-            x = int(min((self.L_F * 0.8) / col, self.H_F / li))
+            self.x = x = int(min((self.L_F * 0.8) / col, self.H_F / li))
             log("lignes:", li, "| colonnes:", col, "| coté de case (px):", x)
 
             F_terrain = tk.Canvas(
@@ -658,14 +656,12 @@ class maitre(tk.Tk): #objet de notre fenetre
                 tag="perso",
                 anchor="nw",
             )
-            mvt = 0
+            self.att = 0
 
         def mouv(mov, coords):
             """
             déplace le personnage si possible
             """
-            nonlocal x
-            nonlocal mvt
             nonlocal F_terrain
             
             cible = [int(coords[i] + mov[i]) for i in range(2)]
@@ -675,23 +671,26 @@ class maitre(tk.Tk): #objet de notre fenetre
                 self.son("pas")
                 self.parties[nom]["pos"] = ";".join([str(i) for i in cible])
                 F_terrain.delete("perso")
-                F_terrain.create_image(*[i*x for i in cible], anchor="nw", tag="perso", image=self.img(x,x,"perso"+"".join([str(i) for i in mov])))
+                F_terrain.create_image(*[i*self.x for i in cible], anchor="nw", tag="perso", image=self.img(self.x,self.x,"perso"+"".join([str(i) for i in mov])))
             else:
                 log("mouvement refusé")
-            mvt = 0
+            self.att = 0
 
         def action(case):
             log("interaction avec", case)
-            nonlocal mvt
             ca = case[0:2]
             if ca == "FB":
-                showinfo("", self.loc[self.parties[nom]["niv"][0] + "_fantome" + case[2]])
+                showinfo("", self.loc[self.n + "_fantome" + case[2]])
             elif ca == "OP":
                 pass
             elif ca == "EP":
                 charge(case[2])
+            elif ca == "CD":
+                inv(case[1:])
+
+
                 
-            mvt = 0
+            self.att = 0
             
 
         def inter(coords):
@@ -710,18 +709,16 @@ class maitre(tk.Tk): #objet de notre fenetre
             if tr:
                 action(niv[self.parties[nom]["niv"]]["grille"][coords[1]+i][coords[0]+j])
             else:
-                nonlocal mvt
-                mvt = 0
+                self.att = 0
 
         def clavier(e):
             """
             intercepte toutes les touches tapées et décide l'action appropriée
             """
-            nonlocal mvt
             e = e.keysym
             log("touche pressée -", e)
-            if mvt == 0:
-                coords = [int(i / x) for i in F_terrain.coords("perso")]
+            if not self.att:
+                coords = [int(i / self.x) for i in F_terrain.coords("perso")]
                 mov = [0, 0]
                 if e == self.options["DEFAULT"]["haut"]:
                     mov[1] = -1
@@ -733,12 +730,12 @@ class maitre(tk.Tk): #objet de notre fenetre
                     mov[0] = 1
                 elif e == self.options["DEFAULT"]["action"]:
                     log("tentative d'interaction")
-                    mvt = 1
+                    self.att = 1
                     inter(coords)
                 if mov != [0, 0]:
                     log("coords", coords)
                     log("tentative de mouvement")
-                    mvt = 1
+                    self.att = 1
                     mouv(mov, coords)
 
         self.bind_all("<Key>", clavier)
@@ -784,7 +781,6 @@ class maitre(tk.Tk): #objet de notre fenetre
             """
             retour au dernier checkpoint
             """
-            nonlocal mvt
             self.parties[nom]["inv"] = self.parties[nom]["S_inv"]
             self.parties[nom]["niv"] = self.parties[nom]["S_niv"]
             self.parties[nom]["score"] = self.parties[nom]["S_score"]
