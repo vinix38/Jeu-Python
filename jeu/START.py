@@ -20,6 +20,14 @@ import os                                   # ^^idem^^
 def log(*arg):
     print("[LOG", str(dt.datetime.now())[11:23]+"]" , *arg)
 
+# === chemins ===
+def ch(fichier):
+    """
+    (fichier)\n
+    indique le chemin absolu du fichier executé
+    """
+    return os.path.join(sys.path[0], str(fichier))
+
 class maitre(tk.Tk): #objet de notre fenetre
     def __init__(self):
         super().__init__() #fenetre tkinter de base
@@ -54,7 +62,7 @@ class maitre(tk.Tk): #objet de notre fenetre
         
             # === lecture des paramètres ===
         self.options = ConfigParser(allow_no_value=True) 
-        if os.path.isfile(self.ch("options.txt")) == False:
+        if os.path.isfile(ch("options.txt")) == False:
             self.options["DEFAULT"] = {
                 "plein_ecran": True,
                 "taille": "1920x1080",
@@ -68,29 +76,21 @@ class maitre(tk.Tk): #objet de notre fenetre
                 "droite": "e",
                 "action": "Tab",
             }
-            with open(self.ch('options.txt'), 'w') as fichier:
+            with open(ch('options.txt'), 'w') as fichier:
                 self.options.write(fichier)
         else:
-            self.options.read(self.ch("options.txt"))
+            self.options.read(ch("options.txt"))
 
         # === lecture des parties sauvegardées ===
         self.parties = ConfigParser(allow_no_value=True)
-        if os.path.isfile(self.ch("parties.txt")):
-            self.parties.read(self.ch("parties.txt"))
+        if os.path.isfile(ch("parties.txt")):
+            self.parties.read(ch("parties.txt"))
         else:
-            with open(self.ch('parties.txt'), 'w') as fichier:
+            with open(ch('parties.txt'), 'w') as fichier:
                 self.parties.write(fichier)
                 
         self.L_F, self.H_F = self.ecran()
         self.localisation()
-
-    # === chemins ===
-    def ch(self, fichier):
-        """
-        (fichier)\n
-        indique le chemin absolu du fichier executé
-        """
-        return os.path.join(sys.path[0], str(fichier))
 
     # === changement de taille ===
     def img(self, L, H, nom):
@@ -99,7 +99,7 @@ class maitre(tk.Tk): #objet de notre fenetre
         redimensionne l'image aux dimensions souhaitées
         """
         if nom not in self.temp:
-            img = tk.PhotoImage(file=self.ch("media/"+nom+".png")) #ressource image
+            img = tk.PhotoImage(file=ch("media/"+nom+".png")) #ressource image
             H = (Fraction(str(H/img.height()))).limit_denominator(30) #ratio de hauteur
             L = (Fraction(str(L/img.width()))).limit_denominator(30)  #ratio de largeur
             log("image", nom,"=",H,"par",L)
@@ -155,7 +155,7 @@ class maitre(tk.Tk): #objet de notre fenetre
 
     def son(self, nom):
         if self.options["DEFAULT"].getboolean("son"):
-            BoomBox(self.ch("media/"+nom+".wav"), False).play()
+            BoomBox(ch("media/"+nom+".wav"), False).play()
 
     # ***====== FENETRES ======***
     def acceuil(self):
@@ -242,7 +242,7 @@ class maitre(tk.Tk): #objet de notre fenetre
                     "temps": 0,
                 }
                 log("nouvelle partie -", nom)
-                with open(self.ch("parties.txt"), "w") as fichier:
+                with open(ch("parties.txt"), "w") as fichier:
                     self.parties.write(fichier)
                 self.jeu(nom)
 
@@ -306,11 +306,11 @@ class maitre(tk.Tk): #objet de notre fenetre
 
         # fonctions de sortie
         def quitter_sans():
-            self.options.read(self.ch("options.txt"))
+            self.options.read(ch("options.txt"))
             self.acceuil()
 
         def quitter_avec():
-            with open(self.ch('options.txt'), 'w') as fichier:
+            with open(ch('options.txt'), 'w') as fichier:
                 self.options.write(fichier)
             self.L_F, self.H_F = self.ecran()
             self.localisation()
@@ -510,7 +510,7 @@ class maitre(tk.Tk): #objet de notre fenetre
             sel = B_liste.focus()
             if sel:
                 self.parties.remove_section(B_liste.item(sel)["values"][0])
-                with open(self.ch('parties.txt'), 'w') as fichier:
+                with open(ch('parties.txt'), 'w') as fichier:
                     self.parties.write(fichier)
                 self.charger()
 
@@ -521,7 +521,7 @@ class maitre(tk.Tk): #objet de notre fenetre
             **self.style,
         )
 
-        self.parties.read(self.ch("parties.txt"))
+        self.parties.read(ch("parties.txt"))
         sauv = self.parties.sections()
         log("parties existantes -", sauv)
 
@@ -573,7 +573,7 @@ class maitre(tk.Tk): #objet de notre fenetre
 
         # fonction de sortie
         def quitter():
-            with open(self.ch("parties.txt"), "w") as fichier:
+            with open(ch("parties.txt"), "w") as fichier:
                 self.parties.write(fichier)
             self.acceuil()
 
@@ -794,7 +794,7 @@ class maitre(tk.Tk): #objet de notre fenetre
             self.parties[nom]["score"] = self.parties[nom]["S_score"]
             self.parties[nom]["pos"] = ""
             self.parties[nom]["vie"] = 5
-            self.charge(self.parties[nom]["niv"])
+            charge(self.parties[nom]["niv"])
             
         def vie(delta):
             """
