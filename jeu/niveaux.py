@@ -1,5 +1,5 @@
 """
-fonctionement case:
+fonctionement case: #opus :OP1 fantôme : FB1 givine :GI struck boon : SB
     chaque case a un nom en trois lettres, qui signifient:
         première lettre --> type physique: V pour vide, S pour sol, M pour mur, C pour coffre, ...
         deuxième lettre --> variante visuelle: P pour pierre, R pour rouge, S pour sable, F pour feuille, ...
@@ -46,16 +46,17 @@ niv = {
             ["V--","V--","V--","V--","V--","V--","MP-","SG-","SG-","MP-","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--",],
             ["V--","V--","V--","V--","V--","V--","MP-","SG-","SG-","MP-","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--",],
             ["V--","V--","V--","V--","V--","V--","MP-","SG-","SG-","MP-","MP-","MP-","MP-","MP-","MP-","MP-","MP-","MP-","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--",],
-            ["V--","V--","MP-","MP-","MP-","MP-","MP-","SG-","SG-","SG-","SG-","SG-","SG-","SG-","SG-","SG-","SG-","MP-","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--",],
-            ["V--","V--","MP-","SG-","SG-","SG-","SG-","SG-","SG-","SG-","SG-","SG-","SG-","SG-","SG-","SG-","SG-","MP-","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--",],
+            ["V--","V--","MP-","MP-","MP-","MP-","MP-","SG-","SG-","SG-","SG-","SG-","SG-","SG-","SG-","GI1","OP1","MP-","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--",],
+            ["V--","V--","MP-","FB1","SG-","SG-","SG-","SG-","SG-","SG-","SG-","SG-","SG-","SG-","SG-","SG-","GI2","MP-","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--",],
             ["V--","V--","MP-","SG-","SG-","SG-","SG-","SG-","SG-","SG-","SG-","SG-","SG-","SG-","SG-","SG-","SG-","MP-","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--",],
             ["V--","V--","MP-","MP-","MP-","MP-","MP-","SG-","SG-","MP-","MP-","MP-","MP-","MP-","MP-","MP-","MP-","MP-","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--",],
             ["V--","V--","V--","V--","V--","V--","MP-","SG-","SG-","MP-","V--","V--","V--","V--","V--","V--","V--","V--","V--","MP-","MP-","MP-","MP-","MP-","MP-","MP-","MP-","MP-","V--","V--","MP-","MP-","MP-","MP-","MP-","MP-","MP-",],
-            ["MP-","MP-","MP-","MP-","MP-","MP-","MP-","SG-","SG-","MP-","MP-","MP-","MP-","MP-","MP-","MP-","MP-","MP-","MP-","MP-","SG-","SG-","SG-","SG-","SG-","SG-","SG-","SG-","SG-","SG-","SG-","SG-","SG-","SG-","SG-","SG-","MP-",],
-            ["MP-","SG-","SG-","SG-","SG-","SG-","SG-","SG-","SG-","SG-","SG-","SG-","SG-","SG-","SG-","SG-","SG-","SG-","SG-","SG-","SG-","SG-","SG-","SG-","SG-","SG-","SG-","SG-","MP-","MP-","MP-","SG-","SG-","SG-","SG-","SG-","MP-",],
-            ["MP-","MP-","MP-","MP-","MP-","MP-","MP-","MP-","MP-","MP-","MP-","MP-","MP-","MP-","MP-","MP-","MP-","MP-","MP-","MP-","SG-","SG-","SG-","SG-","SG-","SG-","SG-","SG-","MP-","V--","MP-","SG-","SG-","SG-","SG-","SG-","MP-",],
+            ["MP-","MP-","MP-","MP-","MP-","MP-","MP-","SG-","SG-","MP-","MP-","MP-","MP-","MP-","MP-","MP-","MP-","MP-","MP-","MP-","SG-","SG-","SG-","SG-","SG-","SG-","SG-","SB2","SG-","SG-","SG-","SG-","SG-","SG-","SG-","SG-","MP-",],
+            ["MP-","SG-","SG-","SG-","SG-","SG-","SG-","FB2","SG-","SG-","SG-","SG-","SG-","SG-","SG-","SG-","SG-","SG-","SG-","SG-","SG-","SG-","SG-","SG-","SG-","SG-","SG-","SG-","MP-","MP-","MP-","SG-","SG-","SG-","SG-","CD2-","MP-",],
+            ["MP-","MP-","MP-","MP-","MP-","MP-","MP-","MP-","MP-","MP-","MP-","MP-","MP-","MP-","MP-","MP-","MP-","MP-","MP-","MP-","SG-","SG-","SG-","SG-","SG-","SG-","SG-","SB1","MP-","V--","MP-","SG-","SG-","SG-","SG-","CD1-","MP-",],
             ["V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","MP-","MP-","MP-","MP-","MP-","MP-","MP-","MP-","MP-","MP-","V--","MP-","MP-","MP-","MP-","MP-","MP-","MP-",],
-        ],
-        "def_img" : "SG",
+
+        ]
+        ,"def_img" : "SG",
     },
 }
