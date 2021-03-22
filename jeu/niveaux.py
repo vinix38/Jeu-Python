@@ -55,7 +55,13 @@ niv = {
             ["MP-","SG-","SG-","SG-","SG-","SG-","SG-","SG-","SG-","SG-","SG-","SG-","SG-","SG-","SG-","SG-","SG-","SG-","SG-","SG-","SG-","SG-","SG-","SG-","SG-","SG-","SG-","SG-","MP-","MP-","MP-","SG-","SG-","SG-","SG-","SG-","MP-",],
             ["MP-","MP-","MP-","MP-","MP-","MP-","MP-","MP-","MP-","MP-","MP-","MP-","MP-","MP-","MP-","MP-","MP-","MP-","MP-","MP-","SG-","SG-","SG-","SG-","SG-","SG-","SG-","SG-","MP-","V--","MP-","SG-","SG-","SG-","SG-","SG-","MP-",],
             ["V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","MP-","MP-","MP-","MP-","MP-","MP-","MP-","MP-","MP-","MP-","V--","MP-","MP-","MP-","MP-","MP-","MP-","MP-",],
+<<<<<<< Updated upstream
         ],
         "def_img" : "SG",
+=======
+
+        ]
+        ,"def_img" : "SG",
+>>>>>>> Stashed changes
     },
 }
