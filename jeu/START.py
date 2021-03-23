@@ -683,9 +683,12 @@ class maitre(tk.Tk): #objet de notre fenetre
                 self.parties[nom]["pos"] = ";".join([str(i) for i in cible])
                 F_terrain.delete("perso")
                 F_terrain.create_image(*[i*self.x for i in cible], anchor="nw", tag="perso", image=self.img(self.x,self.x,"perso"+"".join([str(i) for i in mov])))
+                def apres():
+                    self.att = 0
+                F_terrain.after(100, apres)
             else:
                 log("mouvement refusé")
-            self.att = 0
+                self.att = 0
 
         def action(case):
             log("interaction avec", case)
@@ -785,14 +788,24 @@ class maitre(tk.Tk): #objet de notre fenetre
             maximum = 20,
             value=self.parties[nom].getint("vie"),
         )
-
         A_inv = ttk.Treeview(
             master = F_barre,
-            bg="black",
+            show="headings",
+            columns=["inv"],
+            selectmode="none",
+            #yscrollcommand=roue.set,
             height = len(self.parties[nom]["inv"].split(",")),
         )
+        A_inv.column("inv", anchor="center")
+        A_inv.heading("inv", text=self.loc["inv"], anchor="center")  
+        
         for i in self.parties[nom]["inv"].split(","):
-            A_inv.insert("end", i)
+            A_inv.insert(
+                parent="",
+                index="end",
+                values=(self.loc[i],),
+                )
+
         
         def retour():
             """
@@ -837,9 +850,14 @@ class maitre(tk.Tk): #objet de notre fenetre
             self.parties[nom]["score"] = str(valeur)
             
         def inv(obj):
-            liste = self.parties[nom]["inv"].split(",")
+            liste = self.parties[nom]["inv"].split(",") if self.parties[nom]["inv"] != "" else []
             if obj not in liste:
                 liste.append(obj)
+                A_inv.insert(
+                parent="",
+                index="end",
+                values=self.loc[obj]
+                )
                 self.parties[nom]["inv"] = ",".join(liste)
                 
         def ambiance():
@@ -860,6 +878,12 @@ class maitre(tk.Tk): #objet de notre fenetre
         vie(0)
         xp(0)
         charge(self.parties[nom]["niv"])
+        
+        def boite():
+            F_msg = tk.Toplevel(
+                master=self,
+                
+            )
 
 log("début de l'execution")
 fenetre = maitre()
