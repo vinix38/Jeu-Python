@@ -879,11 +879,25 @@ class maitre(tk.Tk): #objet de notre fenetre
         xp(0)
         charge(self.parties[nom]["niv"])
         
-        def boite():
+        def boite(texte, anim=None):
             F_msg = tk.Toplevel(
                 master=self,
-                
+                height=self.H_F,
+                width=self.L_F,
             )
+            def aff():
+                T_texte = tk.Label(
+                    master=F_msg,
+                    text=self.loc[texte]
+                )
+                T_texte.pack()
+                
+            if anim != None:
+                pass
+                aff()
+            else:
+                aff()
+            
 
 log("début de l'execution")
 fenetre = maitre()
