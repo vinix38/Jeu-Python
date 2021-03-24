@@ -1,6 +1,7 @@
 langue =  {
     #====== FRANCAIS ======
     "fr_FR" : {
+        "" : "",
         "lang" : "Français",
         "titre" : "Le Donjon de Daleah",
         "quitter" : "Quitter",
@@ -55,6 +56,7 @@ langue =  {
     },
     #====== ANGLAIS ======
     "en_US" : {
+        "" : "",
         "lang" : "English (US)",
         "titre" : "Daleah's Dungeon",
         "quitter" : "Quit",
