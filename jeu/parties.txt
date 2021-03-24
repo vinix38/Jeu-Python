@@ -2,7 +2,7 @@
 niv = 1
 score = 4269
 inv = D1
-pos = 7;15
+pos = 2;5
 vie = 5
 s_niv = 1
 s_score = 0
@@ -14,6 +14,17 @@ niv = 2
 score = 0
 inv = 
 pos = 8;6
+vie = 5
+s_niv = 1
+s_score = 0
+s_inv = 
+temps = 0
+
+[test 24/03]
+niv = 1
+score = 0
+inv = 
+pos = 8;2
 vie = 5
 s_niv = 1
 s_score = 0

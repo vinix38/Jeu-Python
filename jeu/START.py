@@ -69,7 +69,7 @@ class maitre(Tk): #objet de notre fenetre
             "TMenubutton",
             **self.style
         )
-        self.ttkStyle.configure("TProgressbar", foreground="black", background="black", troughcolor="black", bd=2) #temporaire
+        self.ttkStyle.configure("TProgressbar", foreground="black", background="black", troughcolor="black") #temporaire
         self.ttkStyle.configure("Treeview", highlightthickness=0, bd=0, font=('Fixedsys', 20), rowheight=40) # style des cases
         self.ttkStyle.configure("Treeview.Heading", font=('Fixedsys', 20,'bold')) # style de l'en-tête
         
@@ -243,12 +243,12 @@ class maitre(Tk): #objet de notre fenetre
                 log("erreur, cette partie existe déjà")
             else:
                 self.parties[nom] = {
-                    "niv": "11",
+                    "niv": "1",
                     "score": 0,
                     "inv": "",
                     "pos": "",
                     "vie": 5,
-                    "S_niv": "11",
+                    "S_niv": "1",
                     "S_score": 0,
                     "S_inv": "",
                     "temps": 0,
@@ -750,16 +750,19 @@ class maitre(Tk): #objet de notre fenetre
             log("interaction avec", case)
             ca = case[0:2]
             if ca == "FB":
-                boite(self.n + "_fantome" + case[2])
+                dialogue().animation(self.n + "_fantome" + case[2])
             elif ca == "OP":
-                pass
+                v, exp, rec = minijeu(case)
+                inv(rec)
+                xp(exp)
+                vie(v)
             elif ca == "EP":
                 self.son("escalier")
                 charge(case[2])
             elif ca == "CD":
                 inv(case[1:])
                 self.son("coffre")
-                boite(case[1:], "coffre_10fps.gif", 5)
+                dialogue().animation(case[1:], "coffre_10fps.gif", 5)
             else:
                 self.att = 0
             
@@ -854,12 +857,12 @@ class maitre(Tk): #objet de notre fenetre
             
         def inv(obj):
             liste = self.parties[nom]["inv"].split(",") if self.parties[nom]["inv"] != "" else []
-            if obj not in liste:
+            if obj not in liste and obj !="":
                 liste.append(obj)
                 A_inv.insert(
                 parent="",
                 index="end",
-                values=self.loc[obj]
+                values=(self.loc[obj],)
                 )
                 self.parties[nom]["inv"] = ",".join(liste)
                 
@@ -867,6 +870,56 @@ class maitre(Tk): #objet de notre fenetre
             self.son("ambiance")
             F_jeu.after(22680, ambiance)
         
+        def minijeu():
+            pass
+            
+        class dialogue(Toplevel):
+            def __init__(self):
+                super().__init__(
+                    master=fenetre,
+                    bg="black",
+                    bd = 10,
+                    relief="raised"
+                )
+                self.L_F = fenetre.L_F
+                self.H_F = fenetre.H_F
+                self.resizable(0, 0)
+                self.minsize(width=int(self.L_F/2), height=int(self.H_F/2))
+                self.geometry("{0}x{1}+{2}+{3}".format(int(self.L_F/2), int(self.H_F/2), int(self.L_F/4), int(self.H_F/4)))
+                self.overrideredirect(True)
+                
+            def animation(self, texte, anim=None, ips=None):
+                T_texte = Label(
+                    master=self,
+                    text=fenetre.loc[texte],
+                    font=fenetre.style["font"],
+                    justify="left",
+                    wraplength=int(self.L_F/2)-10,
+                    fg="white",
+                    bg="white",
+                )
+                T_texte.place(relx=0.5, rely=0.5, anchor="center")
+                if anim != None:
+                    images = [PhotoImage(file=ch('media/'+anim), format='gif -index %i' %(i), width=int(self.L_F/2), height=int(self.H_F/2),) for i in range(ips)]
+                    def maj(ind):
+                        if ind < ips:
+                            image = images[ind]
+                            ind += 1
+                            T_texte.configure(image=image)
+                            self.after(130, maj, ind)
+                        else:
+                            T_texte.configure(image="")
+                            T_texte.configure(bg="black")
+                    maj(0)
+                else:
+                    T_texte.configure(bg="black")
+                self.bind_all("<ButtonRelease>", self.destruc)
+                    
+            def destruc(self, *args):
+                fenetre.att = 0
+                self.unbind_all("<ButtonRelease>")
+                self.destroy()
+            
         #placement
         A_inv.grid(row=7, column=0, sticky="nswe", columnspan=4, rowspan=6)
         A_vie.grid(row=1, column=0, sticky="nswe", columnspan=4)
@@ -881,52 +934,7 @@ class maitre(Tk): #objet de notre fenetre
         vie(0)
         xp(0)
         charge(self.parties[nom]["niv"])
-        
-        def boite(texte, anim=None, ips=None):
-            F_msg = Toplevel(
-                master=self,
-                bg="black",
-                bd = 10,
-                relief="raised"
-            )
-            F_msg.resizable(0, 0)
-            F_msg.minsize(width=int(self.L_F/2), height=int(self.H_F/2))
-            F_msg.geometry("{0}x{1}+{2}+{3}".format(int(self.L_F/2), int(self.H_F/2), int(self.L_F/4), int(self.H_F/4)))
-            F_msg.overrideredirect(True)
-            T_texte = Label(
-                master=F_msg,
-                text=self.loc[texte],
-                font=self.style["font"],
-                justify="left",
-                wraplength=int(self.L_F/2)-10,
-                fg="white",
-                bg="white",
-            )
-            T_texte.place(relx=0.5, rely=0.5, anchor="center")
-            if anim != None:
-                images = [PhotoImage(file=ch('media/'+anim), format='gif -index %i' %(i), width=int(self.L_F/2), height=int(self.H_F/2),) for i in range(ips)]
-                def maj(ind):
-                    if ind < ips:
-                        image = images[ind]
-                        ind += 1
-                        T_texte.configure(image=image)
-                        F_msg.after(130, maj, ind)
-                    else:
-                        T_texte.configure(image="")
-                        T_texte.configure(bg="black")
-                maj(0)
-            else:
-                T_texte.configure(bg="black")
-                
-            def destruc(*args):
-                self.att = 0
-                F_msg.unbind_all("<ButtonRelease>")
-                F_msg.destroy()
-            F_msg.bind_all("<ButtonRelease>", destruc)
-            
-                
-             
-
+          
 log("début de l'execution")
 fenetre = maitre()
 fenetre.acceuil()
