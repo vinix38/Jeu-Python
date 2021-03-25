@@ -608,6 +608,7 @@ class maitre(Tk): #objet de notre fenetre
             self.n = n
             log("chargement du niveau",n)
             V_niv.set(n)
+            self.parties[nom]["niv"] = n
             self.temp = {}
             efface(F_carte)
             li = int(niv[n]["li"])
@@ -733,7 +734,10 @@ class maitre(Tk): #objet de notre fenetre
                 s = True
             elif (s[0] == "P") and (("D" + s[2]) in self.parties[nom]["inv"].split(",")):
                 self.son("porte")
-                s = True
+                if s[2] == "+":
+                    charge(str(int(self.n) + 1))
+                else:
+                    s = True
             if s == True:
                 log("mouvement accepté")
                 self.parties[nom]["pos"] = ";".join([str(i) for i in cible])
@@ -752,7 +756,7 @@ class maitre(Tk): #objet de notre fenetre
             if ca == "FB":
                 dialogue().animation(self.n + "_fantome" + case[2])
             elif ca == "OP":
-                v, exp, rec = minijeu(case)
+                v, exp, rec = dialogue().minijeu("question", case)
                 inv(rec)
                 xp(exp)
                 vie(v)
@@ -869,9 +873,6 @@ class maitre(Tk): #objet de notre fenetre
         def ambiance():
             self.son("ambiance")
             F_jeu.after(22680, ambiance)
-        
-        def minijeu():
-            pass
             
         class dialogue(Toplevel):
             def __init__(self):
@@ -914,7 +915,19 @@ class maitre(Tk): #objet de notre fenetre
                 else:
                     T_texte.configure(bg="black")
                 self.bind_all("<ButtonRelease>", self.destruc)
-                    
+            
+            def minijeu(self, jeu, *args):
+                if jeu == "question":
+                    self.question(*args)
+                elif jeu == "mastermind":
+                    self.mastermind(*args)
+            
+            def question(self, *args):
+                pass
+            
+            def mastermind(self, *args):
+                pass
+            
             def destruc(self, *args):
                 fenetre.att = 0
                 self.unbind_all("<ButtonRelease>")
