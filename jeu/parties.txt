@@ -1,21 +1,37 @@
 [test]
-niv = 11
+niv = 1
 score = 4269
+<<<<<<< HEAD
 inv = 
 pos = 6;9
+=======
+inv = D1,D+
+pos = 6;4
+>>>>>>> 4722ce3b838e3b3803a6b5bc317f0795f9b02acc
 vie = 5
-s_niv = 11
+s_niv = 1
 s_score = 0
 s_inv = 
 temps = 0
 
 [test2]
-niv = 21
+niv = 2
 score = 0
 inv = 
 pos = 7;3
 vie = 5
-s_niv = 11
+s_niv = 1
+s_score = 0
+s_inv = 
+temps = 0
+
+[test 24/03]
+niv = 1
+score = 0
+inv = D1
+pos = 2;5
+vie = 5
+s_niv = 1
 s_score = 0
 s_inv = 
 temps = 0
