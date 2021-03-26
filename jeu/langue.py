@@ -36,6 +36,15 @@ langue =  {
         "1_D1" : "Clé dorée",
         "1_D+" : "Clé du niveau 2",
         "1_OP1" : "Opus: Halte!", 
+        #=== à traduire et copier \/ 
+        "1_OP1_q" : "<question1>",
+        "1_OP1_0" : "<réponse1>",
+        "1_OP1_1" : "<réponse2>",
+        "1_OP1_2" : "<réponse3>",
+        "1_OP1_3" : "<réponse4>", #le nombre de réponse possible peut varier
+        "1_OP1_+" : (5, 200, ""), #vie gagnée, experience gagnée, objet gagnée
+        "1_OP1_-" : (-2, -200, ""), #vie gagnée, experience gagnée, objet gagnée
+        #=== à traduire et copier ^^ 
         "1_OP2" : "Opus: Tu n’iras pas plus loin!",
         "1_FB1" : "Au-delà de cette porte, tu risques de rencontrer plus que ton passé…",
         "1_FB2" : "Si tu ne gagnes pas contre tes ennemis, tu ne pourras pas avancer.",

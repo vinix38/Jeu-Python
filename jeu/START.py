@@ -69,9 +69,26 @@ class maitre(Tk): #objet de notre fenetre
             "TMenubutton",
             **self.style
         )
-        self.ttkStyle.configure("TProgressbar", foreground="black", background="black", troughcolor="black") #temporaire
-        self.ttkStyle.configure("Treeview", highlightthickness=0, bd=0, font=('Fixedsys', 20), rowheight=40, foreground="white", background="black",troughcolor="black") # style des cases
-        self.ttkStyle.configure("Treeview.Heading", font=('Fixedsys', 20,'bold'), foreground="white", background="black",) # style de l'en-tête
+        self.ttkStyle.configure("TProgressbar",
+                            foreground="black",
+                            background="black",
+                            troughcolor="black"
+                        ) #temporaire
+        self.ttkStyle.configure("Treeview.Heading",
+                            font=('Fixedsys', 20,'bold'),
+                            foreground="white",
+                            background="black",
+                            fieldbackground="black",
+                        ) # style de l'en-tête
+        self.ttkStyle.configure("Treeview",
+                            background="pink",
+                            foreground="green",
+                            fieldbackground="black",
+                            rowheight=40,
+                            highlightthickness=0,
+                            bd=0,
+                            font=('Fixedsys', 20),
+                        ) # style des cases
         
         self.iconphoto(True, self.img(200, 200, "icone")) #icone de fenetre
         self.att = 0
@@ -556,8 +573,10 @@ class maitre(Tk): #objet de notre fenetre
                 B_liste.insert(
                     parent='',
                     index='end',
-                    values=(i, self.parties[i]["niv"][0], self.parties[i]["score"], self.parties[i]["temps"])
+                    values=(i, self.parties[i]["niv"][0], self.parties[i]["score"], self.parties[i]["temps"]),
+                    tags=("all",)
                 )
+            B_liste.tag_configure("all", background="black", foreground="white")
             B_liste.pack(fill="both")
 
         else:
@@ -778,7 +797,7 @@ class maitre(Tk): #objet de notre fenetre
             if ca == "FB":
                 dialogue().animation(self.n + "_" + case)
             elif ca == "OP":
-                v, exp, rec = dialogue().minijeu("question", case)
+                v, exp, rec = dialogue().minijeu("question", self.n + "_" + case)
                 inv(rec)
                 xp(exp)
                 vie(v)
@@ -907,6 +926,7 @@ class maitre(Tk): #objet de notre fenetre
                 self.L_F = fenetre.L_F
                 self.H_F = fenetre.H_F
                 self.loc = fenetre.loc
+                self.style = fenetre.style
                 self.resizable(0, 0)
                 self.minsize(width=int(self.L_F/2), height=int(self.H_F/2))
                 self.geometry("{0}x{1}+{2}+{3}".format(int(self.L_F/2), int(self.H_F/2), int(self.L_F/4), int(self.H_F/4)))
@@ -938,20 +958,30 @@ class maitre(Tk): #objet de notre fenetre
                 self.bind_all("<Return>", self.destruc)
                 self.bind_all("<{0}>".format(fenetre.options["DEFAULT"]["action"]), self.destruc)
             
-            def minijeu(self, jeu, **kwargs):
+            def minijeu(self, jeu, case):
                 if jeu == "question":
-                    self.question(**kwargs)
+                    self.question(case)
                 elif jeu == "mastermind":
-                    self.mastermind(**kwargs)
+                    self.mastermind(case)
             
-            def question(self, nb, question):
+            def question(self, nb, case):
                 self.rowconfigure([i for i in range(nb)], minsize=self.H_F/(2*nb))
                 self.columnconfigure([i for i in range(4)], minsize=self.L_F/8)
                 T_question = Label(
-                    master = self,
-                    text=self.loc[question],
-                    fg="white"
+                    master=self,
+                    text=self.loc[case],
+                    **self.style,
                 )
+                def rep(i):
+                    pass
+                
+                for i in range(nb):
+                    Button(
+                        master=self,
+                        text=self.loc[question+str(i)],
+                        command=lambda i: rep(i),
+                        **self.style,
+                    )
             
             def mastermind(self, **kwargs):
                 pass
