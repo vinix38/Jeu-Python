@@ -739,6 +739,8 @@ class maitre(Tk): #objet de notre fenetre
                 self.son("porte")
                 if s[2] == "+":
                     charge(str(int(self.n) + 1))
+                elif s[2] == "-":
+                    charge(str(int(self.n) - 1))
                 else:
                     s = True
             if s == True:
@@ -747,7 +749,8 @@ class maitre(Tk): #objet de notre fenetre
                 F_terrain.delete("perso")
                 F_terrain.create_image(
                     *[i*self.x for i in cible],
-                    anchor="nw", tag="perso",
+                    anchor="nw",
+                    tag="perso",
                     image=self.img(
                         self.x,
                         self.x,
