@@ -702,8 +702,11 @@ class maitre(Tk): #objet de notre fenetre
         )
         T_vie = Label(
             master=F_barre,
-            bg="black",
-            image=self.img(self.L_F/20, self.L_F/20, "coeur")
+            text="/!\\",
+            bg="pink",
+            fg = "green",
+            image=self.img(20,20, "coeur"),
+            anchor="nw",
         )
         A_inv = Treeview(
             master = F_barre,
@@ -716,12 +719,13 @@ class maitre(Tk): #objet de notre fenetre
         A_inv.column("inv", anchor="center")
         A_inv.heading("inv", text=self.loc["inv"], anchor="center")  
         
-        for i in self.parties[nom]["inv"].split(","):
-            A_inv.insert(
-                parent="",
-                index="end",
-                values=(self.loc[i],),
-                )
+        if self.parties[nom]["inv"] != "":
+            for i in self.parties[nom]["inv"].split(","):
+                A_inv.insert(
+                    parent="",
+                    index="end",
+                    values=(self.loc[i],),
+                    )
         
         def mouv(mov, coords):
             """
@@ -738,6 +742,10 @@ class maitre(Tk): #objet de notre fenetre
             elif (s[0] == "P") and (("D" + s[2]) in self.parties[nom]["inv"].split(",")):
                 self.son("porte")
                 if s[2] == "+":
+                    self.parties[nom]["pos"] = ""
+                    charge(str(int(self.n) + 1))
+                elif s[2] == "-":
+                    self.parties[nom]["pos"] = ""
                     charge(str(int(self.n) + 1))
                 else:
                     s = True
@@ -908,7 +916,7 @@ class maitre(Tk): #objet de notre fenetre
                     justify="left",
                     wraplength=int(self.L_F/2)-10,
                     fg="white",
-                    bg="white",
+                    bg="black",
                 )
                 T_texte.place(relx=0.5, rely=0.5, anchor="center")
                 if anim != None:
@@ -921,10 +929,7 @@ class maitre(Tk): #objet de notre fenetre
                             self.after(130, maj, ind)
                         else:
                             T_texte.configure(image="")
-                            T_texte.configure(bg="black")
                     maj(0)
-                else:
-                    T_texte.configure(bg="black")
                 self.bind_all("<ButtonRelease>", self.destruc)
             
             def minijeu(self, jeu, *args):

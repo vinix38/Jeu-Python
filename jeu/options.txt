@@ -9,5 +9,5 @@ haut = Up
 gauche = Left
 bas = Down
 droite = Right
-action = i
+action = e
 
