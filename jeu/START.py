@@ -670,11 +670,38 @@ class maitre(tk.Tk): #objet de notre fenetre
             
             cible = [int(coords[i] + mov[i]) for i in range(2)]
             log("coordonnés cibles -", cible)
+
+            s = niv[self.parties[nom]["niv"]]["grille"][cible[1]][cible[0]]
+            log(s)
+            if s[0] == "S":
+                self.son("pas")
+                s = True
+            elif (s[0] == "P") and (("D" + s[2]) in self.parties[nom]["inv"].split(",")):
+                self.son("porte")
+                if s[2] == "+":
+                    charge(str(int(self.n) + 1))
+                elif s[2] == "-":
+                    charge(str(int(self.n) - 1))
+                else:
+                    s = True
             if niv[self.parties[nom]["niv"]]["grille"][cible[1]][cible[0]][0] == "S":
                 log("mouvement accepté")
                 self.son("pas")
                 self.parties[nom]["pos"] = ";".join([str(i) for i in cible])
                 F_terrain.delete("perso")
+                F_terrain.create_image(
+                    *[i*self.x for i in cible],
+                    anchor="nw",
+                    tag="perso",
+                    image=self.img(
+                        self.x,
+                        self.x,
+                        "perso"+"".join([str(i) for i in mov])
+                    )
+                )
+                def apres():
+                    self.att = 0
+                F_terrain.after(100, apres)
                 F_terrain.create_image(*[i*x for i in cible], anchor="nw", tag="perso", image=self.img(x,x,"perso"+"".join([str(i) for i in mov])))
             else:
                 log("mouvement refusé")
