@@ -13,7 +13,7 @@ from tkinter import Label, Frame, Toplevel, Button, StringVar, IntVar, Canvas, P
 from tkinter.messagebox import showinfo     #message d'erreur
 from tkinter.ttk import Style, Treeview, OptionMenu, Progressbar
 from niveaux import niv                     #infos de niveaux
-import sys                                  #gestion des chemins de fichiers
+import sys                                  #gestion des chemins de fichiersa
 import os                                   # ^^idem^^pytho
 
 # fonction de log
