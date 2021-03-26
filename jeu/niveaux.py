@@ -8,7 +8,7 @@ fonctionement case: #opus :OP1 fantôme : FB1 givine :GI struck boon : SB
 possibilité d'utiliser n'importe quel caractère valable pour des noms de fichiers (tout sauf "/\*<>?|)
 """
 niv = {
-    "11" : {
+    "1" : {
         "li" : 20,
         "col" : 29,
         "def_pos" : [2,1],
@@ -32,11 +32,11 @@ niv = {
             ["M9-","SG-","SG-","SG-","SG-","SG-","SG-","SG-","SG-","SG-","SG-","MP-","V--","MP-","MP-","MF-","MP-","M9-","MP-","MP-","MP-","MP-","MP-","MP-","MF-","MP-","M9-","MP-","MP-",],
             ["MP-","SG-","SG-","SG-","SG-","SG-","SG-","SG-","SG-","SG-","SG-","MP-","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--",],
             ["MP-","SG-","SG-","FB3","SG-","SG-","SG-","SG-","SG-","SG-","SG-","MP-","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--",],
-            ["MP-","MP-","MP-","MP-","MP-","EP2","EP2","MF-","MP-","MP-","MP-","MP-","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--",],
+            ["MP-","MP-","MP-","MP-","MP-","PG+","PD+","MF-","MP-","MP-","MP-","MP-","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--","V--",],
         ],
         "def_img" : "SG",
     },
-    "21" : {
+    "2" : {
         "li" : 14,
         "col" : 37,
         "def_pos" : [7,0],
