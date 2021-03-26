@@ -13,7 +13,6 @@ from tkinter import Label, Frame, Toplevel, Button, StringVar, IntVar, Canvas, P
 from tkinter.messagebox import showinfo     #message d'erreur
 from tkinter.ttk import Style, Treeview, OptionMenu, Progressbar
 from niveaux import niv                     #infos de niveaux
-import time                                 #retarder l'execution du programe
 import sys                                  #gestion des chemins de fichiers
 import os                                   # ^^idem^^pytho
 
@@ -746,7 +745,15 @@ class maitre(Tk): #objet de notre fenetre
                 log("mouvement accepté")
                 self.parties[nom]["pos"] = ";".join([str(i) for i in cible])
                 F_terrain.delete("perso")
-                F_terrain.create_image(*[i*self.x for i in cible], anchor="nw", tag="perso", image=self.img(self.x,self.x,"perso"+"".join([str(i) for i in mov])))
+                F_terrain.create_image(
+                    *[i*self.x for i in cible],
+                    anchor="nw", tag="perso",
+                    image=self.img(
+                        self.x,
+                        self.x,
+                        "perso"+"".join([str(i) for i in mov])
+                    )
+                )
                 def apres():
                     self.att = 0
                 F_terrain.after(100, apres)
