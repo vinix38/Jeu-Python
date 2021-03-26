@@ -2,7 +2,7 @@
 niv = 1
 score = 4269
 inv = D1,D+
-pos = 2;5
+pos = 6;4
 vie = 5
 s_niv = 1
 s_score = 0

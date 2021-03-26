@@ -624,7 +624,6 @@ class maitre(Tk): #objet de notre fenetre
                 #highlightthickness=0,
             )
             F_terrain.place(relx=0.5, rely=0.5, anchor="center")
-            
             log("image par défaut -", niv[n]["def_img"])
             self.temp["def_img"] = self.img(x, x, niv[n]["def_img"]) #image par défaut en cas de transparence
 
@@ -654,8 +653,8 @@ class maitre(Tk): #objet de notre fenetre
             # ---=== fin charge() ===---
 
             if self.parties[nom]["pos"] == "": #si il n'y a pas encore de position enregistrée
-                self.parties[nom]["pos"] = str(
-                    niv[n]["def_pos"][0]) + ";" + str(niv[n]["def_pos"][1])
+                self.parties[nom]["pos"] = str(niv[n]["def_pos"][0]) \
+                    + ";" + str(niv[n]["def_pos"][1])
             
             F_terrain.create_image(
                 int(self.parties[nom]["pos"].split(";")[0]) * x,
@@ -701,6 +700,11 @@ class maitre(Tk): #objet de notre fenetre
             mode = 'determinate',
             maximum = 20,
             value=self.parties[nom].getint("vie"),
+        )
+        T_vie = Label(
+            master=F_barre,
+            bg="black",
+            image=self.img(self.L_F/20, self.L_F/20, "coeur")
         )
         A_inv = Treeview(
             master = F_barre,
@@ -935,7 +939,8 @@ class maitre(Tk): #objet de notre fenetre
             
         #placement
         A_inv.grid(row=7, column=0, sticky="nswe", columnspan=4, rowspan=6)
-        A_vie.grid(row=1, column=0, sticky="nswe", columnspan=4)
+        T_vie.grid(row=1, column=0, sticky="nswe")
+        A_vie.grid(row=1, column=1, sticky="nswe", columnspan=3)
         T_niveau.grid(row=3, column=0, sticky="nswe", columnspan=2)
         A_niveau.grid(row=3, column=2, sticky="nswe", columnspan=2)
         T_xp.grid(row=5, column=0, sticky="nswe", columnspan=2)
