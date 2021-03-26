@@ -1,8 +1,8 @@
 [test]
-niv = 1
+niv = 2
 score = 4269
 inv = D1,D+
-pos = 8;1
+pos = 8;11
 vie = 5
 s_niv = 1
 s_score = 0

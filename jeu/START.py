@@ -46,6 +46,7 @@ class maitre(Tk): #objet de notre fenetre
     """
     # ====== VARIABLES ======
     temp = {} #empêche que les images soient effacées par le garbage collector
+    temp8 = {} #niveau de résilience plus haut
     
     def __init__(self):
         super().__init__() #fenetre tkinter de base
@@ -59,8 +60,8 @@ class maitre(Tk): #objet de notre fenetre
         # === styles ===
         self.style = {   #style par défaut pour tk
             "font": ('Fixedsys', 24),
-            "background": "grey",
-            "foreground": "black",
+            "background": "black",
+            "foreground": "white",
         }
         self.ttkStyle = Style(self) #styles par défaut pour ttk
         self.ttkStyle.theme_use('clam')
@@ -110,7 +111,7 @@ class maitre(Tk): #objet de notre fenetre
         self.localisation()
 
     # === changement de taille ===
-    def img(self, L, H, nom):
+    def img(self, L, H, nom, important=0):
         """
         (Largeur (px), Hauteur (px), nom de l'image)\n
         redimensionne l'image aux dimensions souhaitées
@@ -121,6 +122,8 @@ class maitre(Tk): #objet de notre fenetre
             L = (Fraction(str(L/img.width()))).limit_denominator(30)  #ratio de largeur
             log("image", nom,"=",H,"par",L)
             img = img.zoom(L.numerator, H.numerator).subsample(L.denominator, H.denominator)
+            if important:
+                self.temp8[nom] = img
             self.temp[nom] = img
         return self.temp[nom]
 
@@ -226,8 +229,8 @@ class maitre(Tk): #objet de notre fenetre
         # fenetre
         F_creer = Frame(self)
         F_creer.place(relheight=1, relwidth=1)
-        F_creer.rowconfigure([0, 1], weight=1)
-        F_creer.columnconfigure([0, 1], weight=1)
+        F_creer.rowconfigure([i for i in range(15)], minsize=self.H_F/15)
+        F_creer.columnconfigure([i for i in range(15)], minsize=self.L_F/15)
 
         E_creer = Entry(
             master=F_creer,
@@ -237,9 +240,11 @@ class maitre(Tk): #objet de notre fenetre
         def creation():
             nonlocal E_creer
             nom = E_creer.get()
-            if nom in self.parties.sections() or nom == "":
+            if nom in self.parties.sections():
                 showinfo(self.loc["err"], self.loc["déjà"])
                 log("erreur, cette partie existe déjà")
+            elif nom == "":
+                showinfo(self.loc["err"], self.loc["vide"] )
             else:
                 self.parties[nom] = {
                     "niv": "1",
@@ -271,9 +276,9 @@ class maitre(Tk): #objet de notre fenetre
             **self.style,
         )
         # placement
-        E_creer.grid(row=0, column=0, columnspan=2, sticky="nswe")
-        B_annuler.grid(row=1, column=0, sticky="nswe")
-        B_creer.grid(row=1, column=1, sticky="nswe")
+        E_creer.grid(row=7, column=6, columnspan=2, sticky="nswe")
+        B_annuler.grid(row=9, column=7, sticky="nswe")
+        B_creer.grid(row=9, column=6, sticky="nswe")
 
     def param(self):
         efface(self)
@@ -702,11 +707,9 @@ class maitre(Tk): #objet de notre fenetre
         )
         T_vie = Label(
             master=F_barre,
-            text="/!\\",
-            bg="pink",
-            fg = "green",
-            image=self.img(20,20, "coeur"),
-            anchor="nw",
+            bg="black",
+            image=self.img(self.H_F/15,self.H_F/15, "coeur", 1),
+            anchor="n",
         )
         A_inv = Treeview(
             master = F_barre,
@@ -903,6 +906,7 @@ class maitre(Tk): #objet de notre fenetre
                 )
                 self.L_F = fenetre.L_F
                 self.H_F = fenetre.H_F
+                self.loc = fenetre.loc
                 self.resizable(0, 0)
                 self.minsize(width=int(self.L_F/2), height=int(self.H_F/2))
                 self.geometry("{0}x{1}+{2}+{3}".format(int(self.L_F/2), int(self.H_F/2), int(self.L_F/4), int(self.H_F/4)))
@@ -931,22 +935,32 @@ class maitre(Tk): #objet de notre fenetre
                             T_texte.configure(image="")
                     maj(0)
                 self.bind_all("<ButtonRelease>", self.destruc)
+                self.bind_all("<Return>", self.destruc)
+                self.bind_all("<{0}>".format(fenetre.options["DEFAULT"]["action"]), self.destruc)
             
-            def minijeu(self, jeu, *args):
+            def minijeu(self, jeu, **kwargs):
                 if jeu == "question":
-                    self.question(*args)
+                    self.question(**kwargs)
                 elif jeu == "mastermind":
-                    self.mastermind(*args)
+                    self.mastermind(**kwargs)
             
-            def question(self, *args):
-                pass
+            def question(self, nb, question):
+                self.rowconfigure([i for i in range(nb)], minsize=self.H_F/(2*nb))
+                self.columnconfigure([i for i in range(4)], minsize=self.L_F/8)
+                T_question = Label(
+                    master = self,
+                    text=self.loc[question],
+                    fg="white"
+                )
             
-            def mastermind(self, *args):
+            def mastermind(self, **kwargs):
                 pass
             
             def destruc(self, *args):
                 fenetre.att = 0
                 self.unbind_all("<ButtonRelease>")
+                self.unbind_all("<Return>")
+                self.unbind_all("<{0}>".format(fenetre.options["DEFAULT"]["action"]))
                 self.destroy()
             
         #placement
