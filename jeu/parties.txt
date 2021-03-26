@@ -1,7 +1,7 @@
 [test]
 niv = 2
 score = 4269
-inv = D1,D+
+inv = 1_D1,1_D+
 pos = 8;11
 vie = 5
 s_niv = 1
@@ -23,7 +23,7 @@ temps = 0
 [test 24/03]
 niv = 1
 score = 0
-inv = D1
+inv = 1_D1
 pos = 6;18
 vie = 5
 s_niv = 1

@@ -70,8 +70,8 @@ class maitre(Tk): #objet de notre fenetre
             **self.style
         )
         self.ttkStyle.configure("TProgressbar", foreground="black", background="black", troughcolor="black") #temporaire
-        self.ttkStyle.configure("Treeview", highlightthickness=0, bd=0, font=('Fixedsys', 20), rowheight=40) # style des cases
-        self.ttkStyle.configure("Treeview.Heading", font=('Fixedsys', 20,'bold')) # style de l'en-tête
+        self.ttkStyle.configure("Treeview", highlightthickness=0, bd=0, font=('Fixedsys', 20), rowheight=40, foreground="white", background="black",troughcolor="black") # style des cases
+        self.ttkStyle.configure("Treeview.Heading", font=('Fixedsys', 20,'bold'), foreground="white", background="black",) # style de l'en-tête
         
         self.iconphoto(True, self.img(200, 200, "icone")) #icone de fenetre
         self.att = 0
@@ -486,13 +486,13 @@ class maitre(Tk): #objet de notre fenetre
 
         log("=== charger une partie ===")
 
-        F_charge = Frame(self)
+        F_charge = Frame(self, bg="black")
         F_charge.place(relheight=1, relwidth=1)
 
-        F_liste = Frame(F_charge)
+        F_liste = Frame(F_charge, bg="black")
         F_liste.place(relheight=0.9, relwidth=1)
 
-        F_barre = Frame(F_charge)
+        F_barre = Frame(F_charge, bg="black")
         F_barre.place(relheight=0.1, relwidth=1, rely=0.9)
         F_barre.rowconfigure(0, weight=1)
         F_barre.columnconfigure([0, 1, 2], weight=1)
@@ -742,7 +742,7 @@ class maitre(Tk): #objet de notre fenetre
             if s[0] == "S":
                 self.son("pas")
                 s = True
-            elif (s[0] == "P") and (("D" + s[2]) in self.parties[nom]["inv"].split(",")):
+            elif (s[0] == "P") and ((self.n + "_D" + s[2]) in self.parties[nom]["inv"].split(",")):
                 self.son("porte")
                 if s[2] == "+":
                     self.parties[nom]["pos"] = ""
@@ -776,7 +776,7 @@ class maitre(Tk): #objet de notre fenetre
             log("interaction avec", case)
             ca = case[0:2]
             if ca == "FB":
-                dialogue().animation(self.n + "_fantome" + case[2])
+                dialogue().animation(self.n + "_" + case)
             elif ca == "OP":
                 v, exp, rec = dialogue().minijeu("question", case)
                 inv(rec)
@@ -786,7 +786,7 @@ class maitre(Tk): #objet de notre fenetre
                 self.son("escalier")
                 charge(case[2])
             elif ca == "CD":
-                inv(case[1:])
+                inv(self.n + "_" + case[1:])
                 self.son("coffre")
                 dialogue().animation(case[1:], "coffre_10fps.gif", 5)
             else:
