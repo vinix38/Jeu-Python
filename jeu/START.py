@@ -49,6 +49,9 @@ class maitre(Tk): #objet de notre fenetre
     temp8 = {} #niveau de résilience plus haut
     
     def __init__(self):
+        """
+        initialisation
+        """
         super().__init__() #fenetre tkinter de base
         # === déclaration fenêtre ===
         log("=== INITIALISATION ===")
@@ -130,7 +133,7 @@ class maitre(Tk): #objet de notre fenetre
     # === changement de taille ===
     def img(self, L, H, nom, important=0):
         """
-        (Largeur (px), Hauteur (px), nom de l'image)\n
+        (Largeur (px), Hauteur (px), nom de l'image, importance)\n
         redimensionne l'image aux dimensions souhaitées
         """
         if nom not in self.temp:
@@ -190,7 +193,9 @@ class maitre(Tk): #objet de notre fenetre
 
     # ***====== FENETRES ======***
     def acceuil(self):
-
+        """
+        fenetre d'acceuil du jeu
+        """
         efface(self)
         self.unbind_all("<Key>")
 
@@ -199,8 +204,8 @@ class maitre(Tk): #objet de notre fenetre
         # fenetre
         F_acceuil = Frame(master=self)
         F_acceuil.place(relheight=1, relwidth=1)
-        F_acceuil.rowconfigure(list(range(15)), weight=1)
-        F_acceuil.columnconfigure(list(range(7)), weight=1)
+        F_acceuil.rowconfigure([i for i in range(15)], weight=1)
+        F_acceuil.columnconfigure([i for i in range(7)], weight=1)
 
         # fond
         self.temp={}
@@ -239,6 +244,9 @@ class maitre(Tk): #objet de notre fenetre
         B_creer.grid(column=3, row=6, sticky="nswe")
 
     def creer(self):
+        """
+        création d'une nouvelle partie
+        """
         efface(self)
 
         log("=== nouvelle partie ===")
@@ -254,9 +262,10 @@ class maitre(Tk): #objet de notre fenetre
             **self.style,
         )
 
-        def creation():
-            nonlocal E_creer
-            nom = E_creer.get()
+        def creation(nom):
+            """
+            crée une nouvelle partie si possible
+            """
             if nom in self.parties.sections():
                 showinfo(self.loc["err"], self.loc["déjà"])
                 log("erreur, cette partie existe déjà")
@@ -283,7 +292,7 @@ class maitre(Tk): #objet de notre fenetre
         B_creer = Button(
             master=F_creer,
             text=self.loc["creer"],
-            command=creation,
+            command=lambda: creation(E_creer.get()),
             **self.style,
         )
         B_annuler = Button(
@@ -298,6 +307,9 @@ class maitre(Tk): #objet de notre fenetre
         B_creer.grid(row=9, column=6, sticky="nswe")
 
     def param(self):
+        """
+        fentre des paramètres du jeu
+        """
         efface(self)
 
         log("=== paramètres ===")
@@ -305,8 +317,8 @@ class maitre(Tk): #objet de notre fenetre
         # fenetre
         F_param = Frame(master=self)
         F_param.place(relheight=1, relwidth=1)
-        F_param.rowconfigure(list(range(10)), weight=1)
-        F_param.columnconfigure(list(range(10)), weight=1)
+        F_param.rowconfigure([i for i in range(10)], weight=1)
+        F_param.columnconfigure([i for i in range(10)], weight=1)
 
         # variables menus déroulants
         opt_l = self.options["DEFAULT"]["langues_dispo"].split(",")
@@ -335,10 +347,16 @@ class maitre(Tk): #objet de notre fenetre
 
         # fonctions de sortie
         def quitter_sans():
+            """
+            quitter sans sauvegarder
+            """
             self.options.read(ch("options.txt"))
             self.acceuil()
 
         def quitter_avec():
+            """
+            quitter en sauvegardant
+            """
             with open(ch('options.txt'), 'w') as fichier:
                 self.options.write(fichier)
             self.L_F, self.H_F = self.ecran()
@@ -346,8 +364,8 @@ class maitre(Tk): #objet de notre fenetre
             self.acceuil()
 
         # fond
-        afond = Label(F_param, image=self.temp["BG_"+self.options["DEFAULT"]["langue"][0:2]])
-        afond.place(x=0, y=0, relwidth=1, relheight=1)
+        fond = Label(F_param, image=self.temp["BG_"+self.options["DEFAULT"]["langue"][0:2]])
+        fond.place(x=0, y=0, relwidth=1, relheight=1)
 
         # boutons
         B_langue = OptionMenu(
@@ -499,6 +517,9 @@ class maitre(Tk): #objet de notre fenetre
         T_action.grid(row=6, column=7, sticky="nswe")
 
     def charger(self):
+        """
+        fentre de chargement des parties
+        """
         efface(self)
 
         log("=== charger une partie ===")
@@ -521,6 +542,9 @@ class maitre(Tk): #objet de notre fenetre
             **self.style,
         )
         def charge(B_liste):
+            """
+            lancement du chargement de la partie sélectionnée
+            """
             sel = B_liste.focus()
             log(sel)
             if sel:
@@ -533,6 +557,9 @@ class maitre(Tk): #objet de notre fenetre
             **self.style,
         )
         def supprimer(B_liste):
+            """
+            suppression de la partie sélectionnée
+            """
             sel = B_liste.focus()
             if sel:
                 self.parties.remove_section(B_liste.item(sel)["values"][0])
@@ -573,7 +600,12 @@ class maitre(Tk): #objet de notre fenetre
                 B_liste.insert(
                     parent='',
                     index='end',
-                    values=(i, self.parties[i]["niv"][0], self.parties[i]["score"], self.parties[i]["temps"]),
+                    values=(
+                        i,
+                        self.parties[i]["niv"][0],
+                        self.parties[i]["score"],
+                        self.parties[i]["temps"]
+                    ),
                     tags=("all",)
                 )
             B_liste.tag_configure("all", background="black", foreground="white")
@@ -595,12 +627,18 @@ class maitre(Tk): #objet de notre fenetre
         self.att = 0
 
     def jeu(self, nom):
+        """
+        fenetre principale de jeu
+        """
         efface(self)
 
         log("=== chargement du jeu ===")
 
         # fonction de sortie
         def quitter():
+            """
+            quitter la partie en sauvegardant
+            """
             with open(ch("parties.txt"), "w") as fichier:
                 self.parties.write(fichier)
             self.acceuil()
@@ -614,8 +652,8 @@ class maitre(Tk): #objet de notre fenetre
 
         F_barre = Frame(F_jeu, background="black")
         F_barre.place(relheight=1, relwidth=0.2, relx=0.8)
-        F_barre.rowconfigure(list(range(15)), weight=1,minsize=self.H_F/15)
-        F_barre.columnconfigure([0, 1, 2, 3], weight=1, minsize=self.L_F/20)
+        F_barre.rowconfigure([i for i in range(15)], minsize=self.H_F/15)
+        F_barre.columnconfigure([0, 1, 2, 3], minsize=self.L_F/20)
 
         F_terrain = Canvas(F_carte, background="black")
 
@@ -792,6 +830,9 @@ class maitre(Tk): #objet de notre fenetre
                 self.att = 0
 
         def action(case):
+            """
+            interagis avec l'objet si possible
+            """
             log("interaction avec", case)
             ca = case[0:2]
             if ca == "FB":
@@ -901,6 +942,9 @@ class maitre(Tk): #objet de notre fenetre
             self.parties[nom]["score"] = str(valeur)
             
         def inv(obj):
+            """
+            rajoute les objets récoltés
+            """
             liste = self.parties[nom]["inv"].split(",") if self.parties[nom]["inv"] != "" else []
             if obj not in liste and obj !="":
                 liste.append(obj)
@@ -912,11 +956,20 @@ class maitre(Tk): #objet de notre fenetre
                 self.parties[nom]["inv"] = ",".join(liste)
                 
         def ambiance():
+            """
+            son de fond
+            """
             self.son("ambiance")
             F_jeu.after(22680, ambiance)
             
         class dialogue(Toplevel):
+            """
+            ouvre une fenetre de dialogue
+            """
             def __init__(self):
+                """
+                initialisation du dialogue
+                """
                 super().__init__(
                     master=fenetre,
                     bg="black",
@@ -933,6 +986,9 @@ class maitre(Tk): #objet de notre fenetre
                 self.overrideredirect(True)
                 
             def animation(self, texte, anim=None, ips=None):
+                """
+                lance une animation
+                """
                 T_texte = Label(
                     master=self,
                     text=fenetre.loc[texte],
@@ -946,6 +1002,9 @@ class maitre(Tk): #objet de notre fenetre
                 if anim != None:
                     images = [PhotoImage(file=ch('media/'+anim), format='gif -index %i' %(i), width=int(self.L_F/2), height=int(self.H_F/2),) for i in range(ips)]
                     def maj(ind):
+                        """
+                        passe à l'image suivante de l'animation
+                        """
                         if ind < ips:
                             image = images[ind]
                             ind += 1
@@ -959,6 +1018,9 @@ class maitre(Tk): #objet de notre fenetre
                 self.bind_all("<{0}>".format(fenetre.options["DEFAULT"]["action"]), self.destruc)
             
             def minijeu(self, jeu, case):
+                """
+                déclenche le minijeu souhaité
+                """
                 if jeu == "question":
                     self.question(case)
                 elif jeu == "mastermind":
@@ -966,6 +1028,9 @@ class maitre(Tk): #objet de notre fenetre
                 return self.res
             
             def question(self, case):
+                """
+                pose une question au joueur
+                """
                 bonne = int(self.loc[case][0])
                 nb = int(self.loc[case][1])
                 self.rowconfigure([i for i in range(nb)], minsize=self.H_F/(2*nb))
@@ -975,9 +1040,11 @@ class maitre(Tk): #objet de notre fenetre
                     text=self.loc[case][2:],
                     **self.style,
                 )
+                T_question.grid(row=0, column=0, rowspan=nb, columnspan=4, sticky="nswe")
                 def rep(i):
                     if i == bonne:
                         self.res = self.loc[case+"_+"]
+                        fenetre.son("monstre_dying")
                     else:
                         self.res = self.loc[case+"_-"]
                 
@@ -993,6 +1060,9 @@ class maitre(Tk): #objet de notre fenetre
                 pass
             
             def destruc(self, *args):
+                """
+                retourne à la fentre de jeu principale
+                """
                 fenetre.att = 0
                 self.unbind_all("<ButtonRelease>")
                 self.unbind_all("<Return>")
