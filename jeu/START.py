@@ -963,27 +963,33 @@ class maitre(Tk): #objet de notre fenetre
                     self.question(case)
                 elif jeu == "mastermind":
                     self.mastermind(case)
+                return self.res
             
-            def question(self, nb, case):
+            def question(self, case):
+                bonne = int(self.loc[case][0])
+                nb = int(self.loc[case][1])
                 self.rowconfigure([i for i in range(nb)], minsize=self.H_F/(2*nb))
                 self.columnconfigure([i for i in range(4)], minsize=self.L_F/8)
                 T_question = Label(
                     master=self,
-                    text=self.loc[case],
+                    text=self.loc[case][2:],
                     **self.style,
                 )
                 def rep(i):
-                    pass
+                    if i == bonne:
+                        self.res = self.loc[case+"_+"]
+                    else:
+                        self.res = self.loc[case+"_-"]
                 
                 for i in range(nb):
                     Button(
                         master=self,
-                        text=self.loc[question+str(i)],
+                        text=self.loc[case+"_"+str(i)],
                         command=lambda i: rep(i),
                         **self.style,
-                    )
+                    ).grid(row=i, column=3, sticky="nswe")
             
-            def mastermind(self, **kwargs):
+            def mastermind(self, case):
                 pass
             
             def destruc(self, *args):
