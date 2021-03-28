@@ -51,7 +51,7 @@ langue =  {
         "2_OP1" : "Opus: Je comptes bien te couper dans ton élan",
         "2_OP1_q" : "22<Je porte des lunettes mais je n'y vois rien. Qui suis-je?>",
         "2_OP1_0" : "<Un aveugle>",
-        "2_OP1_1" : "<Le nez>
+        "2_OP1_1" : "<Le nez>",
         "2_OP1_+" : (2,300,"shard"),
         "2_OP1_-" : (-2,-300),
         "2_OP2" : "Opus: Voyons voir à quel point tu es malin...",
