@@ -33,12 +33,12 @@ temps = 0
 
 [test lvl1]
 niv = 1
-score = 0
-inv = 
-pos = 6;4
+score = 200
+inv = 1_D1
+pos = 5;13
 vie = 5
 s_niv = 1
-s_score = 0
-s_inv = 
+s_score = 200
+s_inv = 1_D1
 temps = 0
 
