@@ -31,3 +31,14 @@ s_score = 0
 s_inv = 
 temps = 0
 
+[test lvl1]
+niv = 1
+score = 0
+inv = 
+pos = 6;4
+vie = 5
+s_niv = 1
+s_score = 0
+s_inv = 
+temps = 0
+
