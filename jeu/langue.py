@@ -49,7 +49,7 @@ langue =  {
         "1_FB1" : "Au-delà de cette porte, tu risques de rencontrer plus que ton passé…",
         "1_FB2" : "Si tu ne gagnes pas contre tes ennemis, tu ne pourras pas avancer.",
         "1_FB3" : "Si tu es ici c’est que tu as réussi… Tu t’approches de la vérité",
-        "1_shard1": "",
+        "1_shard1": "Les mages font partis des êtres les plus puissants de tout les royaumes.",
         "2_OP1" : "Opus: Je comptes bien te couper dans ton élan",
         "2_OP2" : "Opus: Voyons voir à quel point tu es malin...",
         "2_OP3" : "Opus: Tu ne gagneras pas contre moi!",
@@ -76,6 +76,7 @@ langue =  {
         "4_FB2" : " Je crois bien que tu y es presque...",
         "4_FB3" : "Le prochain niveau sera ton dernier...",
         "4_shard1" : "Il est possible que quelques mages aient survécu...",
+        "5_DL" : "Daleah: Je ne pensais pas que tu arriverais ici si vite... Bien que cela ne signifie rien, je vais te renvoyer là où tu dois être."
     },
     #====== ANGLAIS ======
     "en_US" : {
@@ -118,7 +119,7 @@ langue =  {
         "1_FB1" : "Beyond this door, you will meet more than your past…",
         "1_FB2" : "If you don't win against your enemies, you can't move forward.",
         "1_FB3" : "If you are here, it means that you succeeded… you are getting closer to the truth",
-        "1_shard1" : "",
+        "1_shard1" : "The mages are one of the most powerful beings of all the kingdoms.",
         "2_OP1" : "Opus: I intend to cut off your momentum",
         "2_OP2" : "Opus: Let's see how clever you are",
         "2_OP3" : "Opus: You won't win against me!",
@@ -145,5 +146,6 @@ langue =  {
         "4_FB2" : "I believe you're almost there...",
         "4_FB3" : "The next level will be your last...",
         "4_shard1" : "It is possible that some mages survived...",
+        "5_DL" : "Daleah: I didn't think that you would make it here so fast... Although this doesn't mean anything, I shall send you back where you belong.", 
     },
 }
