@@ -923,6 +923,14 @@ class maitre(Tk): #objet de notre fenetre
             log("défaite")
             self.son("gameover")
             self.parties[nom]["inv"] = self.parties[nom]["S_inv"]
+            A_inv.delete(*A_inv.get_children())
+            if self.parties[nom]["inv"] != "":
+                for i in self.parties[nom]["inv"].split(","):
+                    A_inv.insert(
+                        parent="",
+                        index="end",
+                        values=(self.loc[i],),
+                        )
             self.parties[nom]["niv"] = self.parties[nom]["S_niv"]
             self.parties[nom]["score"] = self.parties[nom]["S_score"]
             V_xp.set(self.parties[nom]["score"])

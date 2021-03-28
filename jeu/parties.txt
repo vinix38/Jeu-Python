@@ -1,12 +1,12 @@
-[test-]
+[test]
 niv = 1
-score = 0
+score = 200
 inv = 1_D1
-pos = 8;2
-vie = 5
+pos = 7;15
+vie = 10
 s_niv = 1
-s_score = 0
-s_inv = 
+s_score = 200
+s_inv = 1_D1
 temps = 0
 gagne = 
 
