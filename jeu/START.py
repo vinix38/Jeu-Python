@@ -845,20 +845,23 @@ class maitre(Tk): #objet de notre fenetre
             if ca == "FB":
                 dialogue().animation(self.n + "_" + case)
             elif (ca == "OP") and (case not in self.parties[nom]["gagne"].split(",")):
-                f = dialogue()
-                f.question(self.n + "_" + case)
-                def actu(*args):
-                    f.unbind("<Destroy>")
+                if (self.n + "_" + case +"_q") in self.loc:
+                    f = dialogue()
+                    f.question(self.n + "_" + case)
+                    def actu(*args):
+                        f.unbind("<Destroy>")
+                        log(self.res)
+                        res = self.res
+                        xp(res[1])
+                        inv(res[2])
+                        vie(res[0])
+                        if res[0] >= 0:
+                            sauvegarde()
+                            self.parties[nom]["gagne"].append(case+",")
+                    f.bind("<Destroy>", actu)
                     log(self.res)
-                    res = self.res
-                    xp(res[1])
-                    inv(res[2])
-                    vie(res[0])
-                    if res[0] >= 0:
-                        sauvegarde()
-                        self.parties[nom]["gagne"].append(case+",")
-                f.bind("<Destroy>", actu)
-                log(self.res)
+                else:
+                    dialogue().animation(self.n + "_" + case)
             elif ca == "EP":
                 self.son("escalier")
                 charge(case[2])
@@ -993,7 +996,6 @@ class maitre(Tk): #objet de notre fenetre
             self.son("ambiance")
             F_jeu.after(22680, ambiance)
             
-
         class dialogue(Toplevel):
             """
             ouvre une fenetre de dialogue
@@ -1061,6 +1063,7 @@ class maitre(Tk): #objet de notre fenetre
                 T_question = Label(
                     master=self,
                     text=self.loc[case+"_q"][2:],
+                    wraplength=self.L_F/2,
                     **self.style,
                 )
                 T_question.grid(row=0, column=0, rowspan=4, columnspan=nb, sticky="nswe")
