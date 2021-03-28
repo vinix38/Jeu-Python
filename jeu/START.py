@@ -853,7 +853,7 @@ class maitre(Tk): #objet de notre fenetre
             elif ca == "CD":
                 inv(self.n + "_" + case[1:])
                 self.son("coffre")
-                dialogue().animation(case[1:], "coffre_10fps.gif", 5)
+                dialogue().animation(str(self.n)+ "_" + case[1:], "coffre_10fps.gif", 5)
             else:
                 self.att = 0
             
