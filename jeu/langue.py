@@ -37,7 +37,7 @@ langue =  {
         "1_D+" : "Clé du niveau 2",
         "1_OP1" : "Opus: Halte!", 
         #=== à traduire et copier \/ 
-        "1_OP1_q" : "<question1>",
+        "1_OP1_q" : "34<question1>",
         "1_OP1_0" : "<réponse1>",
         "1_OP1_1" : "<réponse2>",
         "1_OP1_2" : "<réponse3>",

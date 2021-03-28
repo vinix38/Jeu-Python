@@ -94,6 +94,7 @@ class maitre(Tk): #objet de notre fenetre
                         ) # style des cases
         
         self.iconphoto(True, self.img(200, 200, "icone")) #icone de fenetre
+        self.res = None
         self.att = 0
         self.x = -1
         self.n = -1
@@ -838,10 +839,14 @@ class maitre(Tk): #objet de notre fenetre
             if ca == "FB":
                 dialogue().animation(self.n + "_" + case)
             elif ca == "OP":
-                v, exp, rec = dialogue().minijeu("question", self.n + "_" + case)
-                inv(rec)
-                xp(exp)
-                vie(v)
+                f = dialogue()
+                slt = f.minijeu("question", self.n + "_" + case)
+                log(slt)
+                log(self.res)
+                #v, exp, rec = f.res
+                #inv(rec)
+                #xp(exp)
+                #vie(v)
             elif ca == "EP":
                 self.son("escalier")
                 charge(case[2])
@@ -962,6 +967,7 @@ class maitre(Tk): #objet de notre fenetre
             self.son("ambiance")
             F_jeu.after(22680, ambiance)
             
+
         class dialogue(Toplevel):
             """
             ouvre une fenetre de dialogue
@@ -976,6 +982,7 @@ class maitre(Tk): #objet de notre fenetre
                     bd = 10,
                     relief="raised"
                 )
+                self.res = None
                 self.L_F = fenetre.L_F
                 self.H_F = fenetre.H_F
                 self.loc = fenetre.loc
@@ -983,7 +990,7 @@ class maitre(Tk): #objet de notre fenetre
                 self.resizable(0, 0)
                 self.minsize(width=int(self.L_F/2), height=int(self.H_F/2))
                 self.geometry("{0}x{1}+{2}+{3}".format(int(self.L_F/2), int(self.H_F/2), int(self.L_F/4), int(self.H_F/4)))
-                self.overrideredirect(True)
+                #self.overrideredirect(True)
                 
             def animation(self, texte, anim=None, ips=None):
                 """
@@ -1025,36 +1032,37 @@ class maitre(Tk): #objet de notre fenetre
                     self.question(case)
                 elif jeu == "mastermind":
                     self.mastermind(case)
-                return self.res
             
             def question(self, case):
                 """
                 pose une question au joueur
                 """
-                bonne = int(self.loc[case][0])
-                nb = int(self.loc[case][1])
-                self.rowconfigure([i for i in range(nb)], minsize=self.H_F/(2*nb))
-                self.columnconfigure([i for i in range(4)], minsize=self.L_F/8)
+                bonne = int(self.loc[case+"_q"][0])
+                nb = int(self.loc[case+"_q"][1])
+                self.columnconfigure([i for i in range(nb)], minsize=self.L_F/(2*nb))
+                self.rowconfigure([i for i in range(4)], minsize=self.H_F/8)
                 T_question = Label(
                     master=self,
-                    text=self.loc[case][2:],
+                    text=self.loc[case+"_q"][2:],
                     **self.style,
                 )
-                T_question.grid(row=0, column=0, rowspan=nb, columnspan=4, sticky="nswe")
+                T_question.grid(row=0, column=0, rowspan=4, columnspan=nb, sticky="nswe")
                 def rep(i):
                     if i == bonne:
-                        self.res = self.loc[case+"_+"]
+                        res = self.loc[case+"_+"]
                         fenetre.son("monstre_dying")
                     else:
-                        self.res = self.loc[case+"_-"]
+                        res = self.loc[case+"_-"]
+                    fenetre.res = res
+                    self.destruc()
                 
                 for i in range(nb):
                     Button(
                         master=self,
                         text=self.loc[case+"_"+str(i)],
-                        command=lambda i: rep(i),
+                        command=lambda i=i: rep(i),
                         **self.style,
-                    ).grid(row=i, column=3, sticky="nswe")
+                    ).grid(row=3, column=i, sticky="nswe")
             
             def mastermind(self, case):
                 pass
