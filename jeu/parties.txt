@@ -1,44 +1,12 @@
-[test]
-niv = 2
-score = 4269
-inv = 1_D1,1_D+
-pos = 8;11
-vie = 5
-s_niv = 1
-s_score = 0
-s_inv = 
-temps = 0
-
-[test2]
-niv = 4
+[test-]
+niv = 1
 score = 0
-inv = 
-pos = 19;21
-vie = 5
-s_niv = 1
-s_score = 0
-s_inv = 
-temps = 0
-
-[test 24/03]
-niv = 1
-score = -200
-inv = 
-pos = 2;1
-vie = 5
-s_niv = 1
-s_score = 0
-s_inv = 
-temps = 0
-
-[test lvl1]
-niv = 1
-score = 200
 inv = 1_D1
-pos = 5;13
+pos = 8;2
 vie = 5
 s_niv = 1
-s_score = 200
-s_inv = 1_D1
+s_score = 0
+s_inv = 
 temps = 0
+gagne = 
 

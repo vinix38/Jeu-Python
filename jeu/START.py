@@ -283,6 +283,7 @@ class maitre(Tk): #objet de notre fenetre
                     "S_score": 0,
                     "S_inv": "",
                     "temps": 0,
+                    "gagne": "",
                 }
                 log("nouvelle partie -", nom)
                 with open(ch("parties.txt"), "w") as fichier:
@@ -843,7 +844,7 @@ class maitre(Tk): #objet de notre fenetre
             ca = case[0:2]
             if ca == "FB":
                 dialogue().animation(self.n + "_" + case)
-            elif ca == "OP":
+            elif (ca == "OP") and (case not in self.parties[nom]["gagne"].split(",")):
                 f = dialogue()
                 f.question(self.n + "_" + case)
                 def actu(*args):
@@ -855,6 +856,7 @@ class maitre(Tk): #objet de notre fenetre
                     vie(res[0])
                     if res[0] >= 0:
                         sauvegarde()
+                        self.parties[nom]["gagne"].append(case+",")
                 f.bind("<Destroy>", actu)
                 log(self.res)
             elif ca == "EP":
