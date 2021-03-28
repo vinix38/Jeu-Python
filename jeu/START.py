@@ -788,6 +788,11 @@ class maitre(Tk): #objet de notre fenetre
                     values=(self.loc[i],),
                     )
         
+        def sauvegarde():
+            self.parties[nom]["S_inv"] = self.parties[nom]["inv"]
+            self.parties[nom]["S_niv"] = self.parties[nom]["niv"]
+            self.parties[nom]["S_score"] = self.parties[nom]["score"]
+        
         def mouv(mov, coords):
             """
             déplace le personnage si possible
@@ -840,13 +845,18 @@ class maitre(Tk): #objet de notre fenetre
                 dialogue().animation(self.n + "_" + case)
             elif ca == "OP":
                 f = dialogue()
-                slt = f.minijeu("question", self.n + "_" + case)
-                log(slt)
+                f.question(self.n + "_" + case)
+                def actu(*args):
+                    f.unbind("<Destroy>")
+                    log(self.res)
+                    res = self.res
+                    xp(res[1])
+                    inv(res[2])
+                    vie(res[0])
+                    if res[0] >= 0:
+                        sauvegarde()
+                f.bind("<Destroy>", actu)
                 log(self.res)
-                #v, exp, rec = f.res
-                #inv(rec)
-                #xp(exp)
-                #vie(v)
             elif ca == "EP":
                 self.son("escalier")
                 charge(case[2])
@@ -908,18 +918,22 @@ class maitre(Tk): #objet de notre fenetre
             """
             retour au dernier checkpoint
             """
+            log("défaite")
             self.son("gameover")
             self.parties[nom]["inv"] = self.parties[nom]["S_inv"]
             self.parties[nom]["niv"] = self.parties[nom]["S_niv"]
             self.parties[nom]["score"] = self.parties[nom]["S_score"]
+            V_xp.set(self.parties[nom]["score"])
             self.parties[nom]["pos"] = ""
-            self.parties[nom]["vie"] = 5
+            self.parties[nom]["vie"] = "5"
+            A_vie["value"] = 5
             charge(self.parties[nom]["niv"])
             
         def vie(delta):
             """
             effectue les changements de niveau de vie
             """
+            log("changement de vie =", delta)
             valeur = A_vie["value"]
             valeur += delta
             if valeur <= 0:
@@ -941,6 +955,7 @@ class maitre(Tk): #objet de notre fenetre
             """
             effectue les changements de score
             """
+            log("changement d'expérience =", delta)
             valeur = V_xp.get()
             valeur += delta
             V_xp.set(valeur)
@@ -950,6 +965,7 @@ class maitre(Tk): #objet de notre fenetre
             """
             rajoute les objets récoltés
             """
+            log("changement d'inventaire =", obj)
             liste = self.parties[nom]["inv"].split(",") if self.parties[nom]["inv"] != "" else []
             if obj not in liste and obj !="":
                 liste.append(obj)
@@ -1024,20 +1040,11 @@ class maitre(Tk): #objet de notre fenetre
                 self.bind_all("<Return>", self.destruc)
                 self.bind_all("<{0}>".format(fenetre.options["DEFAULT"]["action"]), self.destruc)
             
-            def minijeu(self, jeu, case):
-                """
-                déclenche le minijeu souhaité
-                """
-                if jeu == "question":
-                    self.question(case)
-                elif jeu == "mastermind":
-                    self.mastermind(case)
-            
             def question(self, case):
                 """
                 pose une question au joueur
                 """
-                bonne = int(self.loc[case+"_q"][0])
+                bonne = int(self.loc[case+"_q"][0]) - 1
                 nb = int(self.loc[case+"_q"][1])
                 self.columnconfigure([i for i in range(nb)], minsize=self.L_F/(2*nb))
                 self.rowconfigure([i for i in range(4)], minsize=self.H_F/8)
@@ -1071,6 +1078,7 @@ class maitre(Tk): #objet de notre fenetre
                 """
                 retourne à la fentre de jeu principale
                 """
+                log("destruction")
                 fenetre.att = 0
                 self.unbind_all("<ButtonRelease>")
                 self.unbind_all("<Return>")
