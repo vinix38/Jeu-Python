@@ -38,7 +38,7 @@ langue =  {
         "1_OP1" : "Opus: Halte!", 
         #=== à traduire et copier \/ 
         "1_OP1_q" : "22<Je ne peux pas marcher, pourtant j'ai un dos et quatre pieds. Qui suis-je?>",
-        "1_OP1_0" : "<un cheval paralysé>
+        "1_OP1_0" : "<un cheval paralysé>",
         "1_OP1_1" : "<Une chaise>", #le nombre de réponse possible peut varier
         "1_OP1_+" : (5, 200), #vie gagnée, experience gagnée, objet gagnée
         "1_OP1_-" : (-2, -200), #vie gagnée, experience gagnée, objet gagnée
@@ -51,7 +51,7 @@ langue =  {
         "2_OP1" : "Opus: Je comptes bien te couper dans ton élan",
         "2_OP1_q" : "22<Je porte des lunettes mais je n'y vois rien. Qui suis-je?>",
         "2_OP1_0" : "<Un aveugle>",
-        "2_OP1_1" : "<Le nez>
+        "2_OP1_1" : "<Le nez>",
         "2_OP1_+" : (2,300,"shard"),
         "2_OP1_-" : (-2,-300),
         "2_OP2" : "Opus: Voyons voir à quel point tu es malin...",
@@ -101,7 +101,7 @@ langue =  {
         "4_OP3_1" : "<L'espoir>",
         "4_OP3_2" : "<Une devinette>",
         "4_OP3_+" : (1,550,"shard"),
-        "4_OP3_-" : (-2,-550)
+        "4_OP3_-" : (-2,-550),
         "4_OP4" : "Opus: Je ne te laisserais pas atteindre le maître!",
         "4_OP4_q" : "12< Quelle est la question à laquelle on ne peut répondre sans mentir?>",
         "4_OP4_0" : "<Comment vas-tu?>",
@@ -167,7 +167,7 @@ langue =  {
         "2_OP4" : "Opus: You shouldn't be able to be here",
         "2_OP4_q" : "22<I wear glasses but I don't see anything. Who am I?>",
         "2_OP4_0" : "<A blind man>",
-        "2_OP4_1" : "<The nose>"
+        "2_OP4_1" : "<The nose>",
         "2_OP4_+" : (2,300,"shard"),
         "2_OP4_-" : (-2,-300),
         "2_OP5" : "Opus: I won't let you take the key",
