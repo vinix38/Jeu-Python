@@ -389,7 +389,10 @@ class maitre(Tk): #objet de notre fenetre
             onvalue="True",
             offvalue="False",
             variable=V_son,
-            **self.style,
+            font=self.style["font"],
+            bg = "black",
+            fg="grey",
+            highlightbackground="blue",
         )
         B_plein = Checkbutton(
             master=F_param,
@@ -398,7 +401,10 @@ class maitre(Tk): #objet de notre fenetre
             onvalue="True",
             offvalue="False",
             variable=V_plein,
-            **self.style,
+            font=self.style["font"],
+            bg = "black",
+            fg="grey",
+            highlightbackground="blue",
         )
         B_quitter_sauv = Button(
             master=F_param,
