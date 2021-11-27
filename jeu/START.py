@@ -24,15 +24,15 @@ def log(*arg):
     print("[LOG", str(datetime.now())[11:23]+"]" , *arg)
 
 # === chemins ===
-def ch(fichier):
+def dir(fichier):
     """
     (fichier)\n
-    indique le chemin absolu du fichier executé
+    indique le chemin absolu du fichier exécuté
     """
     return os.path.join(sys.path[0], str(fichier))
 
 # === tout effacer ===
-def efface(parent):
+def erase(parent):
     """
     (parent)\n
     Efface tous les widgets présents dans le parent indiqué
@@ -40,9 +40,9 @@ def efface(parent):
     for enfant in parent.winfo_children():
         enfant.destroy()
 
-class maitre(Tk): #objet de notre fenetre
+class master(Tk): #objet de notre fenêtre
     """
-    classe de fenetre
+    classe de fenêtre
     """
     # ====== VARIABLES ======
     temp = {} #empêche que les images soient effacées par le garbage collector
@@ -52,10 +52,10 @@ class maitre(Tk): #objet de notre fenetre
         """
         initialisation
         """
-        super().__init__() #fenetre tkinter de base
+        super().__init__() #fenêtre tkinter de base
         # === déclaration fenêtre ===
         log("=== INITIALISATION ===")
-        self.resizable(0, 0)                      #empecher le changement de taille
+        self.resizable(0, 0)                      #empêcher le changement de taille
         self.H_E = self.winfo_screenheight()           #hauteur d'écran
         self.L_E = self.winfo_screenwidth()            #largeur d'écran
         log("taille d'écran =", self.H_E, "x", self.L_E)
@@ -101,7 +101,7 @@ class maitre(Tk): #objet de notre fenetre
         
         # === lecture des paramètres ===
         self.options = ConfigParser(allow_no_value=True) 
-        if os.path.isfile(ch("options.txt")) == False:
+        if os.path.isfile(dir("options.txt")) == False:
             self.options["DEFAULT"] = {
                 "plein_ecran": True,
                 "taille": "1920x1080",
@@ -115,20 +115,20 @@ class maitre(Tk): #objet de notre fenetre
                 "droite": "e",
                 "action": "Tab",
             }
-            with open(ch('options.txt'), 'w') as fichier:
+            with open(dir('options.txt'), 'w') as fichier:
                 self.options.write(fichier)
         else:
-            self.options.read(ch("options.txt"))
+            self.options.read(dir("options.txt"))
 
         # === lecture des parties sauvegardées ===
         self.parties = ConfigParser(allow_no_value=True)
-        if os.path.isfile(ch("parties.txt")):
-            self.parties.read(ch("parties.txt"))
+        if os.path.isfile(dir("parties.txt")):
+            self.parties.read(dir("parties.txt"))
         else:
-            with open(ch('parties.txt'), 'w') as fichier:
+            with open(dir('parties.txt'), 'w') as fichier:
                 self.parties.write(fichier)
                 
-        self.L_F, self.H_F = self.ecran()
+        self.L_F, self.H_F = self.screen()
         self.localisation()
 
     # === changement de taille ===
@@ -138,7 +138,7 @@ class maitre(Tk): #objet de notre fenetre
         redimensionne l'image aux dimensions souhaitées
         """
         if nom not in self.temp:
-            img = PhotoImage(file=ch("media/"+nom+".png")) #ressource image
+            img = PhotoImage(file=dir("media/"+nom+".png")) #ressource image
             H = (Fraction(str(H/img.height()))).limit_denominator(30) #ratio de hauteur
             L = (Fraction(str(L/img.width()))).limit_denominator(30)  #ratio de largeur
             log("image", nom,"=",H,"par",L)
@@ -161,7 +161,7 @@ class maitre(Tk): #objet de notre fenetre
         log("changement de langue -", self.loc["lang"])
 
     # === prise en compte plein écran ===
-    def ecran(self):
+    def screen(self):
         """
         ()\n
         Redimensionne la taille de l'écran
@@ -185,19 +185,19 @@ class maitre(Tk): #objet de notre fenetre
             self.geometry(self.options["DEFAULT"]["taille"])
             return tuple(int(i) for i in self.options["DEFAULT"]["taille"].split("x"))
 
-    def son(self, nom):
+    def sound(self, nom):
         """
         joue le son demandé
         """
         if self.options["DEFAULT"].getboolean("son"):
-            BoomBox(ch("media/"+nom+".wav"), False).play()
+            BoomBox(dir("media/"+nom+".wav"), False).play()
 
     # ***====== FENETRES ======***
-    def acceuil(self):
+    def home(self):
         """
         fenetre d'acceuil du jeu
         """
-        efface(self)
+        erase(self)
         self.unbind_all("<Key>")
 
         log("=== accueil ===")
@@ -248,7 +248,7 @@ class maitre(Tk): #objet de notre fenetre
         """
         création d'une nouvelle partie
         """
-        efface(self)
+        erase(self)
 
         log("=== nouvelle partie ===")
 
@@ -286,7 +286,7 @@ class maitre(Tk): #objet de notre fenetre
                     "gagne": "",
                 }
                 log("nouvelle partie -", nom)
-                with open(ch("parties.txt"), "w") as fichier:
+                with open(dir("parties.txt"), "w") as fichier:
                     self.parties.write(fichier)
                 self.jeu(nom)
 
@@ -300,7 +300,7 @@ class maitre(Tk): #objet de notre fenetre
         B_annuler = Button(
             master=F_creer,
             text=self.loc["annuler"],
-            command=self.acceuil,
+            command=self.home,
             **self.style,
         )
         # placement
@@ -312,7 +312,7 @@ class maitre(Tk): #objet de notre fenetre
         """
         fentre des paramètres du jeu
         """
-        efface(self)
+        erase(self)
 
         log("=== paramètres ===")
 
@@ -352,18 +352,18 @@ class maitre(Tk): #objet de notre fenetre
             """
             quitter sans sauvegarder
             """
-            self.options.read(ch("options.txt"))
-            self.acceuil()
+            self.options.read(dir("options.txt"))
+            self.home()
 
         def quitter_avec():
             """
             quitter en sauvegardant
             """
-            with open(ch('options.txt'), 'w') as fichier:
+            with open(dir('options.txt'), 'w') as fichier:
                 self.options.write(fichier)
-            self.L_F, self.H_F = self.ecran()
+            self.L_F, self.H_F = self.screen()
             self.localisation()
-            self.acceuil()
+            self.home()
 
         # fond
         fond = Label(F_param, image=self.temp["BG_"+self.options["DEFAULT"]["langue"][0:2]])
@@ -528,7 +528,7 @@ class maitre(Tk): #objet de notre fenetre
         """
         fentre de chargement des parties
         """
-        efface(self)
+        erase(self)
 
         log("=== charger une partie ===")
 
@@ -546,7 +546,7 @@ class maitre(Tk): #objet de notre fenetre
         B_retour = Button(
             master=F_barre,
             text=self.loc["retour"],
-            command=self.acceuil,
+            command=self.home,
             **self.style,
         )
         def charge(B_liste):
@@ -571,7 +571,7 @@ class maitre(Tk): #objet de notre fenetre
             sel = B_liste.focus()
             if sel:
                 self.parties.remove_section(B_liste.item(sel)["values"][0])
-                with open(ch('parties.txt'), 'w') as fichier:
+                with open(dir('parties.txt'), 'w') as fichier:
                     self.parties.write(fichier)
                 self.charger()
 
@@ -582,7 +582,7 @@ class maitre(Tk): #objet de notre fenetre
             **self.style,
         )
 
-        self.parties.read(ch("parties.txt"))
+        self.parties.read(dir("parties.txt"))
         sauv = self.parties.sections()
         log("parties existantes -", sauv)
 
@@ -638,7 +638,7 @@ class maitre(Tk): #objet de notre fenetre
         """
         fenetre principale de jeu
         """
-        efface(self)
+        erase(self)
 
         log("=== chargement du jeu ===")
 
@@ -647,9 +647,9 @@ class maitre(Tk): #objet de notre fenetre
             """
             quitter la partie en sauvegardant
             """
-            with open(ch("parties.txt"), "w") as fichier:
+            with open(dir("parties.txt"), "w") as fichier:
                 self.parties.write(fichier)
-            self.acceuil()
+            self.home()
 
         # fenetre
         F_jeu = Frame(self, background="black")
@@ -679,7 +679,7 @@ class maitre(Tk): #objet de notre fenetre
             V_niv.set(n)
             self.parties[nom]["niv"] = n
             self.temp = {}
-            efface(F_carte)
+            erase(F_carte)
             li = int(niv[n]["li"])
             col = int(niv[n]["col"])
             self.x = x = int(min((self.L_F * 0.8) / col, self.H_F / li))
@@ -810,10 +810,10 @@ class maitre(Tk): #objet de notre fenetre
             s = niv[self.parties[nom]["niv"]]["grille"][cible[1]][cible[0]]
             log(s)
             if s[0] == "S":
-                self.son("pas")
+                self.sound("pas")
                 s = True
             elif (s[0] == "P") and ((self.n + "_D" + s[2]) in self.parties[nom]["inv"].split(",")):
-                self.son("porte")
+                self.sound("porte")
                 if s[2] == "+":
                     self.parties[nom]["pos"] = ""
                     charge(str(int(self.n) + 1))
@@ -869,11 +869,11 @@ class maitre(Tk): #objet de notre fenetre
                 else:
                     dialogue().animation(self.n + "_" + case)
             elif ca == "EP":
-                self.son("escalier")
+                self.sound("escalier")
                 charge(case[2])
             elif ca == "CD":
                 inv(self.n + "_" + case[1:])
-                self.son("coffre")
+                self.sound("coffre")
                 dialogue().animation(str(self.n)+ "_" + case[1:], "coffre_10fps.gif", 5)
             elif ca == "DL":
                 dialogue().animation(self.n + "_" + ca)
@@ -932,7 +932,7 @@ class maitre(Tk): #objet de notre fenetre
             retour au dernier checkpoint
             """
             log("défaite")
-            self.son("gameover")
+            self.sound("gameover")
             self.parties[nom]["inv"] = self.parties[nom]["S_inv"]
             A_inv.delete(*A_inv.get_children())
             if self.parties[nom]["inv"] != "":
@@ -1001,7 +1001,7 @@ class maitre(Tk): #objet de notre fenetre
             """
             son de fond
             """
-            self.son("ambiance")
+            self.sound("ambiance")
             F_jeu.after(22680, ambiance)
             
         class dialogue(Toplevel):
@@ -1043,7 +1043,7 @@ class maitre(Tk): #objet de notre fenetre
                 )
                 T_texte.place(relx=0.5, rely=0.5, anchor="center")
                 if anim != None:
-                    images = [PhotoImage(file=ch('media/'+anim), format='gif -index %i' %(i), width=int(self.L_F/2), height=int(self.H_F/2),) for i in range(ips)]
+                    images = [PhotoImage(file=dir('media/'+anim), format='gif -index %i' %(i), width=int(self.L_F/2), height=int(self.H_F/2),) for i in range(ips)]
                     def maj(ind):
                         """
                         passe à l'image suivante de l'animation
@@ -1078,7 +1078,7 @@ class maitre(Tk): #objet de notre fenetre
                 def rep(i):
                     if i == bonne:
                         res = self.loc[case+"_+"]
-                        fenetre.son("monstre_dying")
+                        fenetre.sound("monstre_dying")
                     else:
                         res = self.loc[case+"_-"]
                     fenetre.res = res
@@ -1097,7 +1097,7 @@ class maitre(Tk): #objet de notre fenetre
             
             def destruc(self, *args):
                 """
-                retourne à la fentre de jeu principale
+                retourne à la fenetre de jeu principale
                 """
                 log("destruction")
                 fenetre.att = 0
@@ -1123,6 +1123,6 @@ class maitre(Tk): #objet de notre fenetre
         charge(self.parties[nom]["niv"])
           
 log("début de l'execution")
-fenetre = maitre()
-fenetre.acceuil()
+fenetre = master()
+fenetre.home()
 fenetre.mainloop() #fin du script !
