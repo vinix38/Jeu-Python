@@ -1,35 +1,41 @@
 # ====== IMPORTS ======
 try:
-    from tkinter import Tk                  #librairie graphique
+    from tkinter import Tk  # librairie graphique
 except ImportError:
-    print("sudo apt install python-tk")     #pour installer tkinter sur les distributions debian
+    # pour installer tkinter sur les distributions debian
+    print("sudo apt install python-tk")
     raise
-from datetime import datetime               #infos de temps
-from platform import system                 #detection de l'OS
-from boombox import BoomBox                 #gestion du son
-from configparser import ConfigParser       #gestion des fichiers persistants
-from fractions import Fraction              #calcul des ratios d'images
+from datetime import datetime  # infos de temps
+from platform import system  # detection de l'OS
+from boombox import BoomBox  # gestion du son
+from configparser import ConfigParser  # gestion des fichiers persistants
+from fractions import Fraction  # calcul des ratios d'images
 from tkinter import Label, Frame, Toplevel, Button, StringVar, IntVar, Canvas, PhotoImage, Entry, Checkbutton, Scrollbar
-from tkinter.messagebox import showinfo     #message d'erreur
+from tkinter.messagebox import showinfo  # message d'erreur
 from tkinter.ttk import Style, Treeview, OptionMenu, Progressbar
-from niveaux import niv                     #infos de niveaux
-import sys                                  #gestion des chemins de fichiers
+from niveaux import niv  # infos de niveaux
+import sys  # gestion des chemins de fichiers
 import os                                   # ^^idem^^pytho
 
 # fonction de log
+
+
 def log(*arg):
     """
     enregistre les infos données
     """
-    print("[LOG", str(datetime.now())[11:23]+"]" , *arg)
+    print("[LOG", str(datetime.now())[11:23]+"]", *arg)
 
 # === chemins ===
+
+
 def dir(fichier):
     """
     (fichier)\n
     indique le chemin absolu du fichier exécuté
     """
     return os.path.join(sys.path[0], str(fichier))
+
 
 # === tout effacer ===
 def erase(parent):
@@ -40,68 +46,69 @@ def erase(parent):
     for enfant in parent.winfo_children():
         enfant.destroy()
 
-class master(Tk): #objet de notre fenêtre
+
+class master(Tk):  # objet de notre fenêtre
     """
     classe de fenêtre
     """
     # ====== VARIABLES ======
-    temp = {} #empêche que les images soient effacées par le garbage collector
-    temp8 = {} #niveau de résilience plus haut
-    
+    temp: dict = {}  # empêche que les images soient effacées par le garbage collector
+    temp8: dict = {}  # niveau de résilience plus haut
+
     def __init__(self):
         """
         initialisation
         """
-        super().__init__() #fenêtre tkinter de base
+        super().__init__()  # fenêtre tkinter de base
         # === déclaration fenêtre ===
         log("=== INITIALISATION ===")
-        self.resizable(0, 0)                      #empêcher le changement de taille
-        self.H_E = self.winfo_screenheight()           #hauteur d'écran
-        self.L_E = self.winfo_screenwidth()            #largeur d'écran
+        self.resizable(0, 0)  # empêcher le changement de taille
+        self.H_E = self.winfo_screenheight()  # hauteur d'écran
+        self.L_E = self.winfo_screenwidth()  # largeur d'écran
         log("taille d'écran =", self.H_E, "x", self.L_E)
 
         # === styles ===
-        self.style = {   #style par défaut pour tk
+        self.style = {  # style par défaut pour tk
             "font": ('Fixedsys', 24),
             "background": "black",
             "foreground": "white",
         }
-        self.ttkStyle = Style(self) #styles par défaut pour ttk
+        self.ttkStyle = Style(self)  # styles par défaut pour ttk
         self.ttkStyle.theme_use('clam')
         self.ttkStyle.configure(
             "TMenubutton",
             **self.style
         )
         self.ttkStyle.configure("TProgressbar",
-                            foreground="black",
-                            background="black",
-                            troughcolor="black"
-                        ) #temporaire
+                                foreground="black",
+                                background="black",
+                                troughcolor="black"
+                                )  # temporaire
         self.ttkStyle.configure("Treeview.Heading",
-                            font=('Fixedsys', 20,'bold'),
-                            foreground="white",
-                            background="black",
-                            fieldbackground="black",
-                        ) # style de l'en-tête
+                                font=('Fixedsys', 20, 'bold'),
+                                foreground="white",
+                                background="black",
+                                fieldbackground="black",
+                                )  # style de l'en-tête
         self.ttkStyle.configure("Treeview",
-                            background="pink",
-                            foreground="green",
-                            fieldbackground="black",
-                            rowheight=40,
-                            highlightthickness=0,
-                            bd=0,
-                            font=('Fixedsys', 20),
-                        ) # style des cases
-        
-        self.iconphoto(True, self.img(200, 200, "icone")) #icone de fenetre
+                                background="pink",
+                                foreground="green",
+                                fieldbackground="black",
+                                rowheight=40,
+                                highlightthickness=0,
+                                bd=0,
+                                font=('Fixedsys', 20),
+                                )  # style des cases
+
+        self.iconphoto(True, self.img(200, 200, "icone"))  # icone de fenetre
         self.res = None
         self.att = 0
         self.x = -1
         self.n = -1
-        
+
         # === lecture des paramètres ===
-        self.options = ConfigParser(allow_no_value=True) 
-        if os.path.isfile(dir("options.txt")) == False:
+        self.options = ConfigParser(allow_no_value=True)
+        if os.path.isfile(dir("options.txt")) is False:
             self.options["DEFAULT"] = {
                 "plein_ecran": True,
                 "taille": "1920x1080",
@@ -127,7 +134,7 @@ class master(Tk): #objet de notre fenêtre
         else:
             with open(dir('parties.txt'), 'w') as fichier:
                 self.parties.write(fichier)
-                
+
         self.L_F, self.H_F = self.screen()
         self.localisation()
 
@@ -138,11 +145,14 @@ class master(Tk): #objet de notre fenêtre
         redimensionne l'image aux dimensions souhaitées
         """
         if nom not in self.temp:
-            img = PhotoImage(file=dir("media/"+nom+".png")) #ressource image
-            H = (Fraction(str(H/img.height()))).limit_denominator(30) #ratio de hauteur
-            L = (Fraction(str(L/img.width()))).limit_denominator(30)  #ratio de largeur
-            log("image", nom,"=",H,"par",L)
-            img = img.zoom(L.numerator, H.numerator).subsample(L.denominator, H.denominator)
+            img = PhotoImage(file=dir("media/"+nom+".png"))  # ressource image
+            H = (Fraction(str(H/img.height()))
+                 ).limit_denominator(30)  # ratio de hauteur
+            L = (Fraction(str(L/img.width()))
+                 ).limit_denominator(30)  # ratio de largeur
+            log("image", nom, "=", H, "par", L)
+            img = img.zoom(L.numerator, H.numerator).subsample(
+                L.denominator, H.denominator)
             if important:
                 self.temp8[nom] = img
             self.temp[nom] = img
@@ -154,10 +164,13 @@ class master(Tk): #objet de notre fenêtre
         ()\n
         Change la langue
         """
-        from langue import langue #fichier de localisation
-        self.loc = langue[self.options["DEFAULT"]["langue"]] #changement de la localisation par défaut
-        self.temp["BG"] = self.img(self.L_F, self.H_F, "BG_"+self.options["DEFAULT"]["langue"][0:2]) #changement du fond d'écran
-        self.title(self.loc["titre"]) #changement du titre
+        from langue import langue  # fichier de localisation
+        # changement de la localisation par défaut
+        self.loc = langue[self.options["DEFAULT"]["langue"]]
+        # changement du fond d'écran
+        self.temp["BG"] = self.img(
+            self.L_F, self.H_F, "BG_"+self.options["DEFAULT"]["langue"][0:2])
+        self.title(self.loc["titre"])  # changement du titre
         log("changement de langue -", self.loc["lang"])
 
     # === prise en compte plein écran ===
@@ -209,8 +222,9 @@ class master(Tk): #objet de notre fenêtre
         F_acceuil.columnconfigure([i for i in range(7)], weight=1)
 
         # fond
-        self.temp={}
-        fond = Label(F_acceuil, image=self.img(self.L_F, self.H_F, "BG_"+self.options["DEFAULT"]["langue"][0:2]))
+        self.temp = {}
+        fond = Label(F_acceuil, image=self.img(self.L_F, self.H_F,
+                     "BG_"+self.options["DEFAULT"]["langue"][0:2]))
         fond.place(x=0, y=0, relwidth=1, relheight=1)
 
         # boutons
@@ -271,7 +285,7 @@ class master(Tk): #objet de notre fenêtre
                 showinfo(self.loc["err"], self.loc["déjà"])
                 log("erreur, cette partie existe déjà")
             elif nom == "":
-                showinfo(self.loc["err"], self.loc["vide"] )
+                showinfo(self.loc["err"], self.loc["vide"])
             else:
                 self.parties[nom] = {
                     "niv": "1",
@@ -390,7 +404,7 @@ class master(Tk): #objet de notre fenêtre
             offvalue="False",
             variable=V_son,
             font=self.style["font"],
-            bg = "black",
+            bg="black",
             fg="grey",
             highlightbackground="blue",
         )
@@ -402,7 +416,7 @@ class master(Tk): #objet de notre fenêtre
             offvalue="False",
             variable=V_plein,
             font=self.style["font"],
-            bg = "black",
+            bg="black",
             fg="grey",
             highlightbackground="blue",
         )
@@ -469,7 +483,7 @@ class master(Tk): #objet de notre fenêtre
             command=lambda: C_touche("action"),
             **self.style,
         )
-        #texte associé aux bouton
+        # texte associé aux bouton
         T_haut = Label(
             F_param,
             text=self.loc["haut"],
@@ -549,6 +563,7 @@ class master(Tk): #objet de notre fenêtre
             command=self.home,
             **self.style,
         )
+
         def charge(B_liste):
             """
             lancement du chargement de la partie sélectionnée
@@ -557,13 +572,14 @@ class master(Tk): #objet de notre fenêtre
             log(sel)
             if sel:
                 self.jeu(B_liste.item(sel)["values"][0])
-                
+
         B_charger = Button(
             master=F_barre,
             text=self.loc["charger"],
             command=lambda: charge(B_liste),
             **self.style,
         )
+
         def supprimer(B_liste):
             """
             suppression de la partie sélectionnée
@@ -602,8 +618,8 @@ class master(Tk): #objet de notre fenêtre
             )
             for c in colonnes:
                 B_liste.column(c, anchor="center")
-                B_liste.heading(c, text=c.title(), anchor="center")            
-                
+                B_liste.heading(c, text=c.title(), anchor="center")
+
             for i in sauv:
                 B_liste.insert(
                     parent='',
@@ -675,7 +691,7 @@ class master(Tk): #objet de notre fenêtre
             nonlocal F_carte
             self.att = 1
             self.n = n
-            log("chargement du niveau",n)
+            log("chargement du niveau", n)
             V_niv.set(n)
             self.parties[nom]["niv"] = n
             self.temp = {}
@@ -690,18 +706,20 @@ class master(Tk): #objet de notre fenêtre
                 height=li*x,
                 width=col*x,
                 background="black",
-                #highlightthickness=0,
+                # highlightthickness=0,
             )
             F_terrain.place(relx=0.5, rely=0.5, anchor="center")
             log("image par défaut -", niv[n]["def_img"])
-            self.temp["def_img"] = self.img(x, x, niv[n]["def_img"]) #image par défaut en cas de transparence
+            # image par défaut en cas de transparence
+            self.temp["def_img"] = self.img(x, x, niv[n]["def_img"])
 
             for i in range(li):
                 for j in range(col):
-                    s = niv[n]["grille"][i][j][0:2] #récupération du nom de la texture
-                    
-                    if s[0] != "V": #pas d'image à afficher si la case est vide
-                        #gestion transparence
+                    # récupération du nom de la texture
+                    s = niv[n]["grille"][i][j][0:2]
+
+                    if s[0] != "V":  # pas d'image à afficher si la case est vide
+                        # gestion transparence
                         if s[0] not in "SMV":
                             F_terrain.create_image(
                                 j*x,
@@ -709,9 +727,9 @@ class master(Tk): #objet de notre fenêtre
                                 image=self.temp["def_img"],
                                 anchor="nw",
                                 tag="case",
-                            )       
-                        
-                        #affichage de la case
+                            )
+
+                        # affichage de la case
                         F_terrain.create_image(
                             j*x,
                             i*x,
@@ -721,10 +739,11 @@ class master(Tk): #objet de notre fenêtre
                         )
             # ---=== fin charge() ===---
 
-            if self.parties[nom]["pos"] == "": #si il n'y a pas encore de position enregistrée
+            # si il n'y a pas encore de position enregistrée
+            if self.parties[nom]["pos"] == "":
                 self.parties[nom]["pos"] = str(niv[n]["def_pos"][0]) \
                     + ";" + str(niv[n]["def_pos"][1])
-            
+
             F_terrain.create_image(
                 int(self.parties[nom]["pos"].split(";")[0]) * x,
                 int(self.parties[nom]["pos"].split(";")[1]) * x,
@@ -734,7 +753,7 @@ class master(Tk): #objet de notre fenêtre
             )
             self.att = 0
 
-        #=== barre latérale ===
+        # === barre latérale ===
         B_quitter = Button(
             master=F_barre,
             text=self.loc["quitter"],
@@ -765,28 +784,28 @@ class master(Tk): #objet de notre fenêtre
         )
         A_vie = Progressbar(
             master=F_barre,
-            orient = "horizontal", 
-            mode = 'determinate',
-            maximum = 20,
+            orient="horizontal",
+            mode='determinate',
+            maximum=20,
             value=self.parties[nom].getint("vie"),
         )
         T_vie = Label(
             master=F_barre,
             bg="black",
-            image=self.img(self.H_F/15,self.H_F/15, "coeur", 1),
+            image=self.img(self.H_F/15, self.H_F/15, "coeur", 1),
             anchor="n",
         )
         A_inv = Treeview(
-            master = F_barre,
+            master=F_barre,
             show="headings",
             columns=["inv"],
             selectmode="none",
-            #yscrollcommand=roue.set,
-            height = len(self.parties[nom]["inv"].split(",")),
+            # yscrollcommand=roue.set,
+            height=len(self.parties[nom]["inv"].split(",")),
         )
         A_inv.column("inv", anchor="center")
-        A_inv.heading("inv", text=self.loc["inv"], anchor="center")  
-        
+        A_inv.heading("inv", text=self.loc["inv"], anchor="center")
+
         if self.parties[nom]["inv"] != "":
             for i in self.parties[nom]["inv"].split(","):
                 A_inv.insert(
@@ -794,12 +813,12 @@ class master(Tk): #objet de notre fenêtre
                     index="end",
                     values=(self.loc[i],),
                     )
-        
+
         def sauvegarde():
             self.parties[nom]["S_inv"] = self.parties[nom]["inv"]
             self.parties[nom]["S_niv"] = self.parties[nom]["niv"]
             self.parties[nom]["S_score"] = self.parties[nom]["score"]
-        
+
         def mouv(mov, coords):
             """
             déplace le personnage si possible
@@ -822,7 +841,7 @@ class master(Tk): #objet de notre fenêtre
                     charge(str(int(self.n) + 1))
                 else:
                     s = True
-            if s == True:
+            if s:
                 log("mouvement accepté")
                 self.parties[nom]["pos"] = ";".join([str(i) for i in cible])
                 F_terrain.delete("perso")
@@ -835,6 +854,7 @@ class master(Tk): #objet de notre fenêtre
                         "perso"+"".join([str(i) for i in mov])
                     )
                 )
+
                 def apres():
                     self.att = 0
                 F_terrain.after(100, apres)
@@ -851,9 +871,10 @@ class master(Tk): #objet de notre fenêtre
             if ca == "FB":
                 dialogue().animation(self.n + "_" + case)
             elif (ca == "OP") and (case not in self.parties[nom]["gagne"].split(",")):
-                if (self.n + "_" + case +"_q") in self.loc:
+                if (self.n + "_" + case + "_q") in self.loc:
                     f = dialogue()
                     f.question(self.n + "_" + case)
+
                     def actu(*args):
                         f.unbind("<Destroy>")
                         log(self.res)
@@ -874,19 +895,19 @@ class master(Tk): #objet de notre fenêtre
             elif ca == "CD":
                 inv(self.n + "_" + case[1:])
                 self.sound("coffre")
-                dialogue().animation(str(self.n)+ "_" + case[1:], "coffre_10fps.gif", 5)
+                dialogue().animation(str(self.n) + "_" + case[1:], "coffre_10fps.gif", 5)
             elif ca == "DL":
                 dialogue().animation(self.n + "_" + ca)
             else:
                 self.att = 0
-            
+
         def inter(coords):
             """
             cherche si il y a un objet avec lequel interagir
             """
             tr = False
-            for i in range(-1,2):
-                for j in range(-1,2):
+            for i in range(-1, 2):
+                for j in range(-1, 2):
                     if niv[self.parties[nom]["niv"]]["grille"][coords[1]+i][coords[0]+j][0] not in "MSV":
                         log("objet trouvé")
                         tr = True
@@ -894,7 +915,8 @@ class master(Tk): #objet de notre fenêtre
                 if tr:
                     break
             if tr:
-                action(niv[self.parties[nom]["niv"]]["grille"][coords[1]+i][coords[0]+j])
+                action(niv[self.parties[nom]["niv"]]
+                       ["grille"][coords[1]+i][coords[0]+j])
             else:
                 self.att = 0
 
@@ -926,7 +948,7 @@ class master(Tk): #objet de notre fenêtre
                     mouv(mov, coords)
 
         self.bind_all("<Key>", clavier)
-        
+
         def retour():
             """
             retour au dernier checkpoint
@@ -949,7 +971,7 @@ class master(Tk): #objet de notre fenêtre
             self.parties[nom]["vie"] = "5"
             A_vie["value"] = 5
             charge(self.parties[nom]["niv"])
-            
+
         def vie(delta):
             """
             effectue les changements de niveau de vie
@@ -971,7 +993,7 @@ class master(Tk): #objet de notre fenêtre
                 else:
                     couleur = "blue"
                 self.ttkStyle.configure("TProgressbar", foreground=couleur, background=couleur)
-                
+
         def xp(delta):
             """
             effectue les changements de score
@@ -981,33 +1003,34 @@ class master(Tk): #objet de notre fenêtre
             valeur += delta
             V_xp.set(valeur)
             self.parties[nom]["score"] = str(valeur)
-            
+
         def inv(obj):
             """
             rajoute les objets récoltés
             """
             log("changement d'inventaire =", obj)
             liste = self.parties[nom]["inv"].split(",") if self.parties[nom]["inv"] != "" else []
-            if obj not in liste and obj !="":
+            if obj not in liste and obj != "":
                 liste.append(obj)
                 A_inv.insert(
-                parent="",
-                index="end",
-                values=(self.loc[obj],)
+                    parent="",
+                    index="end",
+                    values=(self.loc[obj],)
                 )
                 self.parties[nom]["inv"] = ",".join(liste)
-                
+
         def ambiance():
             """
             son de fond
             """
             self.sound("ambiance")
             F_jeu.after(22680, ambiance)
-            
+
         class dialogue(Toplevel):
             """
             ouvre une fenetre de dialogue
             """
+
             def __init__(self):
                 """
                 initialisation du dialogue
@@ -1015,7 +1038,7 @@ class master(Tk): #objet de notre fenêtre
                 super().__init__(
                     master=fenetre,
                     bg="black",
-                    bd = 10,
+                    bd=10,
                     relief="raised"
                 )
                 self.res = None
@@ -1025,9 +1048,10 @@ class master(Tk): #objet de notre fenêtre
                 self.style = fenetre.style
                 self.resizable(0, 0)
                 self.minsize(width=int(self.L_F/2), height=int(self.H_F/2))
-                self.geometry("{0}x{1}+{2}+{3}".format(int(self.L_F/2), int(self.H_F/2), int(self.L_F/4), int(self.H_F/4)))
-                #self.overrideredirect(True)
-                
+                self.geometry("{0}x{1}+{2}+{3}".format(int(self.L_F/2),
+                              int(self.H_F/2), int(self.L_F/4), int(self.H_F/4)))
+                # self.overrideredirect(True)
+
             def animation(self, texte, anim=None, ips=None):
                 """
                 lance une animation
@@ -1042,8 +1066,10 @@ class master(Tk): #objet de notre fenêtre
                     bg="black",
                 )
                 T_texte.place(relx=0.5, rely=0.5, anchor="center")
-                if anim != None:
-                    images = [PhotoImage(file=dir('media/'+anim), format='gif -index %i' %(i), width=int(self.L_F/2), height=int(self.H_F/2),) for i in range(ips)]
+                if anim is not None:
+                    images = [PhotoImage(file=dir('media/'+anim), format='gif -index %i' % (
+                        i), width=int(self.L_F/2), height=int(self.H_F/2),) for i in range(ips)]
+
                     def maj(ind):
                         """
                         passe à l'image suivante de l'animation
@@ -1059,7 +1085,7 @@ class master(Tk): #objet de notre fenêtre
                 self.bind_all("<ButtonRelease>", self.destruc)
                 self.bind_all("<Return>", self.destruc)
                 self.bind_all("<{0}>".format(fenetre.options["DEFAULT"]["action"]), self.destruc)
-            
+
             def question(self, case):
                 """
                 pose une question au joueur
@@ -1075,6 +1101,7 @@ class master(Tk): #objet de notre fenêtre
                     **self.style,
                 )
                 T_question.grid(row=0, column=0, rowspan=4, columnspan=nb, sticky="nswe")
+
                 def rep(i):
                     if i == bonne:
                         res = self.loc[case+"_+"]
@@ -1083,7 +1110,7 @@ class master(Tk): #objet de notre fenêtre
                         res = self.loc[case+"_-"]
                     fenetre.res = res
                     self.destruc()
-                
+
                 for i in range(nb):
                     Button(
                         master=self,
@@ -1091,10 +1118,10 @@ class master(Tk): #objet de notre fenêtre
                         command=lambda i=i: rep(i),
                         **self.style,
                     ).grid(row=3, column=i, sticky="nswe")
-            
+
             def mastermind(self, case):
                 pass
-            
+
             def destruc(self, *args):
                 """
                 retourne à la fenetre de jeu principale
@@ -1105,8 +1132,8 @@ class master(Tk): #objet de notre fenêtre
                 self.unbind_all("<Return>")
                 self.unbind_all("<{0}>".format(fenetre.options["DEFAULT"]["action"]))
                 self.destroy()
-            
-        #placement
+
+        # placement
         A_inv.grid(row=7, column=0, sticky="nswe", columnspan=4, rowspan=6)
         T_vie.grid(row=1, column=0, sticky="nswe")
         A_vie.grid(row=1, column=1, sticky="nswe", columnspan=3)
@@ -1121,8 +1148,9 @@ class master(Tk): #objet de notre fenêtre
         vie(0)
         xp(0)
         charge(self.parties[nom]["niv"])
-          
+
+
 log("début de l'execution")
 fenetre = master()
 fenetre.home()
-fenetre.mainloop() #fin du script !
+fenetre.mainloop()  # fin du script !
