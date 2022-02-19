@@ -7,6 +7,7 @@
 *.ini
 *.code-workspace
 .vscode
+tempCodeRunnerFile.python
 
 # User-specific files
 *.rsuser

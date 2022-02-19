@@ -38,7 +38,7 @@ def dir(fichier):
 
 
 # === tout effacer ===
-def erase(parent):
+def erase(parent:Tk):
     """
     (parent)\n
     Efface tous les widgets présents dans le parent indiqué
